@@ -3,7 +3,7 @@ odin
 
 a go library to help build command line applications
 
-Example
+Basic Example
 ====
 
 ```go
@@ -13,30 +13,67 @@ import "fmt"
 import "github.com/jwaldrip/odin"
 import "os"
 
-var sayCommand = odin.NewCommand
+var sayCommand = odin.NewCommand(".", start, "greeting", "object")
+
+func main(){
+  sayCommand.StartDefault(os.Args[1:])
+}
+
+func say(cmd *odin.Command){
+  line := fmt.Sprintf(
+    "I would like to say... %[1]v, %[2]v",
+    cmd.params["greeting"],
+    cmd.params["object"]
+  )
+  fmt.Println(line)
+}
+```
+
+```sh
+$ say hello world
+I would like to say... hello, world
+```
+
+Basic Example W/ Flags
+====
+
+```go
+package say
+
+import "fmt"
+import "github.com/jwaldrip/odin"
+import "os"
+import "strings"
+
+var sayCommand = odin.NewCommand(".", start, "greeting", "object")
 
 func init(){
-  sayCommand.NewBoolOption("verbose", say)
-  sayCommand.Alias("v")
+  sayCommand.BoolFlag("loud", false, "make it loud")
+  sayCommand.AliasFlag("loud", "l")
 }
 
 func main(){
-  sayCommand.Start(os.Args)
+  sayCommand.StartDefault(os.Args[1:])
 }
 
-func say(command *odin.Command){
-  args := command.Args
-  if command.GetOption("verbose") {
-    fmt.Println("I will be doing thing verbosely")
-  }
-  worldCommand := odin.NewCommand("world", world)
-  worldCommand.Start(args)
+func say(cmd *odin.Command){
+  line := fmt.Sprintf(
+    "I would like to say... %[1]v, %[2]v",
+    cmd.params["greeting"],
+    cmd.params["object"]
+  )
+  if odin.flags["loud"]
+  fmt.Println(line)
 }
-
-func world(command *odin.Command){
-  args := command.Args
-  
-}
-
 ```
 
+```sh
+$ say hello world
+I would like to say... hello, world
+
+$ say --loud hello world
+I WOULD LIKE TO SAY... HELLO, WORLD
+
+$ say --l hello world
+I WOULD LIKE TO SAY... HELLO, WORLD
+```
