@@ -1,0 +1,11 @@
+{
+	"ImportPath": "github.com/jwaldrip/odin",
+	"GoVersion": "go1.3.1",
+	"Deps": [
+		{
+			"ImportPath": "github.com/franela/goblin",
+			"Comment": "0.0.1-45-ga99b1e8",
+			"Rev": "a99b1e87ecb6884721c6586e8846ec368234fb9a"
+		}
+	]
+}
