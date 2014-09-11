@@ -62,7 +62,9 @@ func say(cmd *odin.Command){
     cmd.params["greeting"],
     cmd.params["object"]
   )
-  if odin.flags["loud"]
+  if odin.flags["loud"] {
+    line = string.ToUpper(line)
+  }
   fmt.Println(line)
 }
 ```
