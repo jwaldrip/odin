@@ -34,7 +34,7 @@ $ say hello world
 I would like to say... hello, world
 ```
 
-Basic Example W/ Flags
+Basic Example with Flags
 ====
 
 ```go
