@@ -1,6 +1,6 @@
 package cli
 
 type boolFlag interface {
-  FlagValue
+  Value
   IsBoolFlag() bool
 }

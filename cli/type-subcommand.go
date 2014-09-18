@@ -5,11 +5,10 @@ type SubCommand struct {
   parents []Command
 }
 
-func NewSubCommand(name string, fn commandFn, args ...string ) *SubCommand {
+func NewSubCommand(name string, fn commandFn, paramNames ...string) *SubCommand {
   var cmd SubCommand
-  cmd.name = name
-  cmd.args = args
-  cmd.fn = fn
-  cmd.initFlagSet()
+  cmd.setName(name)
+  cmd.setParams(paramNames...)
+  cmd.setFn(fn)
   return &cmd
 }

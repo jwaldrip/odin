@@ -1,129 +1,87 @@
 package cli
 
-import "os"
 import "fmt"
+import "os"
 
+// A FlagSet represents a set of defined flags.  The zero value of a FlagSet
+// has no name and has ContinueOnError error handling.
 type CLI struct {
-  Usage *func()
-  name string
-  params map[string]string
-  flags map[string]FlagValue
-  args []string
-  fn commandFn
-  err ErrorHandling
-  flagSet FlagSet
-  subCommands map[string]*SubCommand
+  flags
+  params
+  writer
+
+  // Usage is the function called when an error occurs while parsing flags.
+  // The field is a function (not a method) that may be changed to point to
+  // a custom error handler.
+  Usage func()
+
+  fn            commandFn
+  name          string
+  parsed        bool
+  subCommands   []Command
 }
 
-func NewCLI (fn commandFn, args ...string) *CLI {
-  var cli CLI
-  cli.name = os.Args[0]
-  cli.args = args
-  cli.fn = fn
-  cli.initFlagSet()
-  return &cli
+// NewFlagSet returns a new, empty flag set with the specified name and
+// error handling property.
+func NewCLI(fn commandFn, paramNames ...string) *CLI {
+  f := &CLI{name: os.Args[0]}
+  f.setFn(fn)
+  f.setParams(paramNames...)
+  return f
 }
 
-func (this *CLI) initFlagSet() {
-  this.flagSet = *NewFlagSet(this.name, 1)
-  this.flagSet.Usage = this.defaultUsage
-  this.Usage = &this.flagSet.Usage
-}
-
-func (this CLI) defaultUsage() {
-  stdout.Println("Usage:")
-  stdout.Println("", this.CommandUsage())
-  stdout.Println("")
-  stdout.Println("Options:")
-  stdout.Println(this.FlagsUsage())
-}
-
-func (this *CLI) CommandUsage() string {
-  wrappedArgs := fmt.Sprintf("%s [options]", this.name)
-  for i := 0 ; i < len(this.args) ; i++ {
-    wrappedArgs = fmt.Sprintf("%s <%s>", wrappedArgs, this.args[i])
+func (f *CLI) Start(args ...string) {
+  if args == nil {
+    args = os.Args
   }
-  return wrappedArgs
+  ExitIfError(f.parseFlags(args))
+  ExitIfError(f.parseParams(args))
 }
 
-func (this *CLI) FlagsUsage() string {
-  fmt.Println(this.flagSet.Lookup("good"))
-  return "foo"
+func (f *CLI) setName(name string) {
+  f.name = name
 }
 
-func (this CLI) Flag(key string) FlagValue {
-  return this.flags[key]
+func (f *CLI) setFn(fn commandFn){
+  f.fn = fn
 }
 
-func (this CLI) Flags() map[string]FlagValue {
-  return this.flags
-}
+// PrintDefaults prints, to standard error unless configured
+// otherwise, the default values of all defined flags in the set.
+// func (f *FlagSet) PrintDefaults() {
+//   f.VisitAll(func(flag *Flag) {
+//     format := "  -%s=%s: %s\n"
+//     if _, ok := flag.Value.(*stringValue); ok {
+//       // put quotes on the value
+//       format = "  -%s=%q: %s\n"
+//     }
+//     fmt.Fprintf(f.out(), format, flag.Name, flag.DefValue, flag.Usage)
+//   })
+// }
 
-func (this CLI) Param(key string) string {
-  return this.params[key]
-}
-
-func (this CLI) Params() map[string]string {
-  return this.params
-}
-
-func (this *CLI) Name() string {
-  return this.name
-}
-
-func (this *CLI) NewSubCommand( name string, fn commandFn, args ...string ) *SubCommand {
-  subcmd := NewSubCommand(name, fn, args...)
-  subcmd.parents = append(subcmd.parents, this)
-  this.subCommands[name] = subcmd
-  return subcmd
-}
-
-func (this *CLI) Run() {
-  this.Start(os.Args)
-}
-
-func (this *CLI) Start(args []string) {
-  args = args[1:]               // extract command
-  args = this.parseFlags(args)   // extract flags
-  args = this.parseParams(args)  // extract params
-  this.invoke(args)
-}
-
-func (this *CLI) invoke(args []string) {
-  if len(args) == 0 {
-    this.fn(this)
+// usage calls the Usage method for the flag set
+func (f *CLI) usage() {
+  if f.Usage == nil {
+    f.defaultUsage()
   } else {
-    this.invokeSubCommand(args)
+    f.Usage()
   }
 }
 
-func (this *CLI) invokeSubCommand(args []string) {
-  subcmd, ok := this.subCommands[args[0]]
-  if !ok { fail("invalid command") }
-  subcmd.Start(args[1:])
+// Parsed reports whether f.Parse has been called.
+func (f *CLI) Parsed() bool {
+  return f.parsed
 }
 
-func (this *CLI) parseFlags(args []string) []string {
-  this.flags = make(map[string]FlagValue)
-  this.flagSet.Parse(args)
-  this.flagSet.VisitAll(func(f *Flag){
-    this.flags[f.Name] = f.Value
-  })
-  return this.flagSet.Args()
+// Parsed reports whether f.Parse has been called.
+func (f *CLI) defaultUsage() {
+  fmt.Println("Default usage")
 }
 
-func (this *CLI) parseParams(args []string) []string {
-  this.params = make(map[string]string)
-  argLen := len(this.args)
-  paramLen := len(args)
-  for i := 0 ; i < argLen && i < paramLen ; i++ {
-    key := this.args[i]
-    value := args[i]
-    this.params[key] = value
-  }
-  if paramLen > argLen {
-    return args[argLen:]
-  } else {
-    return make([]string, 0)
-  }
+// Init sets the name and error handling property for a flag set.
+// By default, the zero CLI uses an empty name and the
+// ContinueOnError error handling policy.
+func (f *CLI) Init(name string, errorHandling ErrorHandling) {
+  f.name = name
+  f.ErrorHandling = errorHandling
 }

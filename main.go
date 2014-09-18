@@ -2,18 +2,17 @@ package main
 
 import "fmt"
 import . "github.com/jwaldrip/odin/cli"
-import "os"
 import "errors"
 
 var cli = NewCLI(startCmd, "one", "two")
 
 func init(){
-  cli.BoolFlag("good", false, "sets if everything is good")
+  cli.DefineBoolFlag("good", false, "sets if everything is good")
   cli.AliasFlag("good", "g")
 }
 
 func main(){
-  cli.Start(os.Args)
+  cli.Start()
 }
 
 func startCmd(cmd Command) error {
