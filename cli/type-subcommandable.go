@@ -1,7 +1,7 @@
 package cli
 
 type subcommandable struct {
-  subcommands []SubCommand
+  subCommands map[string]*SubCommand
   subCommandsParsed bool
 }
 
