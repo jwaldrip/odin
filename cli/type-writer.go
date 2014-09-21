@@ -8,28 +8,28 @@ type writer struct {
   output io.Writer
 }
 
-func (f *writer) out() io.Writer {
-  if f.output == nil {
+func (this *writer) out() io.Writer {
+  if this.output == nil {
     return os.Stderr
   }
-  return f.output
+  return this.output
 }
 
 // SetOutput sets the destination for usage and error messages.
 // If output is nil, os.Stderr is used.
-func (f *writer) SetOutput(output io.Writer) {
-  f.output = output
+func (this *writer) SetOutput(output io.Writer) {
+  this.output = output
 }
 
 // failf prints to standard error a formatted error and usage message and
 // returns the error.
-func (f *writer) failf(format string, a ...interface{}) error {
+func (this *writer) failf(format string, a ...interface{}) error {
   err := fmt.Errorf(format, a...)
-  fmt.Fprintln(f.out(), err)
-  f.usage()
+  fmt.Fprintln(this.out(), err)
+  this.usage()
   return err
 }
 
-func (f *writer) usage(){
+func (this *writer) usage(){
   panic("not implemented")
 }

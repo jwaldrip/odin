@@ -10,14 +10,20 @@ func newBoolValue(val bool, p *bool) *boolValue {
   return (*boolValue)(p)
 }
 
-func (b *boolValue) Set(s string) error {
+func (this *boolValue) Set(s string) error {
   v, err := strconv.ParseBool(s)
-  *b = boolValue(v)
+  *this = boolValue(v)
   return err
 }
 
-func (b *boolValue) Get() interface{} { return bool(*b) }
+func (this *boolValue) Get() interface{} {
+  return bool(*this)
+}
 
-func (b *boolValue) String() string { return fmt.Sprintf("%v", *b) }
+func (this *boolValue) String() string {
+  return fmt.Sprintf("%v", *this)
+}
 
-func (b *boolValue) IsBoolFlag() bool { return true }
+func (this *boolValue) IsBoolFlag() bool {
+  return true
+}

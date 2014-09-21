@@ -11,12 +11,16 @@ func newUintValue(val uint, p *uint) *uintValue {
   return (*uintValue)(p)
 }
 
-func (i *uintValue) Set(s string) error {
+func (this *uintValue) Set(s string) error {
   v, err := strconv.ParseUint(s, 0, 64)
-  *i = uintValue(v)
+  *this = uintValue(v)
   return err
 }
 
-func (i *uintValue) Get() interface{} { return uint(*i) }
+func (this *uintValue) Get() interface{} {
+  return uint(*this)
+}
 
-func (i *uintValue) String() string { return fmt.Sprintf("%v", *i) }
+func (this *uintValue) String() string {
+  return fmt.Sprintf("%v", *this)
+}

@@ -24,7 +24,6 @@ func startCmd(cmd Command) error {
 // NewCommand("say", *say, "greeting", "object")
 
 // The Type for a command Function, returns a command interface
-
 // func (cmd *SubCommand) Start(args []string){
 //   if cmd.Name != args[0] { log.Panicln("invalid command") }
 //   cmd.parse(args[1:])

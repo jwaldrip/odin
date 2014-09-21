@@ -10,11 +10,15 @@ func newStringValue(val string, p *string) *stringValue {
   return (*stringValue)(p)
 }
 
-func (s *stringValue) Set(val string) error {
-  *s = stringValue(val)
+func (this *stringValue) Set(val string) error {
+  *this = stringValue(val)
   return nil
 }
 
-func (s *stringValue) Get() interface{} { return string(*s) }
+func (this *stringValue) Get() interface{} {
+  return string(*this)
+}
 
-func (s *stringValue) String() string { return fmt.Sprintf("%s", *s) }
+func (this *stringValue) String() string {
+  return fmt.Sprintf("%s", *this)
+}
