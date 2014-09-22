@@ -1,14 +1,15 @@
 package main
 
-import "fmt"
 import . "github.com/jwaldrip/odin/cli"
 import "errors"
+import "fmt"
 
 var cli = NewCLI(startCmd, "one", "two")
 
 func init(){
+  cli.ErrorHandling = ExitOnError
   cli.DefineBoolFlag("good", false, "sets if everything is good")
-  cli.AliasFlag("good", "g")
+  cli.AliasFlag('g', "good")
 }
 
 func main(){
@@ -16,8 +17,9 @@ func main(){
 }
 
 func startCmd(cmd Command) error {
-  fmt.Println( cmd.Param("one"), cmd.Param("two") )
-  fmt.Println( cmd.Flags() )
+  // println(cmd.Param("one"), cmd.Param("two"))
+  fmt.Println("flags:", cmd.Flags())
+  fmt.Println("params:", cmd.Params())
   return errors.New("err")
 }
 

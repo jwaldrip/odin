@@ -1,7 +1,7 @@
 package cli
 
 type paramable struct {
-  writer
+  *writer
   paramNames      []*Param
   paramValues     map[string]Value
   paramsParsed    bool
@@ -41,7 +41,6 @@ func (this *paramable) setParams(names ...string) {
   this.paramNames = paramNames
 }
 
-func (this *paramable) parseParams(args []string) ([]string, error) {
-  var err error
-  return args, err
+func (this *paramable) parseParams(args []string) []string {
+  return args
 }

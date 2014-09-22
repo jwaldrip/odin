@@ -6,6 +6,6 @@ type Command interface {
   Flags() map[string]Value
   Param(string) Value
   Params() map[string]Value
-  Start(args []string)
+  Start(...string)
   // NewSubCommand(string, *commandFn, ...string ) *SubCommand
 }

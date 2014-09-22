@@ -1,35 +1,44 @@
 package cli
 
-import "io"
 import "os"
 import "fmt"
 
 type writer struct {
-  output io.Writer
-}
-
-func (this *writer) out() io.Writer {
-  if this.output == nil {
-    return os.Stderr
-  }
-  return this.output
-}
-
-// SetOutput sets the destination for usage and error messages.
-// If output is nil, os.Stderr is used.
-func (this *writer) SetOutput(output io.Writer) {
-  this.output = output
+  ErrorHandling ErrorHandling
+  Usage func()
 }
 
 // failf prints to standard error a formatted error and usage message and
 // returns the error.
 func (this *writer) failf(format string, a ...interface{}) error {
   err := fmt.Errorf(format, a...)
-  fmt.Fprintln(this.out(), err)
+  fmt.Fprintln(os.Stderr, err)
   this.usage()
   return err
 }
 
-func (this *writer) usage(){
-  panic("not implemented")
+func (this *writer) errf(format string, a ...interface{}){
+  this.handleErr(this.failf(format, a...))
+}
+
+func (this *writer) panicf(format string, a ...interface{}){
+  panic(this.failf(format, a...))
+}
+
+func (this *writer) handleErr(err error){
+  if err != nil {
+    switch this.ErrorHandling {
+    case ExitOnError:
+      os.Exit(2)
+    case PanicOnError:
+      panic(err)
+    }
+  }
+}
+
+// usage calls the Usage method for the flag set
+func (this *writer) usage() {
+  if this.Usage != nil {
+    this.Usage()
+  }
 }

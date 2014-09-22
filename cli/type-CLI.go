@@ -1,6 +1,5 @@
 package cli
 
-import "fmt"
 import "os"
 
 // A FlagSet represents a set of defined flags.  The zero value of a FlagSet
@@ -9,7 +8,7 @@ type CLI struct {
   flagable
   paramable
   subcommandable
-  writer
+  *writer
 
   // Usage is the function called when an error occurs while parsing flags.
   // The field is a function (not a method) that may be changed to point to
@@ -25,7 +24,14 @@ type CLI struct {
 // NewFlagSet returns a new, empty flag set with the specified name and
 // error handling property.
 func NewCLI(fn commandFn, paramNames ...string) *CLI {
-  cli := &CLI{name: os.Args[0]}
+  writer := &writer{}
+  cli := &CLI{
+    writer:         writer,
+    flagable:       flagable{writer: writer},
+    paramable:      paramable{writer: writer},
+    subcommandable: subcommandable{writer: writer},
+    name: os.Args[0],
+  }
   cli.setFn(fn)
   cli.setParams(paramNames...)
   return cli
@@ -33,15 +39,14 @@ func NewCLI(fn commandFn, paramNames ...string) *CLI {
 
 func (this *CLI) Start(args ...string) {
   if args == nil {
-    args = os.Args
+    args = os.Args[1:]
   }
-  var err error
-  args, err = this.parseFlags(args)
-  exitIfError(err)
-  args, err = this.parseParams(args)
-  exitIfError(err)
-  args, err = this.parseSubCommands(args)
-  exitIfError(err)
+  args = this.parseFlags(args)
+  args = this.parseParams(args)
+  ransubcommand := this.parseSubCommands(args)
+  if !ransubcommand {
+    this.fn(this)
+  }
 }
 
 func (this *CLI) setName(name string) {
@@ -50,6 +55,10 @@ func (this *CLI) setName(name string) {
 
 func (this *CLI) setFn(fn commandFn){
   this.fn = fn
+}
+
+func (this *CLI) Name() string {
+  return this.name
 }
 
 // PrintDefaults prints, to standard error unless configured
@@ -65,30 +74,8 @@ func (this *CLI) setFn(fn commandFn){
 //   })
 // }
 
-// usage calls the Usage method for the flag set
-func (this *CLI) usage() {
-  if this.Usage == nil {
-    this.defaultUsage()
-  } else {
-    this.Usage()
-  }
-}
-
 // Parsed reports whether f.Parse has been called.
 func (this *CLI) Parsed() bool {
   allParsed := this.flagsParsed && this.paramsParsed && this.subCommandsParsed
   return allParsed
-}
-
-// Parsed reports whether f.Parse has been called.
-func (this *CLI) defaultUsage() {
-  fmt.Println("Default usage")
-}
-
-// Init sets the name and error handling property for a flag set.
-// By default, the zero CLI uses an empty name and the
-// ContinueOnError error handling policy.
-func (this *CLI) Init(name string, errorHandling ErrorHandling) {
-  this.name = name
-  this.ErrorHandling = errorHandling
 }
