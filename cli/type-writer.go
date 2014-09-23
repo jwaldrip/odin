@@ -12,7 +12,7 @@ type writer struct {
 // returns the error.
 func (this *writer) failf(format string, a ...interface{}) error {
   err := fmt.Errorf(format, a...)
-  fmt.Fprintln(os.Stderr, err)
+  fmt.Fprintln(os.Stderr, err, "\n")
   this.Usage()
   return err
 }

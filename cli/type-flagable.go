@@ -12,7 +12,7 @@ type flagable struct {
 	flagValues      map[*Flag]Getter
 	flagsTerminated bool
 	flagsParsed     bool
-  Version         string
+  version         string
 }
 
 // VisitAll visits the flags in lexicographical order, calling fn for each.
@@ -23,6 +23,14 @@ func (this *flagable) EachFlag(fn func(*Flag, Value)) {
 		value := this.Flag(name)
 		fn(flag, value)
 	}
+}
+
+func (this *flagable) Version() string {
+  return this.version
+}
+
+func (this *flagable) SetVersion(str string){
+  this.version = str
 }
 
 func (this *flagable) AliasFlag(alias rune, flagname string) {
@@ -346,7 +354,7 @@ func (this *flagable) parseFlags(args []string) []string {
 	return args[i:]
 }
 
-func (this *flagable) FlagsUsage() string {
+func (this *flagable) UsageString() string {
   var maxBufferLen int
   flagsUsages := make(map[*Flag]*bytes.Buffer)
 

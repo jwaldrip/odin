@@ -48,7 +48,7 @@ func (this *paramable) parseParams(args []string) []string {
   return args
 }
 
-func (this *paramable) ParamsUsage() string {
+func (this *paramable) UsageString() string {
   var formattednames []string
   for i := 0 ; i < len(this.params) ; i++ {
     param := this.params[i]
