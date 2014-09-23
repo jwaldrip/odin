@@ -3,14 +3,16 @@ package cli
 import "fmt"
 import "time"
 import "strings"
+import "bytes"
 
 type flagable struct {
 	*writer
 	flags           map[string]*Flag
 	aliases         map[rune]*Flag
-	flagValues      map[*Flag]Value
+	flagValues      map[*Flag]Getter
 	flagsTerminated bool
 	flagsParsed     bool
+  Version         string
 }
 
 // VisitAll visits the flags in lexicographical order, calling fn for each.
@@ -35,7 +37,7 @@ func (this *flagable) AliasFlag(alias rune, flagname string) {
 }
 
 // Lookup returns the Flag structure of the named flag, returning nil if none exists.
-func (this *flagable) Flag(name string) Value {
+func (this *flagable) Flag(name string) Getter {
 	flag, ok := this.flags[name]
 	if !ok {
 		panic(fmt.Sprintf("flag not defined %v", name))
@@ -48,8 +50,8 @@ func (this *flagable) Flag(name string) Value {
 	}
 }
 
-func (this *flagable) Flags() map[string]Value {
-	flags := make(map[string]Value)
+func (this *flagable) Flags() map[string]Getter {
+	flags := make(map[string]Getter)
 	for name, _ := range this.flags {
 		flags[name] = this.Flag(name)
 	}
@@ -68,7 +70,7 @@ func (this *flagable) setFlag(flag *Flag, value string) error {
 		return err
 	}
 	if this.flagValues == nil {
-		this.flagValues = make(map[*Flag]Value)
+		this.flagValues = make(map[*Flag]Getter)
 	}
 	this.flagValues[flag] = flag.value
 	return nil
@@ -195,7 +197,7 @@ func (this *flagable) DefineDurationFlag(name string, value time.Duration, usage
 // caller could create a flag that turns a comma-separated string into a slice
 // of strings by giving the slice the methods of Value; in particular, Set would
 // decompose the comma-separated string into the slice.
-func (this *flagable) DefineFlag(value Value, name string, usage string) {
+func (this *flagable) DefineFlag(value Getter, name string, usage string) {
 	// Remember the default value as a string; it won't change.
 	flag := &Flag{
 		Name:     name,
@@ -241,7 +243,7 @@ func (this *flagable) flagFromArg(arg string) (bool, []*Flag) {
 		for _, c := range aliases {
 			flag, ok := this.aliases[c]
 			if !ok {
-				this.errf("invalid alias: %v", string(c))
+		    this.errf("invalid alias: %v", string(c))
 			}
 			flags = append(flags, flag)
 		}
@@ -301,9 +303,29 @@ func (this *flagable) setFlagDefaults() {
 	}
 }
 
+func (this *flagable) defineHelp(){
+  if _, ok := this.flags["help"] ; !ok {
+    this.DefineBoolFlag("help", false, "show help and exit")
+    if _, ok := this.aliases['h'] ; !ok {
+      this.AliasFlag('h', "help")
+    }
+  }
+}
+
+func (this *flagable) defineVersion(){
+  if _, ok := this.flags["version"] ; !ok {
+    this.DefineBoolFlag("version", false, "show version and exit")
+    if _, ok := this.aliases['v'] ; !ok {
+      this.AliasFlag('v', "version")
+    }
+  }
+}
+
 // Parse parses flag definitions from the argument list, returns any left over
 // arguments after flags have been parsed.
 func (this *flagable) parseFlags(args []string) []string {
+  this.defineHelp()
+  this.defineVersion()
 	this.flagsParsed = true
 	i := 0
 	for i < len(args) {
@@ -324,10 +346,60 @@ func (this *flagable) parseFlags(args []string) []string {
 	return args[i:]
 }
 
-func (this *flagable) usage() string {
-	return this.flagsUsage()
-}
+func (this *flagable) FlagsUsage() string {
+  var maxBufferLen int
+  flagsUsages := make(map[*Flag]*bytes.Buffer)
 
-func (this *flagable) flagsUsage() string {
-	return "Flags Usage"
+  // init the map for each flag
+  for _, flag := range this.aliases {
+    flagsUsages[flag] = bytes.NewBufferString("")
+  }
+
+  // Get each flags aliases
+	for r, flag := range this.aliases {
+    alias := string(r)
+    buffer := flagsUsages[flag]
+    var err error
+    if buffer.Len() == 0 {
+      _, err = buffer.WriteString(fmt.Sprintf("-%s", alias))
+    } else {
+      _, err = buffer.WriteString(fmt.Sprintf(", -%s", alias))
+    }
+    exitIfError(err)
+    buffLen := len(buffer.String())
+    if buffLen > maxBufferLen {
+      maxBufferLen = buffLen
+    }
+  }
+
+  // Get each flags names
+  for name, flag := range this.flags {
+    buffer := flagsUsages[flag]
+    var err error
+    if buffer.Len() == 0 {
+      _, err = buffer.WriteString(fmt.Sprintf("--%s", name))
+    } else {
+      _, err = buffer.WriteString(fmt.Sprintf(", --%s", name))
+    }
+    exitIfError(err)
+    buffLen := len(buffer.String())
+    if buffLen > maxBufferLen {
+      maxBufferLen = buffLen
+    }
+  }
+
+  // get the flag strings and append the usage info
+  var outputLines []string
+  for flag, buffer := range flagsUsages {
+    for {
+      buffLen := len(buffer.String())
+      if buffLen > maxBufferLen {
+        break
+      }
+      buffer.WriteString(" ")
+    }
+    outputLines = append(outputLines, fmt.Sprintf("  %s # %s", buffer.String(), flag.Usage))
+  }
+
+  return strings.Join(outputLines, "\n")
 }

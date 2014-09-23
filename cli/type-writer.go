@@ -5,7 +5,7 @@ import "fmt"
 
 type writer struct {
   ErrorHandling ErrorHandling
-  Usage func()
+  usage func()
 }
 
 // failf prints to standard error a formatted error and usage message and
@@ -13,7 +13,7 @@ type writer struct {
 func (this *writer) failf(format string, a ...interface{}) error {
   err := fmt.Errorf(format, a...)
   fmt.Fprintln(os.Stderr, err)
-  this.usage()
+  this.Usage()
   return err
 }
 
@@ -37,8 +37,8 @@ func (this *writer) handleErr(err error){
 }
 
 // usage calls the Usage method for the flag set
-func (this *writer) usage() {
-  if this.Usage != nil {
-    this.Usage()
+func (this *writer) Usage() {
+  if this.usage != nil {
+    this.usage()
   }
 }

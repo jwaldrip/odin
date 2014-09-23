@@ -6,5 +6,5 @@ type Flag struct {
   Usage    string // help message
   DefValue string // default value (as text); for usage message
 
-  value    Value  // value as set
+  value    Getter  // value as set
 }

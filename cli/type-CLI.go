@@ -1,6 +1,8 @@
 package cli
 
 import "os"
+import "fmt"
+import "bytes"
 
 // A FlagSet represents a set of defined flags.  The zero value of a FlagSet
 // has no name and has ContinueOnError error handling.
@@ -10,31 +12,30 @@ type CLI struct {
   subcommandable
   *writer
 
-  // Usage is the function called when an error occurs while parsing flags.
-  // The field is a function (not a method) that may be changed to point to
-  // a custom error handler.
-  Usage func()
-
   fn            commandFn
   name          string
   parsed        bool
-  subCommands   []Command
 }
 
 // NewFlagSet returns a new, empty flag set with the specified name and
 // error handling property.
 func NewCLI(fn commandFn, paramNames ...string) *CLI {
-  writer := &writer{}
-  cli := &CLI{
-    writer:         writer,
-    flagable:       flagable{writer: writer},
-    paramable:      paramable{writer: writer},
-    subcommandable: subcommandable{writer: writer},
-    name: os.Args[0],
-  }
-  cli.setFn(fn)
-  cli.setParams(paramNames...)
+  cli := new(CLI)
+  cli.init(os.Args[0], fn, paramNames...)
+  cli.Version = "v0.0.1"
   return cli
+}
+
+func (this *CLI) init(name string, fn commandFn, paramNames ...string){
+  writer := &writer{}
+  this.writer         = writer
+  this.flagable       = flagable{writer: writer}
+  this.paramable      = paramable{writer: writer}
+  this.subcommandable = subcommandable{writer: writer}
+  this.name           = name
+  this.fn             = fn
+  this.setParams(paramNames...)
+  this.usage = func() { fmt.Println(this.CLIUsage()) }
 }
 
 func (this *CLI) Start(args ...string) {
@@ -43,6 +44,14 @@ func (this *CLI) Start(args ...string) {
   }
   args = this.parseFlags(args)
   args = this.parseParams(args)
+  if this.Flag("version").Get() == true {
+    fmt.Println(this.Name(), this.Version)
+    return
+  }
+  if this.Flag("help").Get() == true{
+    this.Usage()
+    return
+  }
   ransubcommand := this.parseSubCommands(args)
   if !ransubcommand {
     this.fn(this)
@@ -53,29 +62,32 @@ func (this *CLI) setName(name string) {
   this.name = name
 }
 
-func (this *CLI) setFn(fn commandFn){
-  this.fn = fn
-}
-
 func (this *CLI) Name() string {
   return this.name
 }
 
-// PrintDefaults prints, to standard error unless configured
-// otherwise, the default values of all defined flags in the set.
-// func (this *FlagSet) PrintDefaults() {
-//   f.VisitAll(func(flag *Flag) {
-//     format := "  -%s=%s: %s\n"
-//     if _, ok := flag.Value.(*stringValue); ok {
-//       // put quotes on the value
-//       format = "  -%s=%q: %s\n"
-//     }
-//     fmt.Fprintf(f.out(), format, flag.Name, flag.DefValue, flag.Usage)
-//   })
-// }
+func (this *CLI) CLIUsage() string {
+  var buff bytes.Buffer
+  hasSubCommands := len(this.subCommands) > 0
+  buff.WriteString("usage:\n")
+  if hasSubCommands {
+    buff.WriteString(fmt.Sprintf("  %s [options...] %s <command> [arg...]\n", this.Name(), this.ParamsUsage()))
+  } else {
+    buff.WriteString(fmt.Sprintf("  %s [options...] %s\n", this.Name(), this.ParamsUsage()))
+  }
+  buff.WriteString("\n")
+  buff.WriteString("options:\n")
+  buff.WriteString(this.FlagsUsage())
+  if hasSubCommands {
+    buff.WriteString("\n\n")
+    buff.WriteString("commands:\n")
+    buff.WriteString(this.SubCommandsUsage())
+  }
+  return buff.String()
+}
 
 // Parsed reports whether f.Parse has been called.
 func (this *CLI) Parsed() bool {
-  allParsed := this.flagsParsed && this.paramsParsed && this.subCommandsParsed
-  return allParsed
+  this.parsed = this.flagsParsed && this.paramsParsed && this.subCommandsParsed
+  return this.parsed
 }
