@@ -24,7 +24,7 @@ func helloCmd(cmd Command) error {
 }
 
 func startCmd(cmd Command) error {
-  // cmd.Usage()
+  cmd.Usage()
   os.Exit(1)
   return nil
 }
