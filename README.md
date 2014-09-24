@@ -2,7 +2,7 @@
 
 ![odin](https://github.com/jwaldrip/odin/blob/master/odin.png)
 
-A go library to help build self documenting command line applications.
+A go-lang library to help build self documenting command line applications.
 
 **odin currently supports:**
 
