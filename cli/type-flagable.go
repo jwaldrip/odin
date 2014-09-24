@@ -222,11 +222,18 @@ func (f *flagable) UsageString() string {
 	// Get each flags names
 	for name, flag := range f.flags {
 		buffer := flagsUsages[flag]
+		if buffer == nil {
+			flagsUsages[flag] = new(bytes.Buffer)
+			buffer = flagsUsages[flag]
+		}
 		var err error
 		if buffer.Len() == 0 {
 			_, err = buffer.WriteString(fmt.Sprintf("--%s", name))
 		} else {
 			_, err = buffer.WriteString(fmt.Sprintf(", --%s", name))
+		}
+		if _, ok := flag.value.(boolFlag); !ok {
+			buffer.WriteString(fmt.Sprintf("=\"%s\"", flag.DefValue))
 		}
 		exitIfError(err)
 		buffLen := len(buffer.String())
