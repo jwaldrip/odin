@@ -1,6 +1,6 @@
 # odin
 
-!(https://github.com/jwaldrip/odin/blob/master/odin.jpg)
+![odin](https://github.com/jwaldrip/odin/blob/master/odin.jpg)
 
 A go library to help build self documenting command line applications.
 
