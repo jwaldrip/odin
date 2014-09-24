@@ -9,7 +9,7 @@ var cli = odin.NewCLI(greet, "greeting")
 
 func init() {
 	cli.SetVersion("1.0.0")
-	cli.SetDescription("A command line DSL for go")
+	cli.SetDescription("a simple tool to greet with")
 	cli.DefineBoolFlag("loudly", false, "say loudly")
 	cli.AliasFlag('l', "loudly")
 

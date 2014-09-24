@@ -5,7 +5,7 @@ import "strings"
 
 type paramable struct {
 	*writer
-	params       []*Param
+	params       paramsList
 	paramValues  map[string]Getter
 	paramsParsed bool
 	parsed       bool
@@ -60,21 +60,31 @@ func (p *paramable) setParams(names ...string) {
 }
 
 func (p *paramable) parse(args []string) []string {
+	var seenParams paramsList
+
 	if len(p.params) == 0 {
 		return args
-	}
-	if len(args) < len(p.params) {
-		p.errf("missing param")
 	}
 	i := 0
 	for i < len(args) && i < len(p.params) {
 		param := p.params[i]
+		seenParams = append(seenParams, param)
 		str := ""
 		if p.paramValues == nil {
 			p.paramValues = make(map[string]Getter)
 		}
 		p.paramValues[param.Name] = newStringValue(args[i], &str)
 		i++
+	}
+	missingParams := p.params.Compare(seenParams)
+	if len(missingParams) > 0 {
+		var msg string
+		if len(missingParams) == 1 {
+			msg = "missing param"
+		} else {
+			msg = "missing params"
+		}
+		p.errf("%s: %s", msg, strings.Join(missingParams.Names(), ", "))
 	}
 
 	return args[i:]

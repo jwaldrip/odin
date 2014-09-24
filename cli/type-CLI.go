@@ -77,7 +77,6 @@ func (c *CLI) Start(args ...string) {
 
 	// parse flags and args
 	args = c.flagable.parse(args)
-	args = c.paramable.parse(args)
 
 	// Show a version
 	if len(c.Version()) > 0 && c.Flag("version").Get() == true {
@@ -91,6 +90,9 @@ func (c *CLI) Start(args ...string) {
 		return
 	}
 
+	// Parse Params
+	args = c.paramable.parse(args)
+
 	if c.parseSubCommands(args) {
 		return
 	}
@@ -102,7 +104,7 @@ func (c *CLI) Start(args ...string) {
 // UsageString returns the command usage as a string
 func (c *CLI) UsageString() string {
 	hasSubCommands := len(c.subCommands) > 0
-	hasParams := len(c.Params()) > 0
+	hasParams := len(c.params) > 0
 	hasDescription := len(c.description) > 0
 
 	// Start the Buffer
