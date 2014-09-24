@@ -6,19 +6,19 @@ import "fmt"
 type stringValue string
 
 func newStringValue(val string, p *string) *stringValue {
-  *p = val
-  return (*stringValue)(p)
+	*p = val
+	return (*stringValue)(p)
 }
 
 func (this *stringValue) Set(val string) error {
-  *this = stringValue(val)
-  return nil
+	*this = stringValue(val)
+	return nil
 }
 
 func (this *stringValue) Get() interface{} {
-  return string(*this)
+	return string(*this)
 }
 
 func (this *stringValue) String() string {
-  return fmt.Sprintf("%s", *this)
+	return fmt.Sprintf("%s", *this)
 }

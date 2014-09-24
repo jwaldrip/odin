@@ -1,12 +1,12 @@
 package cli
 
 type Command interface {
-  Usage()
-  Name() string
-  Flag(string) Getter
-  Flags() map[string]Getter
-  Param(string) Getter
-  Params() map[string]Getter
-  Start(...string)
-  // NewSubCommand(string, *commandFn, ...string ) *SubCommand
+	Usage()
+	Name() string
+	Flag(string) Getter
+	Flags() map[string]Getter
+	Param(string) Getter
+	Params() map[string]Getter
+	Start(...string)
+	// NewSubCommand(string, *commandFn, ...string ) *SubCommand
 }

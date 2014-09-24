@@ -7,6 +7,6 @@ package cli
 // the command-line parser makes -name equivalent to -name=true
 // rather than using the next command-line argument.
 type Value interface {
-  String() string
-  Set(string) error
+	String() string
+	Set(string) error
 }

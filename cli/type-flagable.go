@@ -12,7 +12,7 @@ type flagable struct {
 	flagValues      map[*Flag]Getter
 	flagsTerminated bool
 	flagsParsed     bool
-  version         string
+	version         string
 }
 
 // VisitAll visits the flags in lexicographical order, calling fn for each.
@@ -26,11 +26,11 @@ func (this *flagable) EachFlag(fn func(*Flag, Value)) {
 }
 
 func (this *flagable) Version() string {
-  return this.version
+	return this.version
 }
 
-func (this *flagable) SetVersion(str string){
-  this.version = str
+func (this *flagable) SetVersion(str string) {
+	this.version = str
 }
 
 func (this *flagable) AliasFlag(alias rune, flagname string) {
@@ -251,7 +251,7 @@ func (this *flagable) flagFromArg(arg string) (bool, []*Flag) {
 		for _, c := range aliases {
 			flag, ok := this.aliases[c]
 			if !ok {
-		    this.errf("invalid alias: %v", string(c))
+				this.errf("invalid alias: %v", string(c))
 			}
 			flags = append(flags, flag)
 		}
@@ -311,29 +311,29 @@ func (this *flagable) setFlagDefaults() {
 	}
 }
 
-func (this *flagable) defineHelp(){
-  if _, ok := this.flags["help"] ; !ok {
-    this.DefineBoolFlag("help", false, "show help and exit")
-    if _, ok := this.aliases['h'] ; !ok {
-      this.AliasFlag('h', "help")
-    }
-  }
+func (this *flagable) defineHelp() {
+	if _, ok := this.flags["help"]; !ok {
+		this.DefineBoolFlag("help", false, "show help and exit")
+		if _, ok := this.aliases['h']; !ok {
+			this.AliasFlag('h', "help")
+		}
+	}
 }
 
-func (this *flagable) defineVersion(){
-  if _, ok := this.flags["version"] ; !ok {
-    this.DefineBoolFlag("version", false, "show version and exit")
-    if _, ok := this.aliases['v'] ; !ok {
-      this.AliasFlag('v', "version")
-    }
-  }
+func (this *flagable) defineVersion() {
+	if _, ok := this.flags["version"]; !ok {
+		this.DefineBoolFlag("version", false, "show version and exit")
+		if _, ok := this.aliases['v']; !ok {
+			this.AliasFlag('v', "version")
+		}
+	}
 }
 
 // Parse parses flag definitions from the argument list, returns any left over
 // arguments after flags have been parsed.
 func (this *flagable) parseFlags(args []string) []string {
-  this.defineHelp()
-  this.defineVersion()
+	this.defineHelp()
+	this.defineVersion()
 	this.flagsParsed = true
 	i := 0
 	for i < len(args) {
@@ -355,59 +355,59 @@ func (this *flagable) parseFlags(args []string) []string {
 }
 
 func (this *flagable) UsageString() string {
-  var maxBufferLen int
-  flagsUsages := make(map[*Flag]*bytes.Buffer)
+	var maxBufferLen int
+	flagsUsages := make(map[*Flag]*bytes.Buffer)
 
-  // init the map for each flag
-  for _, flag := range this.aliases {
-    flagsUsages[flag] = bytes.NewBufferString("")
-  }
+	// init the map for each flag
+	for _, flag := range this.aliases {
+		flagsUsages[flag] = bytes.NewBufferString("")
+	}
 
-  // Get each flags aliases
+	// Get each flags aliases
 	for r, flag := range this.aliases {
-    alias := string(r)
-    buffer := flagsUsages[flag]
-    var err error
-    if buffer.Len() == 0 {
-      _, err = buffer.WriteString(fmt.Sprintf("-%s", alias))
-    } else {
-      _, err = buffer.WriteString(fmt.Sprintf(", -%s", alias))
-    }
-    exitIfError(err)
-    buffLen := len(buffer.String())
-    if buffLen > maxBufferLen {
-      maxBufferLen = buffLen
-    }
-  }
+		alias := string(r)
+		buffer := flagsUsages[flag]
+		var err error
+		if buffer.Len() == 0 {
+			_, err = buffer.WriteString(fmt.Sprintf("-%s", alias))
+		} else {
+			_, err = buffer.WriteString(fmt.Sprintf(", -%s", alias))
+		}
+		exitIfError(err)
+		buffLen := len(buffer.String())
+		if buffLen > maxBufferLen {
+			maxBufferLen = buffLen
+		}
+	}
 
-  // Get each flags names
-  for name, flag := range this.flags {
-    buffer := flagsUsages[flag]
-    var err error
-    if buffer.Len() == 0 {
-      _, err = buffer.WriteString(fmt.Sprintf("--%s", name))
-    } else {
-      _, err = buffer.WriteString(fmt.Sprintf(", --%s", name))
-    }
-    exitIfError(err)
-    buffLen := len(buffer.String())
-    if buffLen > maxBufferLen {
-      maxBufferLen = buffLen
-    }
-  }
+	// Get each flags names
+	for name, flag := range this.flags {
+		buffer := flagsUsages[flag]
+		var err error
+		if buffer.Len() == 0 {
+			_, err = buffer.WriteString(fmt.Sprintf("--%s", name))
+		} else {
+			_, err = buffer.WriteString(fmt.Sprintf(", --%s", name))
+		}
+		exitIfError(err)
+		buffLen := len(buffer.String())
+		if buffLen > maxBufferLen {
+			maxBufferLen = buffLen
+		}
+	}
 
-  // get the flag strings and append the usage info
-  var outputLines []string
-  for flag, buffer := range flagsUsages {
-    for {
-      buffLen := len(buffer.String())
-      if buffLen > maxBufferLen {
-        break
-      }
-      buffer.WriteString(" ")
-    }
-    outputLines = append(outputLines, fmt.Sprintf("  %s # %s", buffer.String(), flag.Usage))
-  }
+	// get the flag strings and append the usage info
+	var outputLines []string
+	for flag, buffer := range flagsUsages {
+		for {
+			buffLen := len(buffer.String())
+			if buffLen > maxBufferLen {
+				break
+			}
+			buffer.WriteString(" ")
+		}
+		outputLines = append(outputLines, fmt.Sprintf("  %s # %s", buffer.String(), flag.Usage))
+	}
 
-  return strings.Join(outputLines, "\n")
+	return strings.Join(outputLines, "\n")
 }

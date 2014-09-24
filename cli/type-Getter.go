@@ -5,6 +5,6 @@ package cli
 // appeared after Go 1 and its compatibility rules. All Value types provided
 // by this package satisfy the Getter interface.
 type Getter interface {
-  Value
-  Get() interface{}
+	Value
+	Get() interface{}
 }

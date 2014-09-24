@@ -4,7 +4,7 @@ package cli
 type ErrorHandling int
 
 const (
-  ContinueOnError ErrorHandling = iota
-  ExitOnError
-  PanicOnError
+	ContinueOnError ErrorHandling = iota
+	ExitOnError
+	PanicOnError
 )
