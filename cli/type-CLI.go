@@ -22,8 +22,9 @@ type CLI struct {
 // NewCLI returns a new cli with the specified name and
 // error handling property.
 func NewCLI(fn commandFn, paramNames ...string) *CLI {
+	nameParts := strings.Split(os.Args[0], "/")
 	cli := new(CLI)
-	cli.init(os.Args[0], fn, paramNames...)
+	cli.init(nameParts[len(nameParts)-1], fn, paramNames...)
 	cli.SetVersion("v0.0.1")
 	return cli
 }
