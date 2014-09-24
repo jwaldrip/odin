@@ -32,7 +32,7 @@ func (s *subCommandable) Parsed() bool {
 func (s *subCommandable) UsageString() string {
 	var maxBufferLen int
 	for _, cmd := range s.subCommands {
-		buffLen := len(cmd.Name())
+		buffLen := len(cmd.name)
 		if buffLen > maxBufferLen {
 			maxBufferLen = buffLen
 		}
@@ -42,13 +42,13 @@ func (s *subCommandable) UsageString() string {
 	for _, cmd := range s.subCommands {
 		var whitespace bytes.Buffer
 		for {
-			buffLen := len(cmd.Name()) + len(whitespace.String())
-			if buffLen > maxBufferLen+5 {
+			buffLen := len(cmd.name) + len(whitespace.String())
+			if buffLen == maxBufferLen+5 {
 				break
 			}
 			whitespace.WriteString(" ")
 		}
-		outputLines = append(outputLines, fmt.Sprintf("  %s %s %s", cmd.Name(), whitespace.String(), cmd.Description()))
+		outputLines = append(outputLines, fmt.Sprintf("  %s%s%s", cmd.name, whitespace.String(), cmd.Description()))
 	}
 
 	return strings.Join(outputLines, "\n")
