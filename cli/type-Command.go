@@ -8,5 +8,4 @@ type Command interface {
 	Param(string) Getter
 	Params() map[string]Getter
 	Start(...string)
-	// NewSubCommand(string, *commandFn, ...string ) *SubCommand
 }

@@ -8,6 +8,13 @@ type writer struct {
 	usage         func()
 }
 
+// Usage calls the Usage method for the flag set
+func (this *writer) Usage() {
+	if this.usage != nil {
+		this.usage()
+	}
+}
+
 // failf prints to standard error a formatted error and usage message and
 // returns the error.
 func (this *writer) failf(format string, a ...interface{}) error {
@@ -33,12 +40,5 @@ func (this *writer) handleErr(err error) {
 		case PanicOnError:
 			panic(err)
 		}
-	}
-}
-
-// usage calls the Usage method for the flag set
-func (this *writer) Usage() {
-	if this.usage != nil {
-		this.usage()
 	}
 }

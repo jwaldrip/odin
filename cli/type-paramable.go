@@ -8,16 +8,7 @@ type paramable struct {
 	params       []*Param
 	paramValues  map[string]Getter
 	paramsParsed bool
-}
-
-// NArg is the number of arguments remaining after flags have been processed.
-func (this *paramable) ParamCount() int {
-	return len(this.paramValues)
-}
-
-// Args returns the non-flag arguments.
-func (this *paramable) Params() map[string]Getter {
-	return this.paramValues
+	parsed       bool
 }
 
 // Arg returns the i'th argument.  Arg(0) is the first remaining argument
@@ -33,6 +24,31 @@ func (this *paramable) Param(key string) Getter {
 	}
 }
 
+// Args returns the non-flag arguments.
+func (this *paramable) Params() map[string]Getter {
+	return this.paramValues
+}
+
+// NArg is the number of arguments remaining after flags have been processed.
+func (this *paramable) ParamCount() int {
+	return len(this.paramValues)
+}
+
+// Parsed returns if the flags have been parsed
+func (this *paramable) Parsed() bool {
+	return this.parsed
+}
+
+// UsageString returns the params usage as a string
+func (this *paramable) UsageString() string {
+	var formattednames []string
+	for i := 0; i < len(this.params); i++ {
+		param := this.params[i]
+		formattednames = append(formattednames, fmt.Sprintf("<%s>", param.Name))
+	}
+	return strings.Join(formattednames, " ")
+}
+
 // Set Param names from strings
 func (this *paramable) setParams(names ...string) {
 	var params []*Param
@@ -46,13 +62,4 @@ func (this *paramable) setParams(names ...string) {
 
 func (this *paramable) parseParams(args []string) []string {
 	return args
-}
-
-func (this *paramable) UsageString() string {
-	var formattednames []string
-	for i := 0; i < len(this.params); i++ {
-		param := this.params[i]
-		formattednames = append(formattednames, fmt.Sprintf("<%s>", param.Name))
-	}
-	return strings.Join(formattednames, " ")
 }

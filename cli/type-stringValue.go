@@ -10,13 +10,13 @@ func newStringValue(val string, p *string) *stringValue {
 	return (*stringValue)(p)
 }
 
+func (this *stringValue) Get() interface{} {
+	return string(*this)
+}
+
 func (this *stringValue) Set(val string) error {
 	*this = stringValue(val)
 	return nil
-}
-
-func (this *stringValue) Get() interface{} {
-	return string(*this)
 }
 
 func (this *stringValue) String() string {

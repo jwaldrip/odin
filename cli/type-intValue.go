@@ -11,14 +11,14 @@ func newIntValue(val int, p *int) *intValue {
 	return (*intValue)(p)
 }
 
+func (this *intValue) Get() interface{} {
+	return int(*this)
+}
+
 func (this *intValue) Set(s string) error {
 	v, err := strconv.ParseInt(s, 0, 64)
 	*this = intValue(v)
 	return err
-}
-
-func (this *intValue) Get() interface{} {
-	return int(*this)
 }
 
 func (this *intValue) String() string {

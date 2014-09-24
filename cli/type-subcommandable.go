@@ -4,26 +4,28 @@ import "bytes"
 import "fmt"
 import "strings"
 
-type subcommandable struct {
+type subCommandable struct {
 	*writer
 
-	parent            Command
-	subCommands       map[string]*SubCommand
-	subCommandsParsed bool
+	parent      Command
+	subCommands map[string]*SubCommand
+	parsed      bool
 }
 
-func (this *subcommandable) parseSubCommands(args []string) bool {
-	name := args[0]
-	cmd, ok := this.subCommands[name]
-	if !ok {
-		this.errf("invalid command: %s", name)
+func (this *subCommandable) DefineSubCommand(name string, desc string, fn commandFn, paramNames ...string) *SubCommand {
+	if this.subCommands == nil {
+		this.subCommands = make(map[string]*SubCommand)
 	}
-	cmd.Start(args...)
-
-	return len(this.subCommands) > 0
+	subcommand := newSubCommand(name, desc, fn, paramNames...)
+	this.subCommands[name] = subcommand
+	return subcommand
 }
 
-func (this *subcommandable) UsageString() string {
+func (this *subCommandable) Parsed() bool {
+	return this.parsed
+}
+
+func (this *subCommandable) UsageString() string {
 	var maxBufferLen int
 	for _, cmd := range this.subCommands {
 		buffLen := len(cmd.Name())
@@ -48,15 +50,14 @@ func (this *subcommandable) UsageString() string {
 	return strings.Join(outputLines, "\n")
 }
 
-// func (this *subcommandable) UsageString() string {
-//
-// }
-
-func (this *subcommandable) DefineSubCommand(name string, desc string, fn commandFn, paramNames ...string) *SubCommand {
-	if this.subCommands == nil {
-		this.subCommands = make(map[string]*SubCommand)
+func (this *subCommandable) parseSubCommands(args []string) bool {
+	this.parsed = true
+	name := args[0]
+	cmd, ok := this.subCommands[name]
+	if !ok {
+		this.errf("invalid command: %s", name)
 	}
-	subcommand := newSubCommand(name, desc, fn, paramNames...)
-	this.subCommands[name] = subcommand
-	return subcommand
+	cmd.Start(args...)
+
+	return len(this.subCommands) > 0
 }

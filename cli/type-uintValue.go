@@ -11,14 +11,14 @@ func newUintValue(val uint, p *uint) *uintValue {
 	return (*uintValue)(p)
 }
 
+func (this *uintValue) Get() interface{} {
+	return uint(*this)
+}
+
 func (this *uintValue) Set(s string) error {
 	v, err := strconv.ParseUint(s, 0, 64)
 	*this = uintValue(v)
 	return err
-}
-
-func (this *uintValue) Get() interface{} {
-	return uint(*this)
 }
 
 func (this *uintValue) String() string {

@@ -10,7 +10,7 @@ import "strings"
 type CLI struct {
 	flagable
 	paramable
-	subcommandable
+	subCommandable
 	*writer
 
 	fn          commandFn
@@ -28,18 +28,40 @@ func NewCLI(fn commandFn, paramNames ...string) *CLI {
 	return cli
 }
 
-func (this *CLI) init(name string, fn commandFn, paramNames ...string) {
-	writer := &writer{ErrorHandling: ExitOnError}
-	this.writer = writer
-	this.flagable = flagable{writer: writer}
-	this.paramable = paramable{writer: writer}
-	this.subcommandable = subcommandable{writer: writer}
-	this.name = name
-	this.fn = fn
-	this.setParams(paramNames...)
-	this.usage = func() { fmt.Println(this.UsageString()) }
+// Define a subcommand
+func (this *CLI) DefineSubCommand(name string, desc string, fn commandFn, paramNames ...string) {
+	cmd := this.subCommandable.DefineSubCommand(name, desc, fn, paramNames...)
+	cmd.parent = this
 }
 
+// Return the command description
+func (this *CLI) Description() string {
+	return this.description
+}
+
+// Return the command name
+func (this *CLI) Name() string {
+	var name string
+	if this.parent != nil {
+		name = strings.Join([]string{this.parent.Name(), this.name}, " ")
+	} else {
+		name = this.name
+	}
+	return name
+}
+
+// Parsed reports whether f.Parse has been called.
+func (this *CLI) Parsed() bool {
+	this.parsed = this.flagable.Parsed() && this.paramable.Parsed() && this.subCommandable.Parsed()
+	return this.parsed
+}
+
+// Set the command description
+func (this *CLI) SetDescription(desc string) {
+	this.description = desc
+}
+
+// Start the command with args, arg[0] is ignored
 func (this *CLI) Start(args ...string) {
 	if args == nil {
 		args = os.Args
@@ -74,28 +96,7 @@ func (this *CLI) Start(args ...string) {
 	this.fn(this)
 }
 
-func (this *CLI) setName(name string) {
-	this.name = name
-}
-
-func (this *CLI) SetDescription(desc string) {
-	this.description = desc
-}
-
-func (this *CLI) Name() string {
-	var name string
-	if this.parent != nil {
-		name = strings.Join([]string{this.parent.Name(), this.name}, " ")
-	} else {
-		name = this.name
-	}
-	return name
-}
-
-func (this *CLI) Description() string {
-	return this.description
-}
-
+// Return the command usage
 func (this *CLI) UsageString() string {
 	hasSubCommands := len(this.subCommands) > 0
 	hasParams := len(this.Params()) > 0
@@ -128,20 +129,21 @@ func (this *CLI) UsageString() string {
 	// Write Sub Command List
 	if hasSubCommands {
 		buff.WriteString("\n\nCommands:\n")
-		buff.WriteString(this.subcommandable.UsageString())
+		buff.WriteString(this.subCommandable.UsageString())
 	}
 
 	// Return buffer as string
 	return buff.String()
 }
 
-// Parsed reports whether f.Parse has been called.
-func (this *CLI) Parsed() bool {
-	this.parsed = this.flagsParsed && this.paramsParsed && this.subCommandsParsed
-	return this.parsed
-}
-
-func (this *CLI) DefineSubCommand(name string, desc string, fn commandFn, paramNames ...string) {
-	cmd := this.subcommandable.DefineSubCommand(name, desc, fn, paramNames...)
-	cmd.parent = this
+func (this *CLI) init(name string, fn commandFn, paramNames ...string) {
+	writer := &writer{ErrorHandling: ExitOnError}
+	this.writer = writer
+	this.flagable = flagable{writer: writer}
+	this.paramable = paramable{writer: writer}
+	this.subCommandable = subCommandable{writer: writer}
+	this.name = name
+	this.fn = fn
+	this.setParams(paramNames...)
+	this.usage = func() { fmt.Println(this.UsageString()) }
 }
