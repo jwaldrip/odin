@@ -1,7 +1,6 @@
 package main
 
 import odin "github.com/jwaldrip/odin/cli"
-
 import "fmt"
 import "strings"
 
