@@ -325,7 +325,7 @@ func (f *flagable) flagFromArg(arg string) (bool, []*Flag) {
 
 // parseFlags flag definitions from the argument list, returns any left over
 // arguments after flags have been parsed.
-func (f *flagable) parseFlags(args []string) []string {
+func (f *flagable) parse(args []string) []string {
 	f.defineHelp()
 	f.defineVersion()
 	f.parsed = true

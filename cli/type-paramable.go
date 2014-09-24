@@ -59,6 +59,23 @@ func (p *paramable) setParams(names ...string) {
 	p.params = params
 }
 
-func (p *paramable) parseParams(args []string) []string {
-	return args
+func (p *paramable) parse(args []string) []string {
+	if len(p.params) == 0 {
+		return args
+	}
+	if len(args) < len(p.params) {
+		p.errf("missing param")
+	}
+	i := 0
+	for i < len(args) && i < len(p.params) {
+		param := p.params[i]
+		str := ""
+		if p.paramValues == nil {
+			p.paramValues = make(map[string]Getter)
+		}
+		p.paramValues[param.Name] = newStringValue(args[i], &str)
+		i++
+	}
+
+	return args[i:]
 }

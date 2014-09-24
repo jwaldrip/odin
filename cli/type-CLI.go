@@ -70,27 +70,28 @@ func (c *CLI) Start(args ...string) {
 
 	if len(args) > 1 {
 		args = args[1:]
-		args = c.parseFlags(args)
-		args = c.parseParams(args)
+	} else {
+		args = []string{}
+	}
 
-		// Show a version
-		if len(c.Version()) > 0 && c.Flag("version").Get() == true {
-			fmt.Println(c.Name(), c.Version())
-			return
-		}
+	// parse flags and args
+	args = c.flagable.parse(args)
+	args = c.paramable.parse(args)
 
-		// Show Help
-		if c.Flag("help").Get() == true {
-			c.Usage()
-			return
-		}
+	// Show a version
+	if len(c.Version()) > 0 && c.Flag("version").Get() == true {
+		fmt.Println(c.Name(), c.Version())
+		return
+	}
 
-		// run subcommands
-		ransubcommand := c.parseSubCommands(args)
+	// Show Help
+	if c.Flag("help").Get() == true {
+		c.Usage()
+		return
+	}
 
-		if ransubcommand {
-			return
-		}
+	if c.parseSubCommands(args) {
+		return
 	}
 
 	// Run the function

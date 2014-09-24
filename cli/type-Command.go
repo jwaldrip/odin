@@ -3,6 +3,7 @@ package cli
 // Command represents a readable command
 type Command interface {
 	Usage()
+	Parent() Command
 	Name() string
 	Flag(string) Getter
 	Flags() map[string]Getter

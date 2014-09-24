@@ -21,6 +21,10 @@ func (s *subCommandable) DefineSubCommand(name string, desc string, fn commandFn
 	return subcommand
 }
 
+func (s *subCommandable) Parent() Command {
+	return s.parent
+}
+
 func (s *subCommandable) Parsed() bool {
 	return s.parsed
 }
@@ -51,6 +55,9 @@ func (s *subCommandable) UsageString() string {
 }
 
 func (s *subCommandable) parseSubCommands(args []string) bool {
+	if len(args) == 0 {
+		return false
+	}
 	s.parsed = true
 	name := args[0]
 	cmd, ok := s.subCommands[name]
@@ -59,5 +66,5 @@ func (s *subCommandable) parseSubCommands(args []string) bool {
 	}
 	cmd.Start(args...)
 
-	return len(s.subCommands) > 0
+	return true
 }

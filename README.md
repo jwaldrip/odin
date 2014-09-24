@@ -3,15 +3,14 @@ odin
 
 a go library to help build command line applications
 
-Basic Example
+Usage
 ====
 
 ```go
-package say
+package main
 
 import "fmt"
 import "github.com/jwaldrip/odin"
-import "os"
 
 var sayCommand = odin.NewCommand(".", start, "greeting", "object")
 

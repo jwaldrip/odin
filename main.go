@@ -1,16 +1,19 @@
 package main
 
-import . "github.com/jwaldrip/odin/cli"
-import "os"
-import "fmt"
+import odin "github.com/jwaldrip/odin/cli"
 
-var cli = NewCLI(startCmd)
+import "fmt"
+import "strings"
+
+var cli = odin.NewCLI(func(cmd odin.Command) { cmd.Usage() })
 
 func init() {
-	cli.SetVersion("0.1.0")
-	cli.DefineBoolFlag("good", false, "sets if everything is good")
-	cli.AliasFlag('g', "good")
-	cli.DefineSubCommand("hello", "say hello world", helloCmd)
+	cli.SetVersion("1.0.0")
+	saycmd := cli.DefineSubCommand("say", "say a greeting", greet, "greeting", "greetee")
+
+	saycmd.DefineBoolFlag("loudly", false, "say something loudly")
+	saycmd.AliasFlag('l', "loudly")
+
 	cli.SetDescription("A command line DSL for go")
 }
 
@@ -18,13 +21,10 @@ func main() {
 	cli.Start()
 }
 
-func helloCmd(cmd Command) error {
-	fmt.Println("hello world")
-	return nil
-}
-
-func startCmd(cmd Command) error {
-	cmd.Usage()
-	os.Exit(1)
-	return nil
+func greet(c odin.Command) {
+	str := fmt.Sprintf("%s %s", c.Param("greeting"), c.Param("greetee"))
+	if c.Flag("loudly").Get() == true {
+		str = strings.ToUpper(str)
+	}
+	fmt.Println(str)
 }

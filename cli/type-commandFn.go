@@ -1,3 +1,3 @@
 package cli
 
-type commandFn func(Command) error
+type commandFn func(Command)
