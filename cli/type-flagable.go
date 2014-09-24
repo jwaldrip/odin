@@ -15,127 +15,127 @@ type flagable struct {
 	version         string
 }
 
-func (this *flagable) AliasFlag(alias rune, flagname string) {
-	flag, ok := this.flags[flagname]
+func (f *flagable) AliasFlag(alias rune, flagname string) {
+	flag, ok := f.flags[flagname]
 	if !ok {
 		panic(fmt.Sprintf("flag not defined %v", flagname))
 	}
-	if this.aliases == nil {
-		this.aliases = make(map[rune]*Flag)
+	if f.aliases == nil {
+		f.aliases = make(map[rune]*Flag)
 	}
-	this.aliases[alias] = flag
+	f.aliases[alias] = flag
 }
 
 // Bool defines a bool flag with specified name, default value, and usage string.
 // The return value is the address of a bool variable that stores the value of the flag.
-func (this *flagable) DefineBoolFlag(name string, value bool, usage string) *bool {
+func (f *flagable) DefineBoolFlag(name string, value bool, usage string) *bool {
 	p := new(bool)
-	this.DefineBoolFlagVar(p, name, value, usage)
+	f.DefineBoolFlagVar(p, name, value, usage)
 	return p
 }
 
 // BoolVar defines a bool flag with specified name, default value, and usage string.
 // The argument p points to a bool variable in which to store the value of the flag.
-func (this *flagable) DefineBoolFlagVar(p *bool, name string, value bool, usage string) {
-	this.DefineFlag(newBoolValue(value, p), name, usage)
+func (f *flagable) DefineBoolFlagVar(p *bool, name string, value bool, usage string) {
+	f.DefineFlag(newBoolValue(value, p), name, usage)
 }
 
 // Duration defines a time.Duration flag with specified name, default value, and usage string.
 // The return value is the address of a time.Duration variable that stores the value of the flag.
-func (this *flagable) DefineDurationFlag(name string, value time.Duration, usage string) *time.Duration {
+func (f *flagable) DefineDurationFlag(name string, value time.Duration, usage string) *time.Duration {
 	p := new(time.Duration)
-	this.DefineDurationFlagVar(p, name, value, usage)
+	f.DefineDurationFlagVar(p, name, value, usage)
 	return p
 }
 
 // DurationVar defines a time.Duration flag with specified name, default value, and usage string.
 // The argument p points to a time.Duration variable in which to store the value of the flag.
-func (this *flagable) DefineDurationFlagVar(p *time.Duration, name string, value time.Duration, usage string) {
-	this.DefineFlag(newDurationValue(value, p), name, usage)
+func (f *flagable) DefineDurationFlagVar(p *time.Duration, name string, value time.Duration, usage string) {
+	f.DefineFlag(newDurationValue(value, p), name, usage)
 }
 
 // Float64 defines a float64 flag with specified name, default value, and usage string.
 // The return value is the address of a float64 variable that stores the value of the flag.
-func (this *flagable) DefineFloat64Flag(name string, value float64, usage string) *float64 {
+func (f *flagable) DefineFloat64Flag(name string, value float64, usage string) *float64 {
 	p := new(float64)
-	this.DefineFloat64FlagVar(p, name, value, usage)
+	f.DefineFloat64FlagVar(p, name, value, usage)
 	return p
 }
 
 // Float64Var defines a float64 flag with specified name, default value, and usage string.
 // The argument p points to a float64 variable in which to store the value of the flag.
-func (this *flagable) DefineFloat64FlagVar(p *float64, name string, value float64, usage string) {
-	this.DefineFlag(newFloat64Value(value, p), name, usage)
+func (f *flagable) DefineFloat64FlagVar(p *float64, name string, value float64, usage string) {
+	f.DefineFlag(newFloat64Value(value, p), name, usage)
 }
 
 // Int64 defines an int64 flag with specified name, default value, and usage string.
 // The return value is the address of an int64 variable that stores the value of the flag.
-func (this *flagable) DefineInt64Flag(name string, value int64, usage string) *int64 {
+func (f *flagable) DefineInt64Flag(name string, value int64, usage string) *int64 {
 	p := new(int64)
-	this.DefineInt64FlagVar(p, name, value, usage)
+	f.DefineInt64FlagVar(p, name, value, usage)
 	return p
 }
 
 // Int64Var defines an int64 flag with specified name, default value, and usage string.
 // The argument p points to an int64 variable in which to store the value of the flag.
-func (this *flagable) DefineInt64FlagVar(p *int64, name string, value int64, usage string) {
-	this.DefineFlag(newInt64Value(value, p), name, usage)
+func (f *flagable) DefineInt64FlagVar(p *int64, name string, value int64, usage string) {
+	f.DefineFlag(newInt64Value(value, p), name, usage)
 }
 
 // Int defines an int flag with specified name, default value, and usage string.
 // The return value is the address of an int variable that stores the value of the flag.
-func (this *flagable) DefineIntFlag(name string, value int, usage string) *int {
+func (f *flagable) DefineIntFlag(name string, value int, usage string) *int {
 	p := new(int)
-	this.DefineIntFlagVar(p, name, value, usage)
+	f.DefineIntFlagVar(p, name, value, usage)
 	return p
 }
 
 // IntVar defines an int flag with specified name, default value, and usage string.
 // The argument p points to an int variable in which to store the value of the flag.
-func (this *flagable) DefineIntFlagVar(p *int, name string, value int, usage string) {
-	this.DefineFlag(newIntValue(value, p), name, usage)
+func (f *flagable) DefineIntFlagVar(p *int, name string, value int, usage string) {
+	f.DefineFlag(newIntValue(value, p), name, usage)
 }
 
 // String defines a string flag with specified name, default value, and usage string.
 // The return value is the address of a string variable that stores the value of the flag.
-func (this *flagable) DefineStringFlag(name string, value string, usage string) *string {
+func (f *flagable) DefineStringFlag(name string, value string, usage string) *string {
 	p := new(string)
-	this.DefineStringFlagVar(p, name, value, usage)
+	f.DefineStringFlagVar(p, name, value, usage)
 	return p
 }
 
 // StringVar defines a string flag with specified name, default value, and usage string.
 // The argument p points to a string variable in which to store the value of the flag.
-func (this *flagable) DefineStringFlagVar(p *string, name string, value string, usage string) {
-	this.DefineFlag(newStringValue(value, p), name, usage)
+func (f *flagable) DefineStringFlagVar(p *string, name string, value string, usage string) {
+	f.DefineFlag(newStringValue(value, p), name, usage)
 }
 
 // Uint64 defines a uint64 flag with specified name, default value, and usage string.
 // The return value is the address of a uint64 variable that stores the value of the flag.
-func (this *flagable) DefineUint64Flag(name string, value uint64, usage string) *uint64 {
+func (f *flagable) DefineUint64Flag(name string, value uint64, usage string) *uint64 {
 	p := new(uint64)
-	this.DefineUint64FlagVar(p, name, value, usage)
+	f.DefineUint64FlagVar(p, name, value, usage)
 	return p
 }
 
 // Uint64Var defines a uint64 flag with specified name, default value, and usage string.
 // The argument p points to a uint64 variable in which to store the value of the flag.
-func (this *flagable) DefineUint64FlagVar(p *uint64, name string, value uint64, usage string) {
-	this.DefineFlag(newUint64Value(value, p), name, usage)
+func (f *flagable) DefineUint64FlagVar(p *uint64, name string, value uint64, usage string) {
+	f.DefineFlag(newUint64Value(value, p), name, usage)
 }
 
 // Uint defines a uint flag with specified name, default value, and usage string.
 // The return value is the address of a uint  variable that stores the value of the flag.
-func (this *flagable) DefineUintFlag(name string, value uint, usage string) *uint {
+func (f *flagable) DefineUintFlag(name string, value uint, usage string) *uint {
 	p := new(uint)
-	this.DefineUintFlagVar(p, name, value, usage)
+	f.DefineUintFlagVar(p, name, value, usage)
 	return p
 }
 
 // UintVar defines a uint flag with specified name, default value, and usage string.
 // The argument p points to a uint variable in which to store the value of the flag.
-func (this *flagable) DefineUintFlagVar(p *uint, name string, value uint, usage string) {
-	this.DefineFlag(newUintValue(value, p), name, usage)
+func (f *flagable) DefineUintFlagVar(p *uint, name string, value uint, usage string) {
+	f.DefineFlag(newUintValue(value, p), name, usage)
 }
 
 // DefineFlag defines a flag with the specified name and usage string. The type and
@@ -144,7 +144,7 @@ func (this *flagable) DefineUintFlagVar(p *uint, name string, value uint, usage 
 // caller could create a flag that turns a comma-separated string into a slice
 // of strings by giving the slice the methods of Value; in particular, Set would
 // decompose the comma-separated string into the slice.
-func (this *flagable) DefineFlag(value Getter, name string, usage string) {
+func (f *flagable) DefineFlag(value Getter, name string, usage string) {
 	// Remember the default value as a string; it won't change.
 	flag := &Flag{
 		Name:     name,
@@ -152,59 +152,58 @@ func (this *flagable) DefineFlag(value Getter, name string, usage string) {
 		value:    value,
 		DefValue: value.String(),
 	}
-	_, alreadythere := this.flags[name]
+	_, alreadythere := f.flags[name]
 	if alreadythere {
-		this.panicf("flag redefined: %s", name)
+		f.panicf("flag redefined: %s", name)
 	}
-	if this.flags == nil {
-		this.flags = make(map[string]*Flag)
+	if f.flags == nil {
+		f.flags = make(map[string]*Flag)
 	}
-	this.flags[name] = flag
+	f.flags[name] = flag
 }
 
 // Flag returns the Getter interface to the value of the named flag,
 // returning nil if none exists.
-func (this *flagable) Flag(name string) Getter {
-	flag, ok := this.flags[name]
+func (f *flagable) Flag(name string) Getter {
+	flag, ok := f.flags[name]
 	if !ok {
 		panic(fmt.Sprintf("flag not defined %v", name))
 	}
-	value, ok := this.flagValues[flag]
+	value, ok := f.flagValues[flag]
 	if ok {
 		return value
-	} else {
-		return nil
 	}
+	return nil
 }
 
-func (this *flagable) Flags() map[string]Getter {
+func (f *flagable) Flags() map[string]Getter {
 	flags := make(map[string]Getter)
-	for name, _ := range this.flags {
-		flags[name] = this.Flag(name)
+	for name := range f.flags {
+		flags[name] = f.Flag(name)
 	}
 	return flags
 }
 
 // FlagCount returns the number of flags that have been set.
-func (this *flagable) FlagCount() int { return len(this.flagValues) }
+func (f *flagable) FlagCount() int { return len(f.flagValues) }
 
 // Parsed returns if the flags have been parsed
-func (this *flagable) Parsed() bool {
-	return this.parsed
+func (f *flagable) Parsed() bool {
+	return f.parsed
 }
 
 // UsageString returns the flags usage as a string
-func (this *flagable) UsageString() string {
+func (f *flagable) UsageString() string {
 	var maxBufferLen int
 	flagsUsages := make(map[*Flag]*bytes.Buffer)
 
 	// init the map for each flag
-	for _, flag := range this.aliases {
+	for _, flag := range f.aliases {
 		flagsUsages[flag] = bytes.NewBufferString("")
 	}
 
 	// Get each flags aliases
-	for r, flag := range this.aliases {
+	for r, flag := range f.aliases {
 		alias := string(r)
 		buffer := flagsUsages[flag]
 		var err error
@@ -221,7 +220,7 @@ func (this *flagable) UsageString() string {
 	}
 
 	// Get each flags names
-	for name, flag := range this.flags {
+	for name, flag := range f.flags {
 		buffer := flagsUsages[flag]
 		var err error
 		if buffer.Len() == 0 {
@@ -252,44 +251,44 @@ func (this *flagable) UsageString() string {
 	return strings.Join(outputLines, "\n")
 }
 
-func (this *flagable) SetVersion(str string) {
-	this.version = str
+func (f *flagable) SetVersion(str string) {
+	f.version = str
 }
 
-func (this *flagable) Version() string {
-	return this.version
+func (f *flagable) Version() string {
+	return f.version
 }
 
 // defineHelp defines a help function and alias if they are not present
-func (this *flagable) defineHelp() {
-	if _, ok := this.flags["help"]; !ok {
-		this.DefineBoolFlag("help", false, "show help and exit")
-		if _, ok := this.aliases['h']; !ok {
-			this.AliasFlag('h', "help")
+func (f *flagable) defineHelp() {
+	if _, ok := f.flags["help"]; !ok {
+		f.DefineBoolFlag("help", false, "show help and exit")
+		if _, ok := f.aliases['h']; !ok {
+			f.AliasFlag('h', "help")
 		}
 	}
 }
 
 // defineVersion defines a version if one has been set
-func (this *flagable) defineVersion() {
-	if _, ok := this.flags["version"]; !ok && len(this.Version()) > 0 {
-		this.DefineBoolFlag("version", false, "show version and exit")
-		if _, ok := this.aliases['v']; !ok {
-			this.AliasFlag('v', "version")
+func (f *flagable) defineVersion() {
+	if _, ok := f.flags["version"]; !ok && len(f.Version()) > 0 {
+		f.DefineBoolFlag("version", false, "show version and exit")
+		if _, ok := f.aliases['v']; !ok {
+			f.AliasFlag('v', "version")
 		}
 	}
 }
 
 // flagFromArg determines the flags from an argument
-func (this *flagable) flagFromArg(arg string) (bool, []*Flag) {
+func (f *flagable) flagFromArg(arg string) (bool, []*Flag) {
 	var flags []*Flag
 
 	// Do nothing if flags terminated
-	if this.flagsTerminated {
+	if f.flagsTerminated {
 		return false, flags
 	}
 	if arg[len(arg)-1] == '=' {
-		this.errf("invalid flag format")
+		f.errf("invalid flag format")
 	}
 	arg = strings.Split(arg, "=")[0]
 
@@ -299,7 +298,7 @@ func (this *flagable) flagFromArg(arg string) (bool, []*Flag) {
 	isTerminator := !areAliases && len(arg) == 2
 
 	if !isFlag || isTerminator {
-		this.flagsTerminated = true
+		f.flagsTerminated = true
 		return false, flags
 	}
 
@@ -307,17 +306,17 @@ func (this *flagable) flagFromArg(arg string) (bool, []*Flag) {
 	if areAliases {
 		aliases := arg[1:]
 		for _, c := range aliases {
-			flag, ok := this.aliases[c]
+			flag, ok := f.aliases[c]
 			if !ok {
-				this.errf("invalid alias: %v", string(c))
+				f.errf("invalid alias: %v", string(c))
 			}
 			flags = append(flags, flag)
 		}
 	} else {
 		name := arg[2:]
-		flag, ok := this.flags[name]
+		flag, ok := f.flags[name]
 		if !ok {
-			this.errf("invalid flag")
+			f.errf("invalid flag")
 		}
 		flags = append(flags, flag)
 	}
@@ -326,31 +325,31 @@ func (this *flagable) flagFromArg(arg string) (bool, []*Flag) {
 
 // parseFlags flag definitions from the argument list, returns any left over
 // arguments after flags have been parsed.
-func (this *flagable) parseFlags(args []string) []string {
-	this.defineHelp()
-	this.defineVersion()
-	this.parsed = true
+func (f *flagable) parseFlags(args []string) []string {
+	f.defineHelp()
+	f.defineVersion()
+	f.parsed = true
 	i := 0
 	for i < len(args) {
-		isAlias, flags := this.flagFromArg(args[i])
-		if this.flagsTerminated {
+		isAlias, flags := f.flagFromArg(args[i])
+		if f.flagsTerminated {
 			break
 		}
 		if isAlias {
-			this.setAliasValues(flags, args[i])
+			f.setAliasValues(flags, args[i])
 		} else {
-			this.setFlagValue(flags[0], args[i])
+			f.setFlagValue(flags[0], args[i])
 		}
 		i++
 	}
 	// Set the remaining flags to defaults
-	this.setFlagDefaults()
+	f.setFlagDefaults()
 	// return the remaining unused args
 	return args[i:]
 }
 
 // setAliasValues sets the values of flags from thier aliases
-func (this *flagable) setAliasValues(flags []*Flag, arg string) {
+func (f *flagable) setAliasValues(flags []*Flag, arg string) {
 	args := strings.Split(arg, "=")
 	hasvalue := len(args) > 1
 	var lastflag *Flag
@@ -359,32 +358,32 @@ func (this *flagable) setAliasValues(flags []*Flag, arg string) {
 	if hasvalue {
 		lastflag = flags[len(flags)-1]
 		flags = flags[:len(flags)-1]
-		this.setFlag(lastflag, args[1])
+		f.setFlag(lastflag, args[1])
 	}
 
 	for i := 0; i < len(flags); i++ {
 		flag := flags[i]
 		if fv, ok := flag.value.(boolFlag); ok && fv.IsBoolFlag() {
-			this.setFlag(flag, "true")
+			f.setFlag(flag, "true")
 		} else {
-			this.panicf("flag %v missing value", flag.Name)
+			f.panicf("flag %v missing value", flag.Name)
 		}
 	}
 }
 
 // setFlagDefaults sets the default values of all flags
-func (this *flagable) setFlagDefaults() {
-	for name, flag := range this.flags {
-		if this.Flag(name) == nil {
-			this.setFlag(flag, flag.DefValue)
+func (f *flagable) setFlagDefaults() {
+	for name, flag := range f.flags {
+		if f.Flag(name) == nil {
+			f.setFlag(flag, flag.DefValue)
 		}
 	}
 }
 
 // setFlag sets the value of the named flag.
-func (this *flagable) setFlag(flag *Flag, value string) error {
-	// Verify the flag is a flag for this set
-	flag, ok := this.flags[flag.Name]
+func (f *flagable) setFlag(flag *Flag, value string) error {
+	// Verify the flag is a flag for f set
+	flag, ok := f.flags[flag.Name]
 	if !ok {
 		return fmt.Errorf("no such flag -%v", flag.Name)
 	}
@@ -392,25 +391,25 @@ func (this *flagable) setFlag(flag *Flag, value string) error {
 	if err != nil {
 		return err
 	}
-	if this.flagValues == nil {
-		this.flagValues = make(map[*Flag]Getter)
+	if f.flagValues == nil {
+		f.flagValues = make(map[*Flag]Getter)
 	}
-	this.flagValues[flag] = flag.value
+	f.flagValues[flag] = flag.value
 	return nil
 }
 
 // setFlagValue sets the value of a given flag
-func (this *flagable) setFlagValue(flag *Flag, arg string) {
+func (f *flagable) setFlagValue(flag *Flag, arg string) {
 	args := strings.Split(arg, "=")
 	hasvalue := len(args) > 1
 	if hasvalue {
 		value := args[1]
-		this.setFlag(flag, value)
+		f.setFlag(flag, value)
 	} else {
 		if fv, ok := flag.value.(boolFlag); ok && fv.IsBoolFlag() {
-			this.setFlag(flag, "true")
+			f.setFlag(flag, "true")
 		} else {
-			this.panicf("flag %v missing value", flag.Name)
+			f.panicf("flag %v missing value", flag.Name)
 		}
 	}
 }

@@ -11,16 +11,16 @@ func newInt64Value(val int64, p *int64) *int64Value {
 	return (*int64Value)(p)
 }
 
-func (this *int64Value) Get() interface{} {
-	return int64(*this)
+func (i *int64Value) Get() interface{} {
+	return int64(*i)
 }
 
-func (this *int64Value) Set(s string) error {
+func (i *int64Value) Set(s string) error {
 	v, err := strconv.ParseInt(s, 0, 64)
-	*this = int64Value(v)
+	*i = int64Value(v)
 	return err
 }
 
-func (this *int64Value) String() string {
-	return fmt.Sprintf("%v", *this)
+func (i *int64Value) String() string {
+	return fmt.Sprintf("%v", *i)
 }

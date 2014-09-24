@@ -5,7 +5,7 @@ import "fmt"
 import "bytes"
 import "strings"
 
-// A FlagSet represents a set of defined flags.  The zero value of a FlagSet
+// CLI represents a set of defined flags.  The zero value of a FlagSet
 // has no name and has ContinueOnError error handling.
 type CLI struct {
 	flagable
@@ -19,7 +19,7 @@ type CLI struct {
 	parsed      bool
 }
 
-// NewFlagSet returns a new, empty flag set with the specified name and
+// NewCLI returns a new cli with the specified name and
 // error handling property.
 func NewCLI(fn commandFn, paramNames ...string) *CLI {
 	cli := new(CLI)
@@ -28,64 +28,65 @@ func NewCLI(fn commandFn, paramNames ...string) *CLI {
 	return cli
 }
 
-// Define a subcommand
-func (this *CLI) DefineSubCommand(name string, desc string, fn commandFn, paramNames ...string) {
-	cmd := this.subCommandable.DefineSubCommand(name, desc, fn, paramNames...)
-	cmd.parent = this
+// DefineSubCommand return a SubCommand and adds the current CLI as the parent
+func (c *CLI) DefineSubCommand(name string, desc string, fn commandFn, paramNames ...string) *SubCommand {
+	cmd := c.subCommandable.DefineSubCommand(name, desc, fn, paramNames...)
+	cmd.parent = c
+	return cmd
 }
 
-// Return the command description
-func (this *CLI) Description() string {
-	return this.description
+// Description returns the command description
+func (c *CLI) Description() string {
+	return c.description
 }
 
-// Return the command name
-func (this *CLI) Name() string {
+// Name returns the command name
+func (c *CLI) Name() string {
 	var name string
-	if this.parent != nil {
-		name = strings.Join([]string{this.parent.Name(), this.name}, " ")
+	if c.parent != nil {
+		name = strings.Join([]string{c.parent.Name(), c.name}, " ")
 	} else {
-		name = this.name
+		name = c.name
 	}
 	return name
 }
 
 // Parsed reports whether f.Parse has been called.
-func (this *CLI) Parsed() bool {
-	this.parsed = this.flagable.Parsed() && this.paramable.Parsed() && this.subCommandable.Parsed()
-	return this.parsed
+func (c *CLI) Parsed() bool {
+	c.parsed = c.flagable.Parsed() && c.paramable.Parsed() && c.subCommandable.Parsed()
+	return c.parsed
 }
 
-// Set the command description
-func (this *CLI) SetDescription(desc string) {
-	this.description = desc
+// SetDescription sets the command description
+func (c *CLI) SetDescription(desc string) {
+	c.description = desc
 }
 
-// Start the command with args, arg[0] is ignored
-func (this *CLI) Start(args ...string) {
+// Start starts the command with args, arg[0] is ignored
+func (c *CLI) Start(args ...string) {
 	if args == nil {
 		args = os.Args
 	}
 
 	if len(args) > 1 {
 		args = args[1:]
-		args = this.parseFlags(args)
-		args = this.parseParams(args)
+		args = c.parseFlags(args)
+		args = c.parseParams(args)
 
 		// Show a version
-		if len(this.Version()) > 0 && this.Flag("version").Get() == true {
-			fmt.Println(this.Name(), this.Version())
+		if len(c.Version()) > 0 && c.Flag("version").Get() == true {
+			fmt.Println(c.Name(), c.Version())
 			return
 		}
 
 		// Show Help
-		if this.Flag("help").Get() == true {
-			this.Usage()
+		if c.Flag("help").Get() == true {
+			c.Usage()
 			return
 		}
 
 		// run subcommands
-		ransubcommand := this.parseSubCommands(args)
+		ransubcommand := c.parseSubCommands(args)
 
 		if ransubcommand {
 			return
@@ -93,24 +94,24 @@ func (this *CLI) Start(args ...string) {
 	}
 
 	// Run the function
-	this.fn(this)
+	c.fn(c)
 }
 
-// Return the command usage
-func (this *CLI) UsageString() string {
-	hasSubCommands := len(this.subCommands) > 0
-	hasParams := len(this.Params()) > 0
-	hasDescription := len(this.description) > 0
+// UsageString returns the command usage as a string
+func (c *CLI) UsageString() string {
+	hasSubCommands := len(c.subCommands) > 0
+	hasParams := len(c.Params()) > 0
+	hasDescription := len(c.description) > 0
 
 	// Start the Buffer
 	var buff bytes.Buffer
 
 	buff.WriteString("Usage:\n")
-	buff.WriteString(fmt.Sprintf("  %s [options...]", this.Name()))
+	buff.WriteString(fmt.Sprintf("  %s [options...]", c.Name()))
 
 	// Write Param Syntax
 	if hasParams {
-		buff.WriteString(fmt.Sprintf(" %s", this.paramable.UsageString()))
+		buff.WriteString(fmt.Sprintf(" %s", c.paramable.UsageString()))
 	}
 
 	// Write Sub Command Syntax
@@ -119,31 +120,31 @@ func (this *CLI) UsageString() string {
 	}
 
 	if hasDescription {
-		buff.WriteString(fmt.Sprintf("\n\n%s", this.Description()))
+		buff.WriteString(fmt.Sprintf("\n\n%s", c.Description()))
 	}
 
 	// Write Flags Syntax
 	buff.WriteString("\n\nOptions:\n")
-	buff.WriteString(this.flagable.UsageString())
+	buff.WriteString(c.flagable.UsageString())
 
 	// Write Sub Command List
 	if hasSubCommands {
 		buff.WriteString("\n\nCommands:\n")
-		buff.WriteString(this.subCommandable.UsageString())
+		buff.WriteString(c.subCommandable.UsageString())
 	}
 
 	// Return buffer as string
 	return buff.String()
 }
 
-func (this *CLI) init(name string, fn commandFn, paramNames ...string) {
+func (c *CLI) init(name string, fn commandFn, paramNames ...string) {
 	writer := &writer{ErrorHandling: ExitOnError}
-	this.writer = writer
-	this.flagable = flagable{writer: writer}
-	this.paramable = paramable{writer: writer}
-	this.subCommandable = subCommandable{writer: writer}
-	this.name = name
-	this.fn = fn
-	this.setParams(paramNames...)
-	this.usage = func() { fmt.Println(this.UsageString()) }
+	c.writer = writer
+	c.flagable = flagable{writer: writer}
+	c.paramable = paramable{writer: writer}
+	c.subCommandable = subCommandable{writer: writer}
+	c.name = name
+	c.fn = fn
+	c.setParams(paramNames...)
+	c.usage = func() { fmt.Println(c.UsageString()) }
 }

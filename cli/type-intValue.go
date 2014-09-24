@@ -11,16 +11,16 @@ func newIntValue(val int, p *int) *intValue {
 	return (*intValue)(p)
 }
 
-func (this *intValue) Get() interface{} {
-	return int(*this)
+func (i *intValue) Get() interface{} {
+	return int(*i)
 }
 
-func (this *intValue) Set(s string) error {
+func (i *intValue) Set(s string) error {
 	v, err := strconv.ParseInt(s, 0, 64)
-	*this = intValue(v)
+	*i = intValue(v)
 	return err
 }
 
-func (this *intValue) String() string {
-	return fmt.Sprintf("%v", *this)
+func (i *intValue) String() string {
+	return fmt.Sprintf("%v", *i)
 }

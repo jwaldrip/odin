@@ -1,5 +1,6 @@
 package cli
 
+// SubCommand is a subcommand to a cli
 type SubCommand struct {
 	CLI
 }

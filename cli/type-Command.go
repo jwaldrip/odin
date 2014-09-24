@@ -1,5 +1,6 @@
 package cli
 
+// Command represents a readable command
 type Command interface {
 	Usage()
 	Name() string

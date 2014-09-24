@@ -1,13 +1,13 @@
 package cli
 
-import . "log"
+import "log"
 import "os"
 
-var stderr = New(os.Stderr, "", 0)
-var stdout = New(os.Stdout, "", 0)
+var stderr = log.New(os.Stderr, "", 0)
+var stdout = log.New(os.Stdout, "", 0)
 
-func exitIfError(error error) {
-	if error != nil {
-		stderr.Fatalln(error)
+func exitIfError(err error) {
+	if err != nil {
+		stderr.Fatalln(err)
 	}
 }

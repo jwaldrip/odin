@@ -10,16 +10,16 @@ func newDurationValue(val time.Duration, p *time.Duration) *durationValue {
 	return (*durationValue)(p)
 }
 
-func (this *durationValue) Get() interface{} {
-	return time.Duration(*this)
+func (d *durationValue) Get() interface{} {
+	return time.Duration(*d)
 }
 
-func (this *durationValue) Set(s string) error {
+func (d *durationValue) Set(s string) error {
 	v, err := time.ParseDuration(s)
-	*this = durationValue(v)
+	*d = durationValue(v)
 	return err
 }
 
-func (this *durationValue) String() string {
-	return (*time.Duration)(this).String()
+func (d *durationValue) String() string {
+	return (*time.Duration)(d).String()
 }
