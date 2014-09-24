@@ -5,9 +5,9 @@ type Command interface {
 	Usage()
 	Parent() Command
 	Name() string
-	Flag(string) Getter
-	Flags() map[string]Getter
-	Param(string) Getter
-	Params() map[string]Getter
+	Flag(string) Value
+	Flags() map[string]Value
+	Param(string) Value
+	Params() map[string]Value
 	Start(...string)
 }

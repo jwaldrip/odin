@@ -9,7 +9,7 @@ type flagable struct {
 	*writer
 	flags           map[string]*Flag
 	aliases         map[rune]*Flag
-	flagValues      map[*Flag]Getter
+	flagValues      map[*Flag]Value
 	flagsTerminated bool
 	parsed          bool
 	version         string
@@ -144,7 +144,7 @@ func (f *flagable) DefineUintFlagVar(p *uint, name string, value uint, usage str
 // caller could create a flag that turns a comma-separated string into a slice
 // of strings by giving the slice the methods of Value; in particular, Set would
 // decompose the comma-separated string into the slice.
-func (f *flagable) DefineFlag(value Getter, name string, usage string) {
+func (f *flagable) DefineFlag(value Value, name string, usage string) {
 	// Remember the default value as a string; it won't change.
 	flag := &Flag{
 		Name:     name,
@@ -162,9 +162,9 @@ func (f *flagable) DefineFlag(value Getter, name string, usage string) {
 	f.flags[name] = flag
 }
 
-// Flag returns the Getter interface to the value of the named flag,
+// Flag returns the Value interface to the value of the named flag,
 // returning nil if none exists.
-func (f *flagable) Flag(name string) Getter {
+func (f *flagable) Flag(name string) Value {
 	flag, ok := f.flags[name]
 	if !ok {
 		panic(fmt.Sprintf("flag not defined %v", name))
@@ -176,8 +176,8 @@ func (f *flagable) Flag(name string) Getter {
 	return nil
 }
 
-func (f *flagable) Flags() map[string]Getter {
-	flags := make(map[string]Getter)
+func (f *flagable) Flags() map[string]Value {
+	flags := make(map[string]Value)
 	for name := range f.flags {
 		flags[name] = f.Flag(name)
 	}
@@ -392,7 +392,7 @@ func (f *flagable) setFlag(flag *Flag, value string) error {
 		return err
 	}
 	if f.flagValues == nil {
-		f.flagValues = make(map[*Flag]Getter)
+		f.flagValues = make(map[*Flag]Value)
 	}
 	f.flagValues[flag] = flag.value
 	return nil

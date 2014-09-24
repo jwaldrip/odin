@@ -6,14 +6,14 @@ import "strings"
 type paramable struct {
 	*writer
 	params       paramsList
-	paramValues  map[string]Getter
+	paramValues  map[string]Value
 	paramsParsed bool
 	parsed       bool
 }
 
 // Arg returns the i'th argument.  Arg(0) is the first remaining argument
 // after flags have been processed.
-func (p *paramable) Param(key string) Getter {
+func (p *paramable) Param(key string) Value {
 	value, ok := p.paramValues[key]
 	if ok {
 		return value
@@ -24,7 +24,7 @@ func (p *paramable) Param(key string) Getter {
 }
 
 // Args returns the non-flag arguments.
-func (p *paramable) Params() map[string]Getter {
+func (p *paramable) Params() map[string]Value {
 	return p.paramValues
 }
 
@@ -71,7 +71,7 @@ func (p *paramable) parse(args []string) []string {
 		seenParams = append(seenParams, param)
 		str := ""
 		if p.paramValues == nil {
-			p.paramValues = make(map[string]Getter)
+			p.paramValues = make(map[string]Value)
 		}
 		p.paramValues[param.Name] = newStringValue(args[i], &str)
 		i++
