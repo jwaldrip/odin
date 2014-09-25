@@ -33,7 +33,7 @@ func NewCLI(version, desc string, fn commandFn, paramNames ...string) *CLI {
 // DefineSubCommand return a SubCommand and adds the current CLI as the parent
 func (cmd *CLI) DefineSubCommand(name string, desc string, fn commandFn, paramNames ...string) *SubCommand {
 	subcmd := cmd.subCommandable.DefineSubCommand(name, desc, fn, paramNames...)
-	cmd.parent = subcmd
+	subcmd.parent = cmd
 	return subcmd
 }
 
