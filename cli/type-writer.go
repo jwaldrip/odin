@@ -9,33 +9,33 @@ type writer struct {
 }
 
 // Usage calls the Usage method for the flag set
-func (w *writer) Usage() {
-	if w.usage != nil {
-		w.usage()
+func (cmd *writer) Usage() {
+	if cmd.usage != nil {
+		cmd.usage()
 	}
 }
 
 // failf prints to standard error a formatted error and usage message and
 // returns the error.
-func (w *writer) failf(format string, a ...interface{}) error {
+func (cmd *writer) failf(format string, a ...interface{}) error {
 	err := fmt.Errorf(format, a...)
 	fmt.Fprintln(os.Stderr, err)
 	fmt.Fprintln(os.Stderr, "")
-	w.Usage()
+	cmd.Usage()
 	return err
 }
 
-func (w *writer) errf(format string, a ...interface{}) {
-	w.handleErr(w.failf(format, a...))
+func (cmd *writer) errf(format string, a ...interface{}) {
+	cmd.handleErr(cmd.failf(format, a...))
 }
 
-func (w *writer) panicf(format string, a ...interface{}) {
-	panic(w.failf(format, a...))
+func (cmd *writer) panicf(format string, a ...interface{}) {
+	panic(cmd.failf(format, a...))
 }
 
-func (w *writer) handleErr(err error) {
+func (cmd *writer) handleErr(err error) {
 	if err != nil {
-		switch w.ErrorHandling {
+		switch cmd.ErrorHandling {
 		case ExitOnError:
 			os.Exit(2)
 		case PanicOnError:
