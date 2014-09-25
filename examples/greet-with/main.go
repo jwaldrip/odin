@@ -36,12 +36,13 @@ func greet(c odin.Command) {
 }
 
 func greetGreetee(c odin.Command) {
-	str := fmt.Sprintf("%s %s", c.Parent().Param("greeting"), c.Param("greetee"))
+	greeting := c.Parent().Param("greeting")
+	greetee := c.Param("greetee")
+	str := fmt.Sprintf("%s %s", greeting, greetee)
 	if c.Parent().Flag("loudly").Get() == true {
 		str = strings.ToUpper(str)
 	}
 	if c.Parent().Flag("color").String() != "" {
-		println("  gg")
 		str = colorfulString(str).color(c.Parent().Flag("color").String())
 	}
 	fmt.Println(str)
@@ -57,7 +58,7 @@ func (s colorfulString) color(color string) string {
 	case "green":
 		coloredString = fmt.Sprintf("\x1b[0;32;49m%s\x1b[0m", s)
 	default:
-		fmt.Fprintln(os.Stderr, "invalid color, try: red, blue, or green")
+		fmt.Fprintln(os.Stderr, fmt.Sprintf("invalid color: '%s' ... try: 'red', 'blue', or 'green'", color))
 		os.Exit(2)
 	}
 	return coloredString
