@@ -12,26 +12,26 @@ type subCommandable struct {
 	parsed      bool
 }
 
-func (s *subCommandable) DefineSubCommand(name string, desc string, fn commandFn, paramNames ...string) *SubCommand {
-	if s.subCommands == nil {
-		s.subCommands = make(map[string]*SubCommand)
+func (cmd *subCommandable) DefineSubCommand(name string, desc string, fn commandFn, paramNames ...string) *SubCommand {
+	if cmd.subCommands == nil {
+		cmd.subCommands = make(map[string]*SubCommand)
 	}
 	subcommand := newSubCommand(name, desc, fn, paramNames...)
-	s.subCommands[name] = subcommand
+	cmd.subCommands[name] = subcommand
 	return subcommand
 }
 
-func (s *subCommandable) Parent() Command {
-	return s.parent
+func (cmd *subCommandable) Parent() Command {
+	return cmd.parent
 }
 
-func (s *subCommandable) Parsed() bool {
-	return s.parsed
+func (cmd *subCommandable) Parsed() bool {
+	return cmd.parsed
 }
 
-func (s *subCommandable) UsageString() string {
+func (cmd *subCommandable) UsageString() string {
 	var maxBufferLen int
-	for _, cmd := range s.subCommands {
+	for _, cmd := range cmd.subCommands {
 		buffLen := len(cmd.name)
 		if buffLen > maxBufferLen {
 			maxBufferLen = buffLen
@@ -39,7 +39,7 @@ func (s *subCommandable) UsageString() string {
 	}
 
 	var outputLines []string
-	for _, cmd := range s.subCommands {
+	for _, cmd := range cmd.subCommands {
 		var whitespace bytes.Buffer
 		for {
 			buffLen := len(cmd.name) + len(whitespace.String())
@@ -54,17 +54,17 @@ func (s *subCommandable) UsageString() string {
 	return strings.Join(outputLines, "\n")
 }
 
-func (s *subCommandable) parseSubCommands(args []string) bool {
+func (cmd *subCommandable) parseSubCommands(args []string) bool {
 	if len(args) == 0 {
 		return false
 	}
-	s.parsed = true
+	cmd.parsed = true
 	name := args[0]
-	cmd, ok := s.subCommands[name]
+	subcmd, ok := cmd.subCommands[name]
 	if !ok {
-		s.errf("invalid command: %s", name)
+		subcmd.errf("invalid command: %s", name)
 	}
-	cmd.Start(args...)
+	subcmd.Start(args...)
 
 	return true
 }

@@ -31,36 +31,36 @@ func NewCLI(version, desc string, fn commandFn, paramNames ...string) *CLI {
 }
 
 // DefineSubCommand return a SubCommand and adds the current CLI as the parent
-func (c *CLI) DefineSubCommand(name string, desc string, fn commandFn, paramNames ...string) *SubCommand {
-	cmd := c.subCommandable.DefineSubCommand(name, desc, fn, paramNames...)
-	cmd.parent = c
-	return cmd
+func (cmd *CLI) DefineSubCommand(name string, desc string, fn commandFn, paramNames ...string) *SubCommand {
+	subcmd := cmd.subCommandable.DefineSubCommand(name, desc, fn, paramNames...)
+	cmd.parent = subcmd
+	return subcmd
 }
 
 // Description returns the command description
-func (c *CLI) Description() string {
-	return c.description
+func (cmd *CLI) Description() string {
+	return cmd.description
 }
 
 // Name returns the command name
-func (c *CLI) Name() string {
+func (cmd *CLI) Name() string {
 	var name string
-	if c.parent != nil {
-		name = strings.Join([]string{c.parent.Name(), c.name}, " ")
+	if cmd.parent != nil {
+		name = strings.Join([]string{cmd.parent.Name(), cmd.name}, " ")
 	} else {
-		name = c.name
+		name = cmd.name
 	}
 	return name
 }
 
 // Parsed reports whether f.Parse has been called.
-func (c *CLI) Parsed() bool {
-	c.parsed = c.flagable.Parsed() && c.paramable.Parsed() && c.subCommandable.Parsed()
-	return c.parsed
+func (cmd *CLI) Parsed() bool {
+	cmd.parsed = cmd.flagable.Parsed() && cmd.paramable.Parsed() && cmd.subCommandable.Parsed()
+	return cmd.parsed
 }
 
 // Start starts the command with args, arg[0] is ignored
-func (c *CLI) Start(args ...string) {
+func (cmd *CLI) Start(args ...string) {
 	if args == nil {
 		args = os.Args
 	}
@@ -72,46 +72,46 @@ func (c *CLI) Start(args ...string) {
 	}
 
 	// parse flags and args
-	args = c.flagable.parse(args)
+	args = cmd.flagable.parse(args)
 
 	// Show a version
-	if len(c.Version()) > 0 && c.Flag("version").Get() == true {
-		fmt.Println(c.Name(), c.Version())
+	if len(cmd.Version()) > 0 && cmd.Flag("version").Get() == true {
+		fmt.Println(cmd.Name(), cmd.Version())
 		return
 	}
 
 	// Show Help
-	if c.Flag("help").Get() == true {
-		c.Usage()
+	if cmd.Flag("help").Get() == true {
+		cmd.Usage()
 		return
 	}
 
 	// Parse Params
-	args = c.paramable.parse(args)
+	args = cmd.paramable.parse(args)
 
-	if c.parseSubCommands(args) {
+	if cmd.parseSubCommands(args) {
 		return
 	}
 
 	// Run the function
-	c.fn(c)
+	cmd.fn(cmd)
 }
 
 // UsageString returns the command usage as a string
-func (c *CLI) UsageString() string {
-	hasSubCommands := len(c.subCommands) > 0
-	hasParams := len(c.params) > 0
-	hasDescription := len(c.description) > 0
+func (cmd *CLI) UsageString() string {
+	hasSubCommands := len(cmd.subCommands) > 0
+	hasParams := len(cmd.params) > 0
+	hasDescription := len(cmd.description) > 0
 
 	// Start the Buffer
 	var buff bytes.Buffer
 
 	buff.WriteString("Usage:\n")
-	buff.WriteString(fmt.Sprintf("  %s [options...]", c.Name()))
+	buff.WriteString(fmt.Sprintf("  %s [options...]", cmd.Name()))
 
 	// Write Param Syntax
 	if hasParams {
-		buff.WriteString(fmt.Sprintf(" %s", c.paramable.UsageString()))
+		buff.WriteString(fmt.Sprintf(" %s", cmd.paramable.UsageString()))
 	}
 
 	// Write Sub Command Syntax
@@ -120,32 +120,32 @@ func (c *CLI) UsageString() string {
 	}
 
 	if hasDescription {
-		buff.WriteString(fmt.Sprintf("\n\n%s", c.Description()))
+		buff.WriteString(fmt.Sprintf("\n\n%s", cmd.Description()))
 	}
 
 	// Write Flags Syntax
 	buff.WriteString("\n\nOptions:\n")
-	buff.WriteString(c.flagable.UsageString())
+	buff.WriteString(cmd.flagable.UsageString())
 
 	// Write Sub Command List
 	if hasSubCommands {
 		buff.WriteString("\n\nCommands:\n")
-		buff.WriteString(c.subCommandable.UsageString())
+		buff.WriteString(cmd.subCommandable.UsageString())
 	}
 
 	// Return buffer as string
 	return buff.String()
 }
 
-func (c *CLI) init(name, desc string, fn commandFn, paramNames ...string) {
+func (cmd *CLI) init(name, desc string, fn commandFn, paramNames ...string) {
 	writer := &writer{ErrorHandling: ExitOnError}
-	c.writer = writer
-	c.flagable = flagable{writer: writer}
-	c.paramable = paramable{writer: writer}
-	c.subCommandable = subCommandable{writer: writer}
-	c.name = name
-	c.fn = fn
-	c.description = desc
-	c.setParams(paramNames...)
-	c.usage = func() { fmt.Println(c.UsageString()) }
+	cmd.writer = writer
+	cmd.flagable = flagable{writer: writer}
+	cmd.paramable = paramable{writer: writer}
+	cmd.subCommandable = subCommandable{writer: writer}
+	cmd.name = name
+	cmd.fn = fn
+	cmd.description = desc
+	cmd.setParams(paramNames...)
+	cmd.usage = func() { fmt.Println(cmd.UsageString()) }
 }
