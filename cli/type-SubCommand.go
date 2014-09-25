@@ -7,7 +7,6 @@ type SubCommand struct {
 
 func newSubCommand(name string, desc string, fn commandFn, paramNames ...string) *SubCommand {
 	var cmd SubCommand
-	cmd.init(name, fn, paramNames...)
-	cmd.SetDescription(desc)
+	cmd.init(name, desc, fn, paramNames...)
 	return &cmd
 }

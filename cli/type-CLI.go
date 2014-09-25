@@ -21,11 +21,12 @@ type CLI struct {
 
 // NewCLI returns a new cli with the specified name and
 // error handling property.
-func NewCLI(fn commandFn, paramNames ...string) *CLI {
+func NewCLI(version, desc string, fn commandFn, paramNames ...string) *CLI {
 	nameParts := strings.Split(os.Args[0], "/")
 	cli := new(CLI)
-	cli.init(nameParts[len(nameParts)-1], fn, paramNames...)
-	cli.SetVersion("v0.0.1")
+	cli.init(nameParts[len(nameParts)-1], desc, fn, paramNames...)
+	cli.version = version
+	cli.description = desc
 	return cli
 }
 
@@ -56,11 +57,6 @@ func (c *CLI) Name() string {
 func (c *CLI) Parsed() bool {
 	c.parsed = c.flagable.Parsed() && c.paramable.Parsed() && c.subCommandable.Parsed()
 	return c.parsed
-}
-
-// SetDescription sets the command description
-func (c *CLI) SetDescription(desc string) {
-	c.description = desc
 }
 
 // Start starts the command with args, arg[0] is ignored
@@ -141,7 +137,7 @@ func (c *CLI) UsageString() string {
 	return buff.String()
 }
 
-func (c *CLI) init(name string, fn commandFn, paramNames ...string) {
+func (c *CLI) init(name, desc string, fn commandFn, paramNames ...string) {
 	writer := &writer{ErrorHandling: ExitOnError}
 	c.writer = writer
 	c.flagable = flagable{writer: writer}
@@ -149,6 +145,7 @@ func (c *CLI) init(name string, fn commandFn, paramNames ...string) {
 	c.subCommandable = subCommandable{writer: writer}
 	c.name = name
 	c.fn = fn
+	c.description = desc
 	c.setParams(paramNames...)
 	c.usage = func() { fmt.Println(c.UsageString()) }
 }
