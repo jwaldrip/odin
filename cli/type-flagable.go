@@ -334,46 +334,35 @@ func (cmd *flagable) parse(args []string) []string {
 	cmd.defineHelp()
 	cmd.defineVersion()
 	cmd.parsed = true
-	i := 0
-	for i < len(args) {
+	for i := 0; i < len(args); i++ {
 		isAlias, flags := cmd.flagFromArg(args[i])
 		if cmd.flagsTerminated {
 			break
 		}
 		if isAlias {
-			cmd.setAliasValues(flags, args[i])
+			args = cmd.setAliasValues(flags, args)
 		} else {
-			cmd.setFlagValue(flags[0], args[i])
+			args = cmd.setFlagValue(flags[0], args)
 		}
-		i++
 	}
 	// Set the remaining flags to defaults
 	cmd.setFlagDefaults()
 	// return the remaining unused args
-	return args[i:]
+	return args
 }
 
 // setAliasValues sets the values of flags from thier aliases
-func (cmd *flagable) setAliasValues(flags []*Flag, arg string) {
-	args := strings.Split(arg, "=")
-	hasvalue := len(args) > 1
-	var lastflag *Flag
-
-	// If a value is provided, set the last flag
-	if hasvalue {
-		lastflag = flags[len(flags)-1]
-		flags = flags[:len(flags)-1]
-		cmd.setFlag(lastflag, args[1])
-	}
-
+func (cmd *flagable) setAliasValues(flags []*Flag, args []string) []string {
 	for i := 0; i < len(flags); i++ {
+		isLastFlag := i == len(flags)-1
 		flag := flags[i]
-		if fv, ok := flag.value.(boolFlag); ok && fv.IsBoolFlag() {
-			cmd.setFlag(flag, "true")
+		if isLastFlag {
+			args = cmd.setFlagValue(flag, args)
 		} else {
-			cmd.errf("flag \"--%v\" is missing a value", flag.Name)
+			cmd.setFlagValue(flag, []string{})
 		}
 	}
+	return args
 }
 
 // setFlagDefaults sets the default values of all flags
@@ -404,17 +393,38 @@ func (cmd *flagable) setFlag(flag *Flag, value string) error {
 }
 
 // setFlagValue sets the value of a given flag
-func (cmd *flagable) setFlagValue(flag *Flag, arg string) {
-	args := strings.Split(arg, "=")
-	hasvalue := len(args) > 1
-	if hasvalue {
-		value := args[1]
-		cmd.setFlag(flag, value)
-	} else {
-		if fv, ok := flag.value.(boolFlag); ok && fv.IsBoolFlag() {
-			cmd.setFlag(flag, "true")
-		} else {
-			cmd.errf("flag \"--%v\" is missing a value", flag.Name)
-		}
+func (cmd *flagable) setFlagValue(flag *Flag, args []string) []string {
+	splitArgs := []string{}
+	hasSetValue := false
+	hasPosValue := false
+	isBoolFlag := false
+	if fv, ok := flag.value.(boolFlag); ok && fv.IsBoolFlag() {
+		isBoolFlag = true
 	}
+
+	if len(args) > 0 {
+		splitArgs = strings.Split(args[0], "=")
+		hasSetValue = len(splitArgs) > 1
+		hasPosValue = len(args) > 2
+	}
+
+	cutLen := 0
+
+	if hasSetValue {
+		cmd.setFlag(flag, splitArgs[1])
+		cutLen = 1
+	} else if hasPosValue {
+		cmd.setFlag(flag, args[1])
+		cutLen = 2
+	} else if isBoolFlag {
+		cmd.setFlag(flag, "true")
+		cutLen = 1
+	} else {
+		cmd.errf("flag \"--%v\" is missing a value", flag.Name)
+	}
+
+	if len(args) > cutLen {
+		return args[cutLen:]
+	}
+	return []string{}
 }
