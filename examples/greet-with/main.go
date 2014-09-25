@@ -1,18 +1,22 @@
 package main
 
-import odin "github.com/jwaldrip/odin/cli"
-import "github.com/mgutz/ansi"
+import (
+	"os"
+
+	odin "github.com/jwaldrip/odin/cli"
+)
 import "fmt"
 import "strings"
 
-var cli = odin.NewCLI(greet, "greeting")
+type colorfulString string
+
+var cli = odin.NewCLI("1.0.0", "a simple tool to greet with", greet, "greeting")
 
 func init() {
-	cli.SetVersion("1.0.0")
-	cli.SetDescription("a simple tool to greet with")
 	cli.DefineBoolFlag("loudly", false, "say loudly")
 	cli.AliasFlag('l', "loudly")
-	cli.DefineStringFlag("color", "blue", "color the output")
+	cli.DefineStringFlag("color", "blue", "color the output (red, blue, green)")
+	cli.AliasFlag('c', "color")
 	cli.DefineSubCommand("to", "greet a person", greetGreetee, "greetee")
 }
 
@@ -26,7 +30,7 @@ func greet(c odin.Command) {
 		str = strings.ToUpper(str)
 	}
 	if c.Flag("color").String() != "" {
-		str = ansi.Color(str, c.Flag("color").String())
+		str = colorfulString(str).color(c.Flag("color").String())
 	}
 	fmt.Println(str)
 }
@@ -38,7 +42,23 @@ func greetGreetee(c odin.Command) {
 	}
 	if c.Parent().Flag("color").String() != "" {
 		println("  gg")
-		str = ansi.Color(str, c.Parent().Flag("color").String())
+		str = colorfulString(str).color(c.Parent().Flag("color").String())
 	}
 	fmt.Println(str)
+}
+
+func (s colorfulString) color(color string) string {
+	var coloredString string
+	switch color {
+	case "red":
+		coloredString = fmt.Sprintf("\x1b[0;31;49m%s\x1b[0m", s)
+	case "blue":
+		coloredString = fmt.Sprintf("\x1b[0;34;49m%s\x1b[0m", s)
+	case "green":
+		coloredString = fmt.Sprintf("\x1b[0;32;49m%s\x1b[0m", s)
+	default:
+		fmt.Fprintln(os.Stderr, "invalid color, try: red, blue, or green")
+		os.Exit(2)
+	}
+	return coloredString
 }

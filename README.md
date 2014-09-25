@@ -11,7 +11,13 @@ A go-lang library to help build self documenting command line applications.
 * Named Command Parameters (currently all required)
 * SubCommand DSL for creating complex CLI utils
 
-## Example Usage
+## Usage
+
+```go
+NewCLI(version string, description string, fn func(), params...)
+```
+
+## Example
 
 **the following example can be found in "example/greet-with"**
 
@@ -23,11 +29,10 @@ import "github.com/mgutz/ansi"
 import "fmt"
 import "strings"
 
-var cli = odin.NewCLI(greet, "greeting")
+var cli = odin.NewCLI("a simple tool to greet with", greet, "greeting")
 
 func init() {
   cli.SetVersion("1.0.0")
-  cli.SetDescription("a simple tool to greet with")
   cli.DefineBoolFlag("loudly", false, "say loudly")
   cli.AliasFlag('l', "loudly")
   cli.DefineStringFlag("color", "blue", "color the output")
@@ -60,6 +65,7 @@ func greetGreetee(c odin.Command) {
   }
   fmt.Println(str)
 }
+
 ```
 
 ## Self Documentation
