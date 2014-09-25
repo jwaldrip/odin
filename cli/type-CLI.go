@@ -13,10 +13,11 @@ type CLI struct {
 	subCommandable
 	*writer
 
-	fn          commandFn
-	name        string
-	description string
-	parsed      bool
+	fn           commandFn
+	name         string
+	description  string
+	parsed       bool
+	unparsedArgs []string
 }
 
 // NewCLI returns a new cli with the specified name and
@@ -28,6 +29,16 @@ func NewCLI(version, desc string, fn commandFn, paramNames ...string) *CLI {
 	cli.version = version
 	cli.description = desc
 	return cli
+}
+
+// Args returns any remaining args that were not parsed as params
+func (cmd *CLI) Args() []string {
+	return cmd.unparsedArgs
+}
+
+// Arg takes a position of a remaining arg that was not parsed as a param
+func (cmd *CLI) Arg(index int) string {
+	return cmd.Args()[index]
 }
 
 // DefineSubCommand return a SubCommand and adds the current CLI as the parent
@@ -89,7 +100,8 @@ func (cmd *CLI) Start(args ...string) {
 	// Parse Params
 	args = cmd.paramable.parse(args)
 
-	if cmd.parseSubCommands(args) {
+	var subCommandsParsed bool
+	if cmd.unparsedArgs, subCommandsParsed = cmd.subCommandable.parse(args); subCommandsParsed {
 		return
 	}
 

@@ -54,9 +54,9 @@ func (cmd *subCommandable) UsageString() string {
 	return strings.Join(outputLines, "\n")
 }
 
-func (cmd *subCommandable) parseSubCommands(args []string) bool {
-	if len(args) == 0 {
-		return false
+func (cmd *subCommandable) parse(args []string) ([]string, bool) {
+	if len(args) == 0 || len(cmd.subCommands) == 0 {
+		return args, false
 	}
 	cmd.parsed = true
 	name := args[0]
@@ -66,5 +66,5 @@ func (cmd *subCommandable) parseSubCommands(args []string) bool {
 	}
 	subcmd.Start(args...)
 
-	return true
+	return []string{}, true
 }

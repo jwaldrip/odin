@@ -45,7 +45,7 @@ func greetGreetee(c odin.Command) {
 	if c.Parent().Flag("color").String() != "" {
 		str = colorfulString(str).color(c.Parent().Flag("color").String())
 	}
-	fmt.Println(str)
+	fmt.Println(str, strings.Join(c.Args(), " "))
 }
 
 func (s colorfulString) color(color string) string {
