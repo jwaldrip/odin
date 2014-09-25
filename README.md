@@ -11,6 +11,14 @@ A go-lang library to help build self documenting command line applications.
 * Named Command Parameters (currently all required)
 * SubCommand DSL for creating complex CLI utils
 
+## Installation
+
+get the package with:
+
+```
+go get github.com/jwaldrip/odin/cli
+```
+
 ## Usage
 
 ```go
