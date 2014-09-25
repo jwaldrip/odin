@@ -244,7 +244,9 @@ func (f *flagable) UsageString() string {
 
 	// get the flag strings and append the usage info
 	var outputLines []string
-	for flag, buffer := range flagsUsages {
+	for i := 0; i < len(f.flags); i++ {
+		flag := f.flags.Sort()[i]
+		buffer := flagsUsages[flag]
 		for {
 			buffLen := len(buffer.String())
 			if buffLen > maxBufferLen {
@@ -256,10 +258,6 @@ func (f *flagable) UsageString() string {
 	}
 
 	return strings.Join(outputLines, "\n")
-}
-
-func (f *flagable) SetVersion(str string) {
-	f.version = str
 }
 
 func (f *flagable) Version() string {
@@ -373,7 +371,7 @@ func (f *flagable) setAliasValues(flags []*Flag, arg string) {
 		if fv, ok := flag.value.(boolFlag); ok && fv.IsBoolFlag() {
 			f.setFlag(flag, "true")
 		} else {
-			f.panicf("flag %v missing value", flag.Name)
+			f.errf("flag \"--%v\" is missing a value", flag.Name)
 		}
 	}
 }
@@ -416,7 +414,7 @@ func (f *flagable) setFlagValue(flag *Flag, arg string) {
 		if fv, ok := flag.value.(boolFlag); ok && fv.IsBoolFlag() {
 			f.setFlag(flag, "true")
 		} else {
-			f.panicf("flag %v missing value", flag.Name)
+			f.errf("flag \"--%v\" is missing a value", flag.Name)
 		}
 	}
 }
