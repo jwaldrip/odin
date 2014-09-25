@@ -7,7 +7,7 @@ import "bytes"
 
 type flagable struct {
 	*writer
-	flags           map[string]*Flag
+	flags           flagMap
 	aliases         map[rune]*Flag
 	flagValues      map[*Flag]Value
 	flagsTerminated bool
