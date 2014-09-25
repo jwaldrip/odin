@@ -1,6 +1,6 @@
-# odin
+# odin ![godoc](http://img.shields.io/badge/Go-Doc-blue.svg)
 
-![odin](https://github.com/jwaldrip/odin/blob/master/odin.png)
+[![odin](https://github.com/jwaldrip/odin/blob/master/odin.png)](https://godoc.org/github.com/jwaldrip/odin/cli)
 
 A go-lang library to help build self documenting command line applications.
 
