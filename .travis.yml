@@ -1,8 +1,6 @@
 language: go
 env: PATH=$GOPATH/bin:$PATH
 go:
-  - 1.0
-  - 1.1
   - 1.2
   - 1.3
   - tip
