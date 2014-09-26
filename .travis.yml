@@ -3,7 +3,8 @@ go:
   - 1.2
   - 1.3
   - tip
-
-before_script: export PATH=$GOPATH/bin:$PATH
-install: env && make install-deps
+before_install: export PATH=$GOPATH/bin:$PATH
+install:
+  - echo $PATH
+  - make install-deps
 script: make test
