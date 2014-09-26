@@ -404,8 +404,8 @@ func (cmd *flagable) setFlagValue(flag *Flag, args []string) []string {
 
 	if len(args) > 0 {
 		splitArgs = strings.Split(args[0], "=")
-		hasSetValue = len(splitArgs) > 1
-		hasPosValue = len(args) > 2
+		hasSetValue = len(splitArgs) >= 2
+		hasPosValue = len(args) >= 2 && args[1][0] != '-'
 	}
 
 	cutLen := 0
