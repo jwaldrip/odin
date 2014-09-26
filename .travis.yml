@@ -5,7 +5,5 @@ go:
   - tip
 
 before_script: export PATH=$GOPATH/bin:$PATH
-
-install: make install-deps
-
-script: env && make test
+install: env && make install-deps
+script: make test
