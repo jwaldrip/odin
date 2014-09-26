@@ -1,4 +1,4 @@
-# odin [![godoc](http://img.shields.io/badge/Go-Doc-blue.svg)](https://godoc.org/github.com/jwaldrip/odin/cli)
+# odin [![godoc](http://img.shields.io/badge/Go-Doc-blue.svg)](https://godoc.org/github.com/jwaldrip/odin/cli) [![Build Status](https://travis-ci.org/jwaldrip/odin.svg?branch=master)](https://travis-ci.org/jwaldrip/odin)
 
 ![odin](https://github.com/jwaldrip/odin/blob/master/odin.png)]
 
