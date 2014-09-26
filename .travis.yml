@@ -1,5 +1,5 @@
 language: go
-
+env: PATH=$GOPATH/bin:$PATH
 go:
   - 1.0
   - 1.1
@@ -7,4 +7,4 @@ go:
   - 1.3
   - tip
 
-script: make test
+script: env && make test
