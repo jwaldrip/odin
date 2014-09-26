@@ -158,6 +158,6 @@ func (cmd *CLI) init(name, desc string, fn commandFn, paramNames ...string) {
 	cmd.name = name
 	cmd.fn = fn
 	cmd.description = desc
-	cmd.setParams(paramNames...)
-	cmd.usage = func() { fmt.Println(cmd.UsageString()) }
+	cmd.DefineParams(paramNames...)
+	cmd.usage = func() { fmt.Fprintln(cmd.StdOutput(), cmd.UsageString()) }
 }

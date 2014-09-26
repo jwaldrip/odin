@@ -1,11 +1,22 @@
 package cli
 
 import "os"
+import "io"
 import "fmt"
 
 type writer struct {
 	ErrorHandling ErrorHandling
 	usage         func()
+	errOutput     io.Writer
+	stdOutput     io.Writer
+}
+
+// ErrOutput is the error output for the command
+func (cmd *writer) ErrOutput() io.Writer {
+	if cmd.errOutput == nil {
+		cmd.errOutput = os.Stderr
+	}
+	return cmd.errOutput
 }
 
 // Usage calls the Usage method for the flag set
@@ -15,12 +26,27 @@ func (cmd *writer) Usage() {
 	}
 }
 
+func (cmd *writer) Mute() {
+	var err error
+	cmd.errOutput, err = os.Open(os.DevNull)
+	cmd.stdOutput, err = os.Open(os.DevNull)
+	exitIfError(err)
+}
+
+// ErrOutput is the error output for the command
+func (cmd *writer) StdOutput() io.Writer {
+	if cmd.stdOutput == nil {
+		cmd.stdOutput = os.Stdout
+	}
+	return cmd.stdOutput
+}
+
 // failf prints to standard error a formatted error and usage message and
 // returns the error.
 func (cmd *writer) failf(format string, a ...interface{}) error {
 	err := fmt.Errorf(format, a...)
-	fmt.Fprintln(os.Stderr, err)
-	fmt.Fprintln(os.Stderr, "")
+	fmt.Fprintln(cmd.ErrOutput(), err)
+	fmt.Fprintln(cmd.ErrOutput(), "")
 	cmd.Usage()
 	return err
 }
