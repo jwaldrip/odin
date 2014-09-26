@@ -14,6 +14,7 @@ var _ = Describe("CLI", func() {
 	var didRun bool
 
 	BeforeEach(func() {
+		didRun = false
 		runFn := func(c Command) {
 			cmd = c
 			didRun = true
@@ -51,8 +52,11 @@ var _ = Describe("CLI", func() {
 
 		BeforeEach(func() {
 			cli.DefineBoolFlag("foo", false, "is foo")
+			cli.AliasFlag('o', "foo")
 			cli.DefineStringFlag("bar", "", "what bar are you at?")
+			cli.AliasFlag('r', "bar")
 			cli.DefineBoolFlag("baz", true, "is baz")
+			cli.AliasFlag('z', "baz")
 		})
 
 		It("should set the flags with set syntax", func() {
@@ -83,35 +87,39 @@ var _ = Describe("CLI", func() {
 
 		Context("when an invalid flag was passed", func() {
 			It("should raise an error", func() {
-
+				Ω(func() { cli.Start("cmd", "--bad") }).Should(Panic())
 			})
 		})
 
 		Context("when a non-boolflag was not provided a value", func() {
 			It("should raise an error", func() {
-
+				Ω(func() { cli.Start("cmd", "--bar") }).Should(Panic())
 			})
 		})
 
 		Context("with aliases", func() {
 
 			It("should set the last flag with set syntax", func() {
-
+				cli.Start("cmd", "-or=dive bar")
+				Expect(cmd.Flag("foo").Get()).To(Equal(true))
+				Expect(cmd.Flag("bar").Get()).To(Equal("dive bar"))
 			})
 
-			It("should set the last flag with set syntax", func() {
-
+			It("should set the last flag with positional syntax", func() {
+				cli.Start("cmd", "-or", "dive bar")
+				Expect(cmd.Flag("foo").Get()).To(Equal(true))
+				Expect(cmd.Flag("bar").Get()).To(Equal("dive bar"))
 			})
 
 			Context("when an invalid alias was passed", func() {
 				It("should raise an error", func() {
-
+					Ω(func() { cli.Start("cmd", "-op") }).Should(Panic())
 				})
 			})
 
 			Context("when a non-boolflag was not provided a value", func() {
 				It("should raise an error", func() {
-
+					Ω(func() { cli.Start("cmd", "-or") }).Should(Panic())
 				})
 			})
 
@@ -121,20 +129,35 @@ var _ = Describe("CLI", func() {
 
 	Describe("remaining arguments", func() {
 		It("should return any arguments that have not been specified", func() {
-
+			cli.Start("cmd", "super", "awesome", "dude")
+			Expect(cmd.Args()).To(Equal([]string{"super", "awesome", "dude"}))
+			Expect(cmd.Arg(0)).To(Equal("super"))
+			Expect(cmd.Arg(1)).To(Equal("awesome"))
+			Expect(cmd.Arg(2)).To(Equal("dude"))
 		})
 	})
 
 	Describe("subcommands", func() {
+
+		var didRunSub bool
+
+		BeforeEach(func() {
+			didRunSub = false
+			cli.DefineSubCommand("razzle", "razzle dazzle me", func(c Command) {
+				didRunSub = true
+			})
+		})
+
 		Context("when the subcommand is valid", func() {
 			It("should start a subcommand", func() {
-
+				cli.Start("cmd", "razzle")
+				Expect(didRunSub).To(Equal(true))
 			})
 		})
 
 		Context("when the subcommand is not valid", func() {
 			It("should raise an error", func() {
-
+				Ω(func() { cli.Start("cmd", "bad") }).Should(Panic())
 			})
 		})
 	})
