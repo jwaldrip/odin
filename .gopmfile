@@ -1,6 +1,0 @@
-[target]
-path=github.com/jwaldrip/odin
-
-[deps]
-"github.com/onsi/ginkgo"=tag:v1.1.0
-"github.com/onsi/gomega"=tag:v1.0

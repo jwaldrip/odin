@@ -1,9 +1,9 @@
 test: install-deps
-	@cd cli && $$GOPATH/bin/gopm test
+	@cd cli && go test
 
 install-deps:
-	@cd cli && go get -u github.com/gpmgo/gopm
-	@cd cli && $$GOPATH/bin/gopm install
+	@go get github.com/onsi/ginkgo
+	@go get github.com/onsi/gomega
 
 install: install-deps
 	@go install
