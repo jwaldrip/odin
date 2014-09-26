@@ -49,7 +49,7 @@ func (cmd *paramable) UsageString() string {
 }
 
 // Set Param names from strings
-func (cmd *paramable) setParams(names ...string) {
+func (cmd *paramable) DefineParams(names ...string) {
 	var params []*Param
 	for i := 0; i < len(names); i++ {
 		name := names[i]
