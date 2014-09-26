@@ -1,8 +1,11 @@
 language: go
-env: PATH=$GOPATH/bin:$PATH
 go:
   - 1.2
   - 1.3
   - tip
+
+before_script: export PATH=$GOPATH/bin:$PATH
+
+install: make install-deps
 
 script: env && make test
