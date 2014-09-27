@@ -125,6 +125,26 @@ var _ = Describe("CLI Start", func() {
 
 		})
 
+		Context("once flags are terminated", func() {
+			Context("with --", func() {
+				It("should not parse additional flags", func() {
+					cli.DefineBoolFlag("sample", false, "a sample flag")
+					cli.Start("cmd", "--", "--sample=true")
+					Expect(cmd.Flag("sample").Get()).To(Equal(false))
+					Expect(cmd.Args()).To(Equal([]string{"--sample=true"}))
+				})
+			})
+
+			Context("with non flag", func() {
+				It("should not parse additional flags", func() {
+					cli.DefineBoolFlag("sample", false, "a sample flag")
+					cli.Start("cmd", "foo", "--sample=true")
+					Expect(cmd.Flag("sample").Get()).To(Equal(false))
+					Expect(cmd.Args()).To(Equal([]string{"foo", "--sample=true"}))
+				})
+			})
+		})
+
 	})
 
 	Describe("remaining arguments", func() {
@@ -134,6 +154,15 @@ var _ = Describe("CLI Start", func() {
 			Expect(cmd.Arg(0)).To(Equal("super"))
 			Expect(cmd.Arg(1)).To(Equal("awesome"))
 			Expect(cmd.Arg(2)).To(Equal("dude"))
+		})
+
+		Context("once flags are terminated", func() {
+			It("should return what would usually be flag values", func() {
+				cli.DefineBoolFlag("sample", false, "a sample flag")
+				cli.Start("cmd", "--", "--sample=true")
+				Expect(cmd.Flag("sample").Get()).To(Equal(false))
+				Expect(cmd.Args()).To(Equal([]string{"--sample=true"}))
+			})
 		})
 	})
 
