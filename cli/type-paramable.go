@@ -27,10 +27,6 @@ func (cmd *paramable) Params() map[string]Value {
 	return cmd.paramValues
 }
 
-// NArg is the number of arguments remaining after flags have been processed.
-func (cmd *paramable) ParamCount() int {
-	return len(cmd.paramValues)
-}
 // UsageString returns the params usage as a string
 func (cmd *paramable) UsageString() string {
 	var formattednames []string
