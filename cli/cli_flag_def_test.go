@@ -78,6 +78,23 @@ var _ = Describe("CLI Start", func() {
 			})
 		})
 
+		Describe("Int64Flag", func() {
+
+			It("should set and parse", func() {
+				cli.DefineInt64Flag("int64flag", 10, "desc")
+				cli.Start("cmd", "--int64flag=9")
+				Expect(cmd.Flag("int64flag").Get()).To(Equal(int64(9)))
+			})
+
+			It("should set and parse from var", func() {
+				var val int64
+				cli.DefineInt64FlagVar(&val, "int64flag", 10, "desc")
+				cli.DefineInt64FlagVar(&val, "int64flag2", 9, "desc")
+				cli.Start("cmd", "--int64flag=8")
+				Expect(cmd.Flag("int64flag2").Get()).To(Equal(int64(8)))
+			})
+		})
+
 	})
 
 })
