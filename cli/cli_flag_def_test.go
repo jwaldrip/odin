@@ -61,6 +61,23 @@ var _ = Describe("CLI Start", func() {
 			})
 		})
 
+		Describe("Float64Flag", func() {
+
+			It("should set and parse", func() {
+				cli.DefineFloat64Flag("float64flag", 10.1, "desc")
+				cli.Start("cmd", "--float64flag=9.9")
+				Expect(cmd.Flag("float64flag").Get()).To(Equal(9.9))
+			})
+
+			It("should set and parse from var", func() {
+				var val float64
+				cli.DefineFloat64FlagVar(&val, "float64flag", 10.10, "desc")
+				cli.DefineFloat64FlagVar(&val, "float64flag2", 9.9, "desc")
+				cli.Start("cmd", "--float64flag=8.8")
+				Expect(cmd.Flag("float64flag2").Get()).To(Equal(8.8))
+			})
+		})
+
 	})
 
 })
