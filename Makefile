@@ -1,4 +1,5 @@
 test: install-deps
+	@clear
 	@cd cli && go test
 
 install-deps:
