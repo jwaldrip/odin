@@ -24,6 +24,25 @@ var _ = Describe("CLI", func() {
 		cli.Mute()
 	})
 
+	Describe("flag definitions", func() {
+		Describe("BoolFlag", func() {
+
+			It("should set and parse", func() {
+				cli.DefineBoolFlag("boolflag", false, "desc")
+				cli.Start("cmd", "--boolflag")
+				Expect(cmd.Flag("boolflag").Get()).To(Equal(true))
+			})
+
+			It("should set and parse from var", func() {
+				var val bool
+				cli.DefineBoolFlagVar(&val, "boolflag", false, "desc")
+				cli.DefineBoolFlagVar(&val, "boolflag2", false, "desc")
+				cli.Start("cmd", "--boolflag")
+				Expect(cmd.Flag("boolflag2").Get()).To(Equal(true))
+			})
+		})
+	})
+
 	Describe("required parameters", func() {
 
 		BeforeEach(func() {

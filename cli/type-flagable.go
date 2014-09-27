@@ -334,6 +334,11 @@ func (cmd *flagable) parse(args []string) []string {
 	cmd.defineHelp()
 	cmd.defineVersion()
 	cmd.parsed = true
+
+	// Set all the flags to defaults before setting
+	cmd.setFlagDefaults()
+
+	// Set each flag by its set value
 	for i := 0; i < len(args); i++ {
 		isAlias, flags := cmd.flagFromArg(args[i])
 		if cmd.flagsTerminated {
@@ -345,8 +350,6 @@ func (cmd *flagable) parse(args []string) []string {
 			args = cmd.setFlagValue(flags[0], args)
 		}
 	}
-	// Set the remaining flags to defaults
-	cmd.setFlagDefaults()
 	// return the remaining unused args
 	return args
 }
@@ -367,10 +370,8 @@ func (cmd *flagable) setAliasValues(flags []*Flag, args []string) []string {
 
 // setFlagDefaults sets the default values of all flags
 func (cmd *flagable) setFlagDefaults() {
-	for name, flag := range cmd.flags {
-		if cmd.Flag(name) == nil {
-			cmd.setFlag(flag, flag.DefValue)
-		}
+	for _, flag := range cmd.flags {
+		cmd.setFlag(flag, flag.DefValue)
 	}
 }
 
