@@ -3,6 +3,10 @@ go:
   - 1.2
   - 1.3
   - tip
-install: make install-deps
+install:
+  - make install-deps
+  - go get github.com/axw/gocov/gocov
+  - go get github.com/mattn/goveralls
 script:
-  - $HOME/gopath/bin/goveralls -repotoken pwWfQ7Jb6JEdBgqH4DZVAF9sA45xi9FpS
+  - make test
+  - $HOME/gopath/bin/goveralls -repotoken UmhtcZLpiHvyEzYMiAw6PKkyeHFCbB8CK ./cli
