@@ -26,6 +26,24 @@ var _ = Describe("CLI Start", func() {
 		cli.Mute()
 	})
 
+	Describe("flag aliasing", func() {
+		BeforeEach(func() {
+			cli.DefineBoolFlag("valid", false, "valid flag")
+		})
+
+		Context("with a valid flag", func() {
+			It("should not panic", func() {
+				Ω(func() { cli.AliasFlag('a', "valid") }).ShouldNot(Panic())
+			})
+		})
+
+		Context("without a valid flag", func() {
+			It("should panic", func() {
+				Ω(func() { cli.AliasFlag('a', "notvalid") }).Should(Panic())
+			})
+		})
+	})
+
 	Describe("flag definitions", func() {
 		Describe("BoolFlag", func() {
 
