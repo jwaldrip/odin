@@ -69,6 +69,12 @@ var _ = Describe("CLI Start", func() {
 			Expect(cmd.Flag("bar").Get()).To(Equal("squeaky bean"))
 		})
 
+		Context("invalid flags", func() {
+			It("should panic", func() {
+				Ω(func() { cli.Start("cmd", "--invalid") }).Should(Panic())
+			})
+		})
+
 		Context("boolean flags", func() {
 
 			It("should set boolean flags as true if set", func() {
@@ -81,6 +87,12 @@ var _ = Describe("CLI Start", func() {
 				cli.Start("cmd")
 				Expect(cmd.Flag("foo").Get()).To(Equal(false))
 				Expect(cmd.Flag("baz").Get()).To(Equal(true))
+			})
+
+			It("should not support positional setting", func() {
+				cli.Start("cmd", "--foo", "false")
+				Expect(cmd.Flag("foo").Get()).To(Equal(true))
+				Expect(cmd.Args()).To(Equal([]string{"false"}))
 			})
 
 		})
