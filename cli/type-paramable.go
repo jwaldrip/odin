@@ -10,16 +10,13 @@ type paramable struct {
 	paramsParsed bool
 }
 
-// Arg returns the i'th argument.  Arg(0) is the first remaining argument
-// after flags have been processed.
+// Param returns named param
 func (cmd *paramable) Param(key string) Value {
 	value, ok := cmd.paramValues[key]
-	if ok {
-		return value
+	if !ok {
+		cmd.errf("invalid param: %s", key)
 	}
-	var emptyString stringValue
-	emptyString = ""
-	return &emptyString
+	return value
 }
 
 // Args returns the non-flag arguments.
