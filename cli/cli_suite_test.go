@@ -9,5 +9,5 @@ import (
 
 func TestCli(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Cli Suite")
+	RunSpecs(t, "Odin CLI Suite")
 }
