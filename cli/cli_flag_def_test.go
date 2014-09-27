@@ -95,6 +95,23 @@ var _ = Describe("CLI Start", func() {
 			})
 		})
 
+		Describe("IntFlag", func() {
+
+			It("should set and parse", func() {
+				cli.DefineIntFlag("intflag", 10, "desc")
+				cli.Start("cmd", "--intflag=9")
+				Expect(cmd.Flag("intflag").Get()).To(Equal(int(9)))
+			})
+
+			It("should set and parse from var", func() {
+				var val int
+				cli.DefineIntFlagVar(&val, "intflag", 10, "desc")
+				cli.DefineIntFlagVar(&val, "intflag2", 9, "desc")
+				cli.Start("cmd", "--intflag=8")
+				Expect(cmd.Flag("intflag2").Get()).To(Equal(int(8)))
+			})
+		})
+
 	})
 
 })
