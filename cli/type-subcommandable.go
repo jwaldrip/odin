@@ -9,24 +9,21 @@ type subCommandable struct {
 
 	parent      Command
 	subCommands map[string]*SubCommand
-	parsed      bool
 }
 
 func (cmd *subCommandable) DefineSubCommand(name string, desc string, fn commandFn, paramNames ...string) *SubCommand {
 	if cmd.subCommands == nil {
 		cmd.subCommands = make(map[string]*SubCommand)
 	}
-	subcommand := newSubCommand(name, desc, fn, paramNames...)
-	cmd.subCommands[name] = subcommand
-	return subcommand
+	subcmd := newSubCommand(name, desc, fn, paramNames...)
+	subcmd.errOutput = cmd.errOutput
+	subcmd.stdOutput = cmd.stdOutput
+	cmd.subCommands[name] = subcmd
+	return subcmd
 }
 
 func (cmd *subCommandable) Parent() Command {
 	return cmd.parent
-}
-
-func (cmd *subCommandable) Parsed() bool {
-	return cmd.parsed
 }
 
 func (cmd *subCommandable) UsageString() string {
@@ -58,7 +55,6 @@ func (cmd *subCommandable) parse(args []string) ([]string, bool) {
 	if len(args) == 0 || len(cmd.subCommands) == 0 {
 		return args, false
 	}
-	cmd.parsed = true
 	name := args[0]
 	subcmd, ok := cmd.subCommands[name]
 	if !ok {
