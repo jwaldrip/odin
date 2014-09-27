@@ -339,9 +339,21 @@ func (cmd *flagable) parse(args []string) []string {
 	cmd.setFlagDefaults()
 
 	// Set each flag by its set value
-	for i := 0; i < len(args); i++ {
-		isAlias, flags := cmd.flagFromArg(args[i])
+	for {
+		// Break if no arguments remain
+		if len(args) == 0 {
+			cmd.flagsTerminated = true
+			break
+		}
+		arg := args[0]
+		isAlias, flags := cmd.flagFromArg(arg)
+
+		// Break if the flags have been terminated
 		if cmd.flagsTerminated {
+			// Remove the flag terminator if it exists
+			if arg == "--" {
+				args = args[1:]
+			}
 			break
 		}
 		if isAlias {
