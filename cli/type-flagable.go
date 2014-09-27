@@ -25,7 +25,7 @@ func (cmd *flagable) AliasFlag(alias rune, flagname string) {
 	cmd.aliases[alias] = flag
 }
 
-// Bool defines a bool flag with specified name, default value, and usage string.
+// DefineBoolFlag defines a bool flag with specified name, default value, and usage string.
 // The return value is the address of a bool variable that stores the value of the flag.
 func (cmd *flagable) DefineBoolFlag(name string, value bool, usage string) *bool {
 	p := new(bool)
@@ -33,13 +33,13 @@ func (cmd *flagable) DefineBoolFlag(name string, value bool, usage string) *bool
 	return p
 }
 
-// BoolVar defines a bool flag with specified name, default value, and usage string.
+// DefineBoolFlagVar defines a bool flag with specified name, default value, and usage string.
 // The argument p points to a bool variable in which to store the value of the flag.
 func (cmd *flagable) DefineBoolFlagVar(p *bool, name string, value bool, usage string) {
 	cmd.DefineFlag(newBoolValue(value, p), name, usage)
 }
 
-// Duration defines a time.Duration flag with specified name, default value, and usage string.
+// DefineDurationFlag defines a time.Duration flag with specified name, default value, and usage string.
 // The return value is the address of a time.Duration variable that stores the value of the flag.
 func (cmd *flagable) DefineDurationFlag(name string, value time.Duration, usage string) *time.Duration {
 	p := new(time.Duration)
@@ -47,13 +47,13 @@ func (cmd *flagable) DefineDurationFlag(name string, value time.Duration, usage 
 	return p
 }
 
-// DurationVar defines a time.Duration flag with specified name, default value, and usage string.
+// DefineDurationFlagVar defines a time.Duration flag with specified name, default value, and usage string.
 // The argument p points to a time.Duration variable in which to store the value of the flag.
 func (cmd *flagable) DefineDurationFlagVar(p *time.Duration, name string, value time.Duration, usage string) {
 	cmd.DefineFlag(newDurationValue(value, p), name, usage)
 }
 
-// Float64 defines a float64 flag with specified name, default value, and usage string.
+// DefineFloat64Flag defines a float64 flag with specified name, default value, and usage string.
 // The return value is the address of a float64 variable that stores the value of the flag.
 func (cmd *flagable) DefineFloat64Flag(name string, value float64, usage string) *float64 {
 	p := new(float64)
@@ -61,13 +61,13 @@ func (cmd *flagable) DefineFloat64Flag(name string, value float64, usage string)
 	return p
 }
 
-// Float64Var defines a float64 flag with specified name, default value, and usage string.
+// DefineFloat64FlagVar defines a float64 flag with specified name, default value, and usage string.
 // The argument p points to a float64 variable in which to store the value of the flag.
 func (cmd *flagable) DefineFloat64FlagVar(p *float64, name string, value float64, usage string) {
 	cmd.DefineFlag(newFloat64Value(value, p), name, usage)
 }
 
-// Int64 defines an int64 flag with specified name, default value, and usage string.
+// DefineInt64Flag defines an int64 flag with specified name, default value, and usage string.
 // The return value is the address of an int64 variable that stores the value of the flag.
 func (cmd *flagable) DefineInt64Flag(name string, value int64, usage string) *int64 {
 	p := new(int64)
@@ -75,13 +75,13 @@ func (cmd *flagable) DefineInt64Flag(name string, value int64, usage string) *in
 	return p
 }
 
-// Int64Var defines an int64 flag with specified name, default value, and usage string.
+// DefineInt64FlagVar defines an int64 flag with specified name, default value, and usage string.
 // The argument p points to an int64 variable in which to store the value of the flag.
 func (cmd *flagable) DefineInt64FlagVar(p *int64, name string, value int64, usage string) {
 	cmd.DefineFlag(newInt64Value(value, p), name, usage)
 }
 
-// Int defines an int flag with specified name, default value, and usage string.
+// DefineIntFlag defines an int flag with specified name, default value, and usage string.
 // The return value is the address of an int variable that stores the value of the flag.
 func (cmd *flagable) DefineIntFlag(name string, value int, usage string) *int {
 	p := new(int)
@@ -89,13 +89,13 @@ func (cmd *flagable) DefineIntFlag(name string, value int, usage string) *int {
 	return p
 }
 
-// IntVar defines an int flag with specified name, default value, and usage string.
+// DefineIntFlagVar defines an int flag with specified name, default value, and usage string.
 // The argument p points to an int variable in which to store the value of the flag.
 func (cmd *flagable) DefineIntFlagVar(p *int, name string, value int, usage string) {
 	cmd.DefineFlag(newIntValue(value, p), name, usage)
 }
 
-// String defines a string flag with specified name, default value, and usage string.
+// DefineStringFlag defines a string flag with specified name, default value, and usage string.
 // The return value is the address of a string variable that stores the value of the flag.
 func (cmd *flagable) DefineStringFlag(name string, value string, usage string) *string {
 	p := new(string)
@@ -103,13 +103,13 @@ func (cmd *flagable) DefineStringFlag(name string, value string, usage string) *
 	return p
 }
 
-// StringVar defines a string flag with specified name, default value, and usage string.
+// DefineStringFlagVar defines a string flag with specified name, default value, and usage string.
 // The argument p points to a string variable in which to store the value of the flag.
 func (cmd *flagable) DefineStringFlagVar(p *string, name string, value string, usage string) {
 	cmd.DefineFlag(newStringValue(value, p), name, usage)
 }
 
-// Uint64 defines a uint64 flag with specified name, default value, and usage string.
+// DefineUint64Flag defines a uint64 flag with specified name, default value, and usage string.
 // The return value is the address of a uint64 variable that stores the value of the flag.
 func (cmd *flagable) DefineUint64Flag(name string, value uint64, usage string) *uint64 {
 	p := new(uint64)
@@ -117,13 +117,13 @@ func (cmd *flagable) DefineUint64Flag(name string, value uint64, usage string) *
 	return p
 }
 
-// Uint64Var defines a uint64 flag with specified name, default value, and usage string.
+// DefineUint64FlagVar defines a uint64 flag with specified name, default value, and usage string.
 // The argument p points to a uint64 variable in which to store the value of the flag.
 func (cmd *flagable) DefineUint64FlagVar(p *uint64, name string, value uint64, usage string) {
 	cmd.DefineFlag(newUint64Value(value, p), name, usage)
 }
 
-// Uint defines a uint flag with specified name, default value, and usage string.
+// DefineUintFlag defines a uint flag with specified name, default value, and usage string.
 // The return value is the address of a uint  variable that stores the value of the flag.
 func (cmd *flagable) DefineUintFlag(name string, value uint, usage string) *uint {
 	p := new(uint)
@@ -131,7 +131,7 @@ func (cmd *flagable) DefineUintFlag(name string, value uint, usage string) *uint
 	return p
 }
 
-// UintVar defines a uint flag with specified name, default value, and usage string.
+// DefineUintFlagVar defines a uint flag with specified name, default value, and usage string.
 // The argument p points to a uint variable in which to store the value of the flag.
 func (cmd *flagable) DefineUintFlagVar(p *uint, name string, value uint, usage string) {
 	cmd.DefineFlag(newUintValue(value, p), name, usage)
@@ -172,6 +172,7 @@ func (cmd *flagable) Flag(name string) Value {
 	return value
 }
 
+// Flags returns the flags as a map of strings with Values
 func (cmd *flagable) Flags() map[string]Value {
 	flags := make(map[string]Value)
 	for name := range cmd.flags {
