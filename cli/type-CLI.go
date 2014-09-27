@@ -16,7 +16,7 @@ type CLI struct {
 	fn           commandFn
 	name         string
 	description  string
-	unparsedArgs []string
+	unparsedArgs []Value
 }
 
 // NewCLI returns a new cli with the specified name and
@@ -31,12 +31,12 @@ func NewCLI(version, desc string, fn commandFn, paramNames ...string) *CLI {
 }
 
 // Args returns any remaining args that were not parsed as params
-func (cmd *CLI) Args() []string {
+func (cmd *CLI) Args() []Value {
 	return cmd.unparsedArgs
 }
 
 // Arg takes a position of a remaining arg that was not parsed as a param
-func (cmd *CLI) Arg(index int) string {
+func (cmd *CLI) Arg(index int) Value {
 	return cmd.Args()[index]
 }
 
@@ -94,9 +94,11 @@ func (cmd *CLI) Start(args ...string) {
 	args = cmd.paramable.parse(args)
 
 	var subCommandsParsed bool
-	if cmd.unparsedArgs, subCommandsParsed = cmd.subCommandable.parse(args); subCommandsParsed {
+	if args, subCommandsParsed = cmd.subCommandable.parse(args); subCommandsParsed {
 		return
 	}
+
+	cmd.assignUnparsedArgs(args)
 
 	// Run the function
 	cmd.fn(cmd)
@@ -140,6 +142,13 @@ func (cmd *CLI) UsageString() string {
 
 	// Return buffer as string
 	return buff.String()
+}
+
+func (cmd *CLI) assignUnparsedArgs(args []string) {
+	for i := 0; i < len(args); i++ {
+		str := ""
+		cmd.unparsedArgs = append(cmd.unparsedArgs, newStringValue(args[i], &str))
+	}
 }
 
 func (cmd *CLI) init(name, desc string, fn commandFn, paramNames ...string) {

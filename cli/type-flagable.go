@@ -168,11 +168,8 @@ func (cmd *flagable) Flag(name string) Value {
 	if !ok {
 		panic(fmt.Sprintf("flag not defined %v", name))
 	}
-	value, ok := cmd.flagValues[flag]
-	if ok {
-		return value
-	}
-	return nil
+	value := cmd.flagValues[flag]
+	return value
 }
 
 func (cmd *flagable) Flags() map[string]Value {

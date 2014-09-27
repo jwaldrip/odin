@@ -152,7 +152,7 @@ var _ = Describe("CLI Start", func() {
 			It("should not support positional setting", func() {
 				cli.Start("cmd", "--foo", "false")
 				Expect(cmd.Flag("foo").Get()).To(Equal(true))
-				Expect(cmd.Args()).To(Equal([]string{"false"}))
+				Expect(cmd.Arg(0).Get()).To(Equal("false"))
 			})
 
 		})
@@ -203,7 +203,7 @@ var _ = Describe("CLI Start", func() {
 					cli.DefineBoolFlag("sample", false, "a sample flag")
 					cli.Start("cmd", "--", "--sample=true")
 					Expect(cmd.Flag("sample").Get()).To(Equal(false))
-					Expect(cmd.Args()).To(Equal([]string{"--sample=true"}))
+					Expect(cmd.Arg(0).Get()).To(Equal("--sample=true"))
 				})
 			})
 
@@ -212,7 +212,8 @@ var _ = Describe("CLI Start", func() {
 					cli.DefineBoolFlag("sample", false, "a sample flag")
 					cli.Start("cmd", "foo", "--sample=true")
 					Expect(cmd.Flag("sample").Get()).To(Equal(false))
-					Expect(cmd.Args()).To(Equal([]string{"foo", "--sample=true"}))
+					Expect(cmd.Arg(0).Get()).To(Equal("foo"))
+					Expect(cmd.Arg(1).Get()).To(Equal("--sample=true"))
 				})
 			})
 		})
@@ -222,10 +223,9 @@ var _ = Describe("CLI Start", func() {
 	Describe("remaining arguments", func() {
 		It("should return any arguments that have not been specified", func() {
 			cli.Start("cmd", "super", "awesome", "dude")
-			Expect(cmd.Args()).To(Equal([]string{"super", "awesome", "dude"}))
-			Expect(cmd.Arg(0)).To(Equal("super"))
-			Expect(cmd.Arg(1)).To(Equal("awesome"))
-			Expect(cmd.Arg(2)).To(Equal("dude"))
+			Expect(cmd.Arg(0).Get()).To(Equal("super"))
+			Expect(cmd.Arg(1).Get()).To(Equal("awesome"))
+			Expect(cmd.Arg(2).Get()).To(Equal("dude"))
 		})
 
 		Context("once flags are terminated", func() {
@@ -233,7 +233,7 @@ var _ = Describe("CLI Start", func() {
 				cli.DefineBoolFlag("sample", false, "a sample flag")
 				cli.Start("cmd", "--", "--sample=true")
 				Expect(cmd.Flag("sample").Get()).To(Equal(false))
-				Expect(cmd.Args()).To(Equal([]string{"--sample=true"}))
+				Expect(cmd.Arg(0).Get()).To(Equal("--sample=true"))
 			})
 		})
 	})
