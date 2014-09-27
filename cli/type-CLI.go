@@ -16,7 +16,6 @@ type CLI struct {
 	fn           commandFn
 	name         string
 	description  string
-	parsed       bool
 	unparsedArgs []string
 }
 
@@ -62,12 +61,6 @@ func (cmd *CLI) Name() string {
 		name = cmd.name
 	}
 	return name
-}
-
-// Parsed reports whether f.Parse has been called.
-func (cmd *CLI) Parsed() bool {
-	cmd.parsed = cmd.flagable.Parsed() && cmd.paramable.Parsed() && cmd.subCommandable.Parsed()
-	return cmd.parsed
 }
 
 // Start starts the command with args, arg[0] is ignored

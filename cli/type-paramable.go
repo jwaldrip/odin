@@ -8,7 +8,6 @@ type paramable struct {
 	params       paramsList
 	paramValues  map[string]Value
 	paramsParsed bool
-	parsed       bool
 }
 
 // Arg returns the i'th argument.  Arg(0) is the first remaining argument
@@ -32,12 +31,6 @@ func (cmd *paramable) Params() map[string]Value {
 func (cmd *paramable) ParamCount() int {
 	return len(cmd.paramValues)
 }
-
-// Parsed returns if the flags have been parsed
-func (cmd *paramable) Parsed() bool {
-	return cmd.parsed
-}
-
 // UsageString returns the params usage as a string
 func (cmd *paramable) UsageString() string {
 	var formattednames []string

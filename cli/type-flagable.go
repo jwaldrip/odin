@@ -11,7 +11,6 @@ type flagable struct {
 	aliases         map[rune]*Flag
 	flagValues      map[*Flag]Value
 	flagsTerminated bool
-	parsed          bool
 	version         string
 }
 
@@ -187,11 +186,6 @@ func (cmd *flagable) Flags() map[string]Value {
 // FlagCount returns the number of flags that have been set.
 func (cmd *flagable) FlagCount() int { return len(cmd.flagValues) }
 
-// Parsed returns if the flags have been parsed
-func (cmd *flagable) Parsed() bool {
-	return cmd.parsed
-}
-
 // UsageString returns the flags usage as a string
 func (cmd *flagable) UsageString() string {
 	var maxBufferLen int
@@ -333,7 +327,6 @@ func (cmd *flagable) flagFromArg(arg string) (bool, []*Flag) {
 func (cmd *flagable) parse(args []string) []string {
 	cmd.defineHelp()
 	cmd.defineVersion()
-	cmd.parsed = true
 
 	// Set all the flags to defaults before setting
 	cmd.setFlagDefaults()
@@ -389,11 +382,7 @@ func (cmd *flagable) setFlagDefaults() {
 
 // setFlag sets the value of the named flag.
 func (cmd *flagable) setFlag(flag *Flag, value string) error {
-	// Verify the flag is a flag for f set
-	flag, ok := cmd.flags[flag.Name]
-	if !ok {
-		return fmt.Errorf("no such flag -%v", flag.Name)
-	}
+	_ = cmd.flags[flag.Name] // Verify the flag is a flag for f set
 	err := flag.value.Set(value)
 	if err != nil {
 		return err
@@ -423,18 +412,22 @@ func (cmd *flagable) setFlagValue(flag *Flag, args []string) []string {
 
 	cutLen := 0
 
+	var err error
+
 	if hasSetValue {
-		cmd.setFlag(flag, splitArgs[1])
+		err = cmd.setFlag(flag, splitArgs[1])
 		cutLen = 1
-	} else if hasPosValue {
-		cmd.setFlag(flag, args[1])
-		cutLen = 2
 	} else if isBoolFlag {
 		cmd.setFlag(flag, "true")
 		cutLen = 1
+	} else if hasPosValue {
+		err = cmd.setFlag(flag, args[1])
+		cutLen = 2
 	} else {
 		cmd.errf("flag \"--%v\" is missing a value", flag.Name)
 	}
+
+	exitIfError(err)
 
 	if len(args) > cutLen {
 		return args[cutLen:]
