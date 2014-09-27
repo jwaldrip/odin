@@ -112,6 +112,23 @@ var _ = Describe("CLI Start", func() {
 			})
 		})
 
+		Describe("StringFlag", func() {
+
+			It("should set and parse", func() {
+				cli.DefineStringFlag("stringflag", "foo", "desc")
+				cli.Start("cmd", "--stringflag=bar")
+				Expect(cmd.Flag("stringflag").Get()).To(Equal("bar"))
+			})
+
+			It("should set and parse from var", func() {
+				var val string
+				cli.DefineStringFlagVar(&val, "stringflag", "foo", "desc")
+				cli.DefineStringFlagVar(&val, "stringflag2", "bar", "desc")
+				cli.Start("cmd", "--stringflag=baz")
+				Expect(cmd.Flag("stringflag2").Get()).To(Equal("baz"))
+			})
+		})
+
 		Describe("Uint64Flag", func() {
 
 			It("should set and parse", func() {
