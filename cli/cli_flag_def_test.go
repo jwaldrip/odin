@@ -112,6 +112,40 @@ var _ = Describe("CLI Start", func() {
 			})
 		})
 
+		Describe("Uint64Flag", func() {
+
+			It("should set and parse", func() {
+				cli.DefineUint64Flag("uint64flag", uint64(10), "desc")
+				cli.Start("cmd", "--uint64flag=9")
+				Expect(cmd.Flag("uint64flag").Get()).To(Equal(uint64(9)))
+			})
+
+			It("should set and parse from var", func() {
+				var val uint64
+				cli.DefineUint64FlagVar(&val, "uint64flag", uint64(10), "desc")
+				cli.DefineUint64FlagVar(&val, "uint64flag2", uint64(9), "desc")
+				cli.Start("cmd", "--uint64flag=8")
+				Expect(cmd.Flag("uint64flag2").Get()).To(Equal(uint64(8)))
+			})
+		})
+
+		Describe("UintFlag", func() {
+
+			It("should set and parse", func() {
+				cli.DefineUintFlag("uintflag", uint(10), "desc")
+				cli.Start("cmd", "--uintflag=9")
+				Expect(cmd.Flag("uintflag").Get()).To(Equal(uint(9)))
+			})
+
+			It("should set and parse from var", func() {
+				var val uint
+				cli.DefineUintFlagVar(&val, "uintflag", uint(10), "desc")
+				cli.DefineUintFlagVar(&val, "uintflag2", uint(9), "desc")
+				cli.Start("cmd", "--uintflag=8")
+				Expect(cmd.Flag("uintflag2").Get()).To(Equal(uint(8)))
+			})
+		})
+
 	})
 
 })
