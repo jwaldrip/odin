@@ -11,10 +11,10 @@ type paramable struct {
 }
 
 // Param returns named param
-func (cmd *paramable) Param(key string) Value {
-	value, ok := cmd.paramValues[key]
+func (cmd *paramable) Param(name string) Value {
+	value, ok := cmd.paramValues[name]
 	if !ok {
-		cmd.errf("invalid param: %s", key)
+		panic(fmt.Sprintf("param not defined %v", name))
 	}
 	return value
 }
