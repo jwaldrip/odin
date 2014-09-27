@@ -87,7 +87,7 @@ func (cmd *CLI) Start(args ...string) {
 
 	// Show a version
 	if len(cmd.Version()) > 0 && cmd.Flag("version").Get() == true {
-		fmt.Println(cmd.Name(), cmd.Version())
+		fmt.Fprintln(cmd.StdOutput(), cmd.Name(), cmd.Version())
 		return
 	}
 
