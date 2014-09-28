@@ -236,6 +236,10 @@ greet-with 1.0.0
 
 *Example CLIs can be found in [./examples](https://github.com/jwaldrip/odin/tree/master/examples)*
 
+## Todo
+
+* Bash Completion
+
 ## Contributing
 
 See [CONTRIBUTING](https://github.com/jwaldrip/odin/blob/master/CONTRIBUTING.md) for details on how to contribute.
