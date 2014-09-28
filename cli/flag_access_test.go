@@ -33,6 +33,12 @@ var _ = Describe("Flag Access", func() {
 		It("should return a flag's value", func() {
 			Expect(cmd.Flag("foo").Get()).To(Equal(false))
 		})
+
+		Context("when a flag is not defined", func() {
+			It("should panic", func() {
+				Ω(func() { cmd.Flag("undefined") }).Should(Panic())
+			})
+		})
 	})
 
 	Describe("Flags() map[string]value", func() {
