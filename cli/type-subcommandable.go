@@ -11,7 +11,7 @@ type subCommandable struct {
 	subCommands map[string]*SubCommand
 }
 
-func (cmd *subCommandable) DefineSubCommand(name string, desc string, fn commandFn, paramNames ...string) *SubCommand {
+func (cmd *subCommandable) DefineSubCommand(name string, desc string, fn CommandFn, paramNames ...string) *SubCommand {
 	if cmd.subCommands == nil {
 		cmd.subCommands = make(map[string]*SubCommand)
 	}

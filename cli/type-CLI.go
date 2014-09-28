@@ -13,7 +13,7 @@ type CLI struct {
 	subCommandable
 	*writer
 
-	fn           commandFn
+	fn           CommandFn
 	name         string
 	description  string
 	unparsedArgs []Value
@@ -21,7 +21,7 @@ type CLI struct {
 
 // NewCLI returns a new cli with the specified name and
 // error handling property.
-func NewCLI(version, desc string, fn commandFn, paramNames ...string) *CLI {
+func NewCLI(version, desc string, fn CommandFn, paramNames ...string) *CLI {
 	nameParts := strings.Split(os.Args[0], "/")
 	cli := new(CLI)
 	cli.init(nameParts[len(nameParts)-1], desc, fn, paramNames...)
@@ -41,7 +41,7 @@ func (cmd *CLI) Arg(index int) Value {
 }
 
 // DefineSubCommand return a SubCommand and adds the current CLI as the parent
-func (cmd *CLI) DefineSubCommand(name string, desc string, fn commandFn, paramNames ...string) *SubCommand {
+func (cmd *CLI) DefineSubCommand(name string, desc string, fn CommandFn, paramNames ...string) *SubCommand {
 	subcmd := cmd.subCommandable.DefineSubCommand(name, desc, fn, paramNames...)
 	subcmd.parent = cmd
 	return subcmd
@@ -151,7 +151,7 @@ func (cmd *CLI) assignUnparsedArgs(args []string) {
 	}
 }
 
-func (cmd *CLI) init(name, desc string, fn commandFn, paramNames ...string) {
+func (cmd *CLI) init(name, desc string, fn CommandFn, paramNames ...string) {
 	writer := &writer{ErrorHandling: ExitOnError}
 	cmd.writer = writer
 	cmd.flagable = flagable{writer: writer}
