@@ -42,8 +42,17 @@ var _ = Describe("Flag parsing", func() {
 	})
 
 	Context("invalid flags", func() {
-		It("should panic", func() {
-			Ω(func() { cli.Start("cmd", "--invalid") }).Should(Panic())
+		It("undefined should panic", func() {
+			Ω(func() { cli.Start("cmd", "--undefined") }).Should(Panic())
+		})
+
+		It("malformed should panic", func() {
+			Ω(func() { cli.Start("cmd", "-=") }).Should(Panic())
+		})
+
+		It("improper value should panic", func() {
+			cli.DefineBoolFlag("bool", false, "")
+			Ω(func() { cli.Start("cmd", "--bool=funny") }).Should(Panic())
 		})
 	})
 
