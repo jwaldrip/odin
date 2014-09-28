@@ -422,7 +422,7 @@ func (cmd *flagable) setFlagValue(flag *Flag, args []string) []string {
 		cmd.errf("flag \"--%v\" is missing a value", flag.Name)
 	}
 
-	exitIfError(err)
+	cmd.handleErr(err)
 
 	if len(args) > cutLen {
 		return args[cutLen:]
