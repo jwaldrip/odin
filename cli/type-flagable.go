@@ -181,9 +181,6 @@ func (cmd *flagable) Flags() map[string]Value {
 	return flags
 }
 
-// FlagCount returns the number of flags that have been set.
-func (cmd *flagable) FlagCount() int { return len(cmd.flagValues) }
-
 // UsageString returns the flags usage as a string
 func (cmd *flagable) UsageString() string {
 	var maxBufferLen int
