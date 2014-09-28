@@ -9,7 +9,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("CLI Start", func() {
+var _ = Describe("Flag definitions", func() {
 
 	var cli *CLI
 	var cmd Command
@@ -26,7 +26,7 @@ var _ = Describe("CLI Start", func() {
 		cli.Mute()
 	})
 
-	Describe("flag aliasing", func() {
+	Describe("aliasing", func() {
 		BeforeEach(func() {
 			cli.DefineBoolFlag("valid", false, "valid flag")
 		})
@@ -44,7 +44,13 @@ var _ = Describe("CLI Start", func() {
 		})
 	})
 
-	Describe("flag definitions", func() {
+	Describe("type definitions", func() {
+
+		It("should panic if a flag is redefined", func() {
+			cli.DefineBoolFlag("foo", false, "")
+			Ω(func() { cli.DefineBoolFlag("foo", false, "") }).Should(Panic())
+		})
+
 		Describe("BoolFlag", func() {
 
 			It("should set and parse", func() {

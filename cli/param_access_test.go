@@ -7,7 +7,7 @@ import (
 	// . "github.com/onsi/gomega"
 )
 
-var _ = Describe("CLI Start", func() {
+var _ = Describe("Param Access", func() {
 
 	var cli *CLI
 	var cmd Command
