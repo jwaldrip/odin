@@ -56,13 +56,6 @@ var _ = Describe("Flag parsing", func() {
 		})
 	})
 
-	Context("when a flag is not defined", func() {
-		It("should panic", func() {
-			cli.Start("cmd")
-			Ω(func() { cmd.Flag("undefined") }).Should(Panic())
-		})
-	})
-
 	Context("boolean flags", func() {
 
 		It("should set boolean flags as true if set", func() {
