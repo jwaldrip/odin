@@ -26,6 +26,16 @@ var _ = Describe("Param Parsing", func() {
 		cli.DefineParams("paramA", "paramB")
 	})
 
+	Context("missing params", func() {
+		It("should panic on a single missing param", func() {
+			Ω(func() { cli.Start("cmd", "a") }).Should(Panic())
+		})
+
+		It("should panic on a multiple missing params", func() {
+			Ω(func() { cli.Start("cmd") }).Should(Panic())
+		})
+	})
+
 	It("should set the parameters by position", func() {
 		cli.Start("cmd", "foo", "bar")
 		Expect(cmd.Param("paramA").Get()).To(Equal("foo"))
