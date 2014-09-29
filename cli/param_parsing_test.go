@@ -28,11 +28,11 @@ var _ = Describe("Param Parsing", func() {
 
 	Context("missing params", func() {
 		It("should panic on a single missing param", func() {
-			Ω(func() { cli.Start("cmd", "a") }).Should(Panic())
+			Expect(func() { cli.Start("cmd", "a") }).Should(Panic())
 		})
 
 		It("should panic on a multiple missing params", func() {
-			Ω(func() { cli.Start("cmd") }).Should(Panic())
+			Expect(func() { cli.Start("cmd") }).Should(Panic())
 		})
 	})
 
@@ -49,7 +49,7 @@ var _ = Describe("Param Parsing", func() {
 
 	Context("when a paramter is mising", func() {
 		It("should raise an error", func() {
-			Ω(func() { cli.Start("cmd") }).Should(Panic())
+			Expect(func() { cli.Start("cmd") }).Should(Panic())
 		})
 	})
 

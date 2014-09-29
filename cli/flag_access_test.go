@@ -36,7 +36,7 @@ var _ = Describe("Flag Access", func() {
 
 		Context("when a flag is not defined", func() {
 			It("should panic", func() {
-				Ω(func() { cmd.Flag("undefined") }).Should(Panic())
+				Expect(func() { cmd.Flag("undefined") }).Should(Panic())
 			})
 		})
 	})

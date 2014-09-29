@@ -33,13 +33,13 @@ var _ = Describe("Flag definitions", func() {
 
 		Context("with a valid flag", func() {
 			It("should not panic", func() {
-				Ω(func() { cli.AliasFlag('a', "valid") }).ShouldNot(Panic())
+				Expect(func() { cli.AliasFlag('a', "valid") }).ShouldNot(Panic())
 			})
 		})
 
 		Context("without a valid flag", func() {
 			It("should panic", func() {
-				Ω(func() { cli.AliasFlag('a', "notvalid") }).Should(Panic())
+				Expect(func() { cli.AliasFlag('a', "notvalid") }).Should(Panic())
 			})
 		})
 	})
@@ -48,7 +48,7 @@ var _ = Describe("Flag definitions", func() {
 
 		It("should panic if a flag is redefined", func() {
 			cli.DefineBoolFlag("foo", false, "")
-			Ω(func() { cli.DefineBoolFlag("foo", false, "") }).Should(Panic())
+			Expect(func() { cli.DefineBoolFlag("foo", false, "") }).Should(Panic())
 		})
 
 		Describe("BoolFlag", func() {

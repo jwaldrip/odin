@@ -32,7 +32,7 @@ var _ = Describe("Param Access", func() {
 
 		Context("when a param is not defined", func() {
 			It("should panic", func() {
-				Ω(func() { cmd.Param("undefined") }).Should(Panic())
+				Expect(func() { cmd.Param("undefined") }).Should(Panic())
 			})
 		})
 	})

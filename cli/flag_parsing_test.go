@@ -43,16 +43,16 @@ var _ = Describe("Flag parsing", func() {
 
 	Context("invalid flags", func() {
 		It("undefined should panic", func() {
-			Ω(func() { cli.Start("cmd", "--undefined") }).Should(Panic())
+			Expect(func() { cli.Start("cmd", "--undefined") }).Should(Panic())
 		})
 
 		It("malformed should panic", func() {
-			Ω(func() { cli.Start("cmd", "-=") }).Should(Panic())
+			Expect(func() { cli.Start("cmd", "-=") }).Should(Panic())
 		})
 
 		It("improper value should panic", func() {
 			cli.DefineBoolFlag("bool", false, "")
-			Ω(func() { cli.Start("cmd", "--bool=funny") }).Should(Panic())
+			Expect(func() { cli.Start("cmd", "--bool=funny") }).Should(Panic())
 		})
 	})
 
@@ -80,13 +80,13 @@ var _ = Describe("Flag parsing", func() {
 
 	Context("when an invalid flag was passed", func() {
 		It("should raise an error", func() {
-			Ω(func() { cli.Start("cmd", "--bad") }).Should(Panic())
+			Expect(func() { cli.Start("cmd", "--bad") }).Should(Panic())
 		})
 	})
 
 	Context("when a non-boolflag was not provided a value", func() {
 		It("should raise an error", func() {
-			Ω(func() { cli.Start("cmd", "--bar") }).Should(Panic())
+			Expect(func() { cli.Start("cmd", "--bar") }).Should(Panic())
 		})
 	})
 
@@ -106,13 +106,13 @@ var _ = Describe("Flag parsing", func() {
 
 		Context("when an invalid alias was passed", func() {
 			It("should raise an error", func() {
-				Ω(func() { cli.Start("cmd", "-op") }).Should(Panic())
+				Expect(func() { cli.Start("cmd", "-op") }).Should(Panic())
 			})
 		})
 
 		Context("when a non-boolflag was not provided a value", func() {
 			It("should raise an error", func() {
-				Ω(func() { cli.Start("cmd", "-or") }).Should(Panic())
+				Expect(func() { cli.Start("cmd", "-or") }).Should(Panic())
 			})
 		})
 

@@ -38,7 +38,7 @@ var _ = Describe("CLI Start", func() {
 
 	Context("when the subcommand is not valid", func() {
 		It("should raise an error", func() {
-			Ω(func() { cli.Start("cmd", "bad") }).Should(Panic())
+			Expect(func() { cli.Start("cmd", "bad") }).Should(Panic())
 		})
 	})
 
