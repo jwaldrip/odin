@@ -165,7 +165,7 @@ cmd.Arg(0) Value
 *or just by getting them all as a `slice`*
 
 ```go
-cmd.Args() []Value
+cmd.Args() ValueList
 ```
 
 ### Sub Commands
