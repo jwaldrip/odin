@@ -10,6 +10,7 @@ import "strings"
 
 type colorfulString string
 
+// CLI is the Program
 var CLI = cli.New("1.0.0", "a simple tool to greet with", greet, "greeting")
 
 func init() {
@@ -24,7 +25,7 @@ func main() {
 	CLI.Start()
 }
 
-func greet(c odin.Command) {
+func greet(c cli.Command) {
 	str := fmt.Sprintf("%s", c.Param("greeting"))
 	if c.Flag("loudly").Get() == true {
 		str = strings.ToUpper(str)
@@ -35,7 +36,7 @@ func greet(c odin.Command) {
 	fmt.Println(str)
 }
 
-func greetGreetee(c odin.Command) {
+func greetGreetee(c cli.Command) {
 	greeting := c.Parent().Param("greeting")
 	greetee := c.Param("greetee")
 	str := fmt.Sprintf("%s %s", greeting, greetee)
@@ -45,7 +46,6 @@ func greetGreetee(c odin.Command) {
 	if c.Parent().Flag("color").String() != "" {
 		str = colorfulString(str).color(c.Parent().Flag("color").String())
 	}
-	fmt.Println(str, strings.Join(c.Args(), " "))
 }
 
 func (s colorfulString) color(color string) string {
