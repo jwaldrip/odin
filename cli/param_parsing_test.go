@@ -42,7 +42,7 @@ var _ = Describe("Param Parsing", func() {
 		Expect(cmd.Param("paramB").Get()).To(Equal("bar"))
 		Expect(cmd.Params()).To(
 			Equal(
-				map[string]Value{"paramA": cmd.Param("paramA"), "paramB": cmd.Param("paramB")},
+				ValueMap{"paramA": cmd.Param("paramA"), "paramB": cmd.Param("paramB")},
 			),
 		)
 	})

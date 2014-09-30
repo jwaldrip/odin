@@ -6,13 +6,13 @@ import "strings"
 type paramable struct {
 	*writer
 	params       paramsList
-	paramValues  map[string]Value
+	paramValues  map[*Param]Value
 	paramsParsed bool
 }
 
 // Param returns named param
 func (cmd *paramable) Param(name string) Value {
-	value, ok := cmd.paramValues[name]
+	value, ok := cmd.Params()[name]
 	if !ok {
 		panic(fmt.Sprintf("param not defined %v", name))
 	}
@@ -20,8 +20,12 @@ func (cmd *paramable) Param(name string) Value {
 }
 
 // Args returns the non-flag arguments.
-func (cmd *paramable) Params() map[string]Value {
-	return cmd.paramValues
+func (cmd *paramable) Params() ValueMap {
+	params := make(ValueMap)
+	for param, value := range cmd.paramValues {
+		params[param.Name] = value
+	}
+	return params
 }
 
 // UsageString returns the params usage as a string
@@ -57,9 +61,9 @@ func (cmd *paramable) parse(args []string) []string {
 		seenParams = append(seenParams, param)
 		str := ""
 		if cmd.paramValues == nil {
-			cmd.paramValues = make(map[string]Value)
+			cmd.paramValues = make(map[*Param]Value)
 		}
-		cmd.paramValues[param.Name] = newStringValue(args[i], &str)
+		cmd.paramValues[param] = newStringValue(args[i], &str)
 		i++
 	}
 	missingParams := cmd.params.Compare(seenParams)

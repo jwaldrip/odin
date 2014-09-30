@@ -173,8 +173,8 @@ func (cmd *flagable) Flag(name string) Value {
 }
 
 // Flags returns the flags as a map of strings with Values
-func (cmd *flagable) Flags() map[string]Value {
-	flags := make(map[string]Value)
+func (cmd *flagable) Flags() ValueMap {
+	flags := make(ValueMap)
 	for name := range cmd.flags {
 		flags[name] = cmd.Flag(name)
 	}

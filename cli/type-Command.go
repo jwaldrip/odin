@@ -8,8 +8,8 @@ type Command interface {
 	Parent() Command
 	Name() string
 	Flag(string) Value
-	Flags() map[string]Value
+	Flags() ValueMap
 	Param(string) Value
-	Params() map[string]Value
+	Params() ValueMap
 	Start(...string)
 }
