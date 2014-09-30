@@ -4,7 +4,7 @@ package cli
 type Command interface {
 	Usage()
 	Arg(int) Value
-	Args() []Value
+	Args() ValueList
 	Parent() Command
 	Name() string
 	Flag(string) Value
