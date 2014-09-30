@@ -52,7 +52,7 @@ Flags support a number of different types and can be defined by using a basic de
 
 *Basic Definitions are in the format of:*
 ```go
-DefineTypeFlag(name string, deafultValue typedValue, usage string)
+DefineTypeFlag(name string, defaultValue typedValue, usage string)
 ```
 *Pointer Definitions are in the format of:*
 ```go
