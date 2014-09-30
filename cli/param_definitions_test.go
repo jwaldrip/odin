@@ -19,7 +19,7 @@ var _ = Describe("Param Definitions", func() {
 			cmd = c
 			didRun = true
 		}
-		cli = NewCLI("v1.0.0", "sample description", runFn, "a", "b")
+		cli = New("v1.0.0", "sample description", runFn, "a", "b")
 		cli.ErrorHandling = PanicOnError
 		cli.Mute()
 	})

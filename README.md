@@ -35,7 +35,7 @@ go get github.com/jwaldrip/odin/cli
 ### Creating a new CLI
 
 ```go
-NewCLI(version string, description string, fn func(), params...)
+New(version string, description string, fn func(), params...)
 ```
 
 ### Flags
@@ -91,7 +91,7 @@ import (
 )
 
 // CLI is the odin CLI
-var CLI = cli.NewCLI("0.0.1", "my cli", func(c cli.Command){
+var CLI = New("0.0.1", "my cli", func(c cli.Command){
 	if c.Flag("gopher").Get() == true {
 		fmt.Println("IT IS JUST GOPHERTASTIC!!!")
 	} else {
@@ -129,7 +129,7 @@ Commands can specify parameters that they require in the order they are passed. 
 *They can be defined at CLI creation...*
 
 ```go
-NewCLI(version string, description string, fn CommandFn, params ...string)
+New(version string, description string, fn CommandFn, params ...string)
 ```
 
 *or at a later time...*

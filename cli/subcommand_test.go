@@ -20,7 +20,7 @@ var _ = Describe("CLI Start", func() {
 			cmd = c
 			didRun = true
 		}
-		cli = NewCLI("v1.0.0", "sample description", runFn)
+		cli = New("v1.0.0", "sample description", runFn)
 		cli.ErrorHandling = PanicOnError
 		cli.Mute()
 		didRunSub = false

@@ -19,7 +19,7 @@ var _ = Describe("Param Access", func() {
 			cmd = c
 			didRun = true
 		}
-		cli = NewCLI("v1.0.0", "sample description", runFn, "foo", "bar")
+		cli = New("v1.0.0", "sample description", runFn, "foo", "bar")
 		cli.ErrorHandling = PanicOnError
 		cli.Mute()
 		cli.Start("cmd", "a", "b")

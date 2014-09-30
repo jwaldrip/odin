@@ -10,7 +10,7 @@ import "strings"
 
 type colorfulString string
 
-var cli = odin.NewCLI("1.0.0", "a simple tool to greet with", greet, "greeting")
+var cli = odin.New("1.0.0", "a simple tool to greet with", greet, "greeting")
 
 func init() {
 	cli.DefineBoolFlag("loudly", false, "say loudly")

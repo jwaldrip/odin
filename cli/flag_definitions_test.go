@@ -21,7 +21,7 @@ var _ = Describe("Flag definitions", func() {
 			cmd = c
 			didRun = true
 		}
-		cli = NewCLI("v1.0.0", "sample description", runFn)
+		cli = New("v1.0.0", "sample description", runFn)
 		cli.ErrorHandling = PanicOnError
 		cli.Mute()
 	})

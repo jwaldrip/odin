@@ -19,9 +19,9 @@ type CLI struct {
 	unparsedArgs []Value
 }
 
-// NewCLI returns a new cli with the specified name and
+// New returns a new cli with the specified name and
 // error handling property.
-func NewCLI(version, desc string, fn CommandFn, paramNames ...string) *CLI {
+func New(version, desc string, fn CommandFn, paramNames ...string) *CLI {
 	nameParts := strings.Split(os.Args[0], "/")
 	cli := new(CLI)
 	cli.init(nameParts[len(nameParts)-1], desc, fn, paramNames...)
@@ -29,6 +29,9 @@ func NewCLI(version, desc string, fn CommandFn, paramNames ...string) *CLI {
 	cli.description = desc
 	return cli
 }
+
+// Alias for New
+var NewCLI = New
 
 // Args returns any remaining args that were not parsed as params
 func (cmd *CLI) Args() []Value {

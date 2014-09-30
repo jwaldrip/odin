@@ -16,7 +16,7 @@ var _ = Describe("Flag Access", func() {
 		runFn := func(c Command) {
 			cmd = c
 		}
-		cli = NewCLI("v1.0.0", "sample description", runFn)
+		cli = New("v1.0.0", "sample description", runFn)
 		cli.ErrorHandling = PanicOnError
 		cli.Mute()
 
