@@ -46,6 +46,7 @@ func greetGreetee(c cli.Command) {
 	if c.Parent().Flag("color").String() != "" {
 		str = colorfulString(str).color(c.Parent().Flag("color").String())
 	}
+	fmt.Println(str, strings.Join(c.Args().Strings(), " "))
 }
 
 func (s colorfulString) color(color string) string {
