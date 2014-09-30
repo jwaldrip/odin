@@ -4,9 +4,9 @@ package cli
 type ValueMap map[string]Value
 
 // Values returns a ValueList of all the values in the map
-func (v *ValueMap) Values() ValueList {
+func (v ValueMap) Values() ValueList {
 	var valueList ValueList
-	for _, value := range *v {
+	for _, value := range v {
 		valueList = append(valueList, value)
 	}
 	return valueList
