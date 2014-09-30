@@ -3,25 +3,25 @@ package main
 import (
 	"os"
 
-	odin "github.com/jwaldrip/odin/cli"
+	"github.com/jwaldrip/odin/cli"
 )
 import "fmt"
 import "strings"
 
 type colorfulString string
 
-var cli = odin.New("1.0.0", "a simple tool to greet with", greet, "greeting")
+var CLI = cli.New("1.0.0", "a simple tool to greet with", greet, "greeting")
 
 func init() {
-	cli.DefineBoolFlag("loudly", false, "say loudly")
-	cli.AliasFlag('l', "loudly")
-	cli.DefineStringFlag("color", "blue", "color the output (red, blue, green)")
-	cli.AliasFlag('c', "color")
-	cli.DefineSubCommand("to", "greet a person", greetGreetee, "greetee")
+	CLI.DefineBoolFlag("loudly", false, "say loudly")
+	CLI.AliasFlag('l', "loudly")
+	CLI.DefineStringFlag("color", "blue", "color the output (red, blue, green)")
+	CLI.AliasFlag('c', "color")
+	CLI.DefineSubCommand("to", "greet a person", greetGreetee, "greetee")
 }
 
 func main() {
-	cli.Start()
+	CLI.Start()
 }
 
 func greet(c odin.Command) {
