@@ -146,10 +146,10 @@ cli.DefineParams(params ...string)
 	cmd.Param(name string) Value
 ```
 
-*or as a `map[string]Value` where the name is the string key of the map.*
+*or as a `ValueMap` where the name is the string key of the map.*
 
 ```go
-	cmd.Params() map[string]Value
+	cmd.Params() ValueMap
 ```
 
 ### Freeform Parameters
