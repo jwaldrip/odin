@@ -41,11 +41,23 @@ var _ = Describe("Flag Access", func() {
 		})
 	})
 
-	Describe("Flags() map[string]value", func() {
+	Describe("Flags() ValueMap", func() {
 		It("should return each flags value", func() {
 			for k, v := range cmd.Flags() {
 				Expect(v).To(Equal(cmd.Flag(k)))
 			}
+		})
+
+		It("Should be a value map", func() {
+			Expect(cmd.Flags().Keys()).To(ContainElement("foo"))
+			Expect(cmd.Flags().Keys()).To(ContainElement("bar"))
+			Expect(cmd.Flags().Keys()).To(ContainElement("baz"))
+			Expect(cmd.Flags().Values().GetAll()).To(ContainElement(false))
+			Expect(cmd.Flags().Values().GetAll()).To(ContainElement(""))
+			Expect(cmd.Flags().Values().GetAll()).To(ContainElement(true))
+			Expect(cmd.Flags().Values().Strings()).To(ContainElement("false"))
+			Expect(cmd.Flags().Values().Strings()).To(ContainElement(""))
+			Expect(cmd.Flags().Values().Strings()).To(ContainElement("true"))
 		})
 	})
 

@@ -53,4 +53,14 @@ var _ = Describe("Param Parsing", func() {
 		})
 	})
 
+	It("Should be a value map", func() {
+		cli.Start("cmd", "foo", "bar")
+		Expect(cmd.Params().Keys()).To(ContainElement("paramA"))
+		Expect(cmd.Params().Keys()).To(ContainElement("paramB"))
+		Expect(cmd.Params().Values().GetAll()).To(ContainElement("foo"))
+		Expect(cmd.Params().Values().GetAll()).To(ContainElement("bar"))
+		Expect(cmd.Params().Values().Strings()).To(ContainElement("foo"))
+		Expect(cmd.Params().Values().Strings()).To(ContainElement("bar"))
+	})
+
 })

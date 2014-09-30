@@ -40,4 +40,12 @@ var _ = Describe("Freeform Args Parsing", func() {
 		})
 	})
 
+	It("Should be a value list", func() {
+		cli.Start("cmd", "foo", "bar")
+		Expect(cmd.Args().GetAll()).To(ContainElement("foo"))
+		Expect(cmd.Args().GetAll()).To(ContainElement("bar"))
+		Expect(cmd.Args().Strings()).To(ContainElement("foo"))
+		Expect(cmd.Args().Strings()).To(ContainElement("bar"))
+	})
+
 })
