@@ -16,7 +16,7 @@ type CLI struct {
 	fn           CommandFn
 	name         string
 	description  string
-	unparsedArgs []Value
+	unparsedArgs ValueList
 }
 
 // New returns a new cli with the specified name and
