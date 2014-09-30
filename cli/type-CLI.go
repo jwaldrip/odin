@@ -34,7 +34,7 @@ func New(version, desc string, fn CommandFn, paramNames ...string) *CLI {
 var NewCLI = New
 
 // Args returns any remaining args that were not parsed as params
-func (cmd *CLI) Args() []Value {
+func (cmd *CLI) Args() ValueList {
 	return cmd.unparsedArgs
 }
 
