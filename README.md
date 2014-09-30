@@ -239,6 +239,7 @@ greet-with 1.0.0
 ## Todo
 
 * Bash Completion
+* Zsh Completion
 * CLI Bootstrapping
 
 ## Contributing
