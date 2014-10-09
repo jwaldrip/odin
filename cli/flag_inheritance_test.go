@@ -40,6 +40,13 @@ var _ = Describe("CLI Start", func() {
 			cli.Start("cmd", "--foo", "razzle")
 			Expect(subcmd.Flag("foo").Get()).To(Equal(true))
 		})
+
+		Context("when there is not parent", func() {
+			It("should raise an error", func() {
+				Expect(cli.Parent()).To(BeNil())
+				Expect(func() { cli.InheritFlag("") }).Should(Panic())
+			})
+		})
 	})
 
 	Describe("InheritFlags", func() {
@@ -57,6 +64,14 @@ var _ = Describe("CLI Start", func() {
 			cli.Start("cmd", "--foo", "razzle")
 			Expect(subcmd.Flag("foo").Get()).To(Equal(true))
 		})
+
+		It("should propogate deeply", func() {
+			var subsubcmd Command
+			sub.DefineSubCommand("baz", "a deeper command", func(c Command) { subsubcmd = c })
+			cli.SubCommandsInheritFlag("foo")
+			cli.Start("cmd", "--foo", "razzle", "baz")
+			Expect(subsubcmd.Flag("foo").Get()).To(Equal(true))
+		})
 	})
 
 	Describe("SubCommandsInheritFlags", func() {
@@ -65,6 +80,15 @@ var _ = Describe("CLI Start", func() {
 			cli.Start("cmd", "--foo", "--bar=dive", "razzle")
 			Expect(subcmd.Flag("foo").Get()).To(Equal(true))
 			Expect(subcmd.Flag("bar").Get()).To(Equal("dive"))
+		})
+
+		It("should propogate deeply", func() {
+			var subsubcmd Command
+			sub.DefineSubCommand("baz", "a deeper command", func(c Command) { subsubcmd = c })
+			cli.SubCommandsInheritFlags("foo", "bar")
+			cli.Start("cmd", "--foo", "--bar=dive", "razzle", "baz")
+			Expect(subsubcmd.Flag("foo").Get()).To(Equal(true))
+			Expect(subsubcmd.Flag("bar").Get()).To(Equal("dive"))
 		})
 	})
 })

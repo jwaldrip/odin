@@ -45,5 +45,7 @@ func (cmd *CLI) copyPropogatingFlags() {
 	if cmd.parent == nil {
 		return
 	}
-	cmd.InheritFlags(cmd.parent.(*CLI).propogatingFlags.Names()...)
+	parentPropogatingFlags := cmd.parent.(*CLI).propogatingFlags
+	cmd.propogatingFlags = parentPropogatingFlags.Merge(cmd.propogatingFlags)
+	cmd.InheritFlags(parentPropogatingFlags.Names()...)
 }
