@@ -1,7 +1,9 @@
 package cli
 
+// paramsList a list of params
 type paramsList []*Param
 
+// Compare compares two lists and returns the difference
 func (l paramsList) Compare(Y paramsList) paramsList {
 	m := make(map[*Param]int)
 
@@ -21,6 +23,7 @@ func (l paramsList) Compare(Y paramsList) paramsList {
 	return ret
 }
 
+// Names returns the list of parameters names as a slice of strings
 func (l paramsList) Names() []string {
 	var names []string
 	for i := 0; i < len(l); i++ {

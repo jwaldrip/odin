@@ -2,6 +2,7 @@ package cli_test
 
 import (
 	. "github.com/jwaldrip/odin/cli"
+	"github.com/jwaldrip/odin/cli/values"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -42,7 +43,7 @@ var _ = Describe("Param Parsing", func() {
 		Expect(cmd.Param("paramB").Get()).To(Equal("bar"))
 		Expect(cmd.Params()).To(
 			Equal(
-				ValueMap{"paramA": cmd.Param("paramA"), "paramB": cmd.Param("paramB")},
+				values.Map{"paramA": cmd.Param("paramA"), "paramB": cmd.Param("paramB")},
 			),
 		)
 	})

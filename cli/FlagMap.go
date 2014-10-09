@@ -2,8 +2,10 @@ package cli
 
 import "sort"
 
+// flagMap is a map of flags with the name as a string key
 type flagMap map[string]*Flag
 
+// Sort returns a sorted list of flags
 func (fm flagMap) Sort() []*Flag {
 	list := make(sort.StringSlice, len(fm))
 	i := 0

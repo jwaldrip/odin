@@ -1,10 +1,10 @@
-package cli
+package values
 
-// ValueList is list of values
-type ValueList []Value
+// List is list of values
+type List []Value
 
 // GetAll gets an interface for all values in the list
-func (v ValueList) GetAll() []interface{} {
+func (v List) GetAll() []interface{} {
 	var interfaces []interface{}
 	for _, value := range v {
 		interfaces = append(interfaces, value.Get())
@@ -13,7 +13,7 @@ func (v ValueList) GetAll() []interface{} {
 }
 
 // Strings returns all the values as their strings
-func (v ValueList) Strings() []string {
+func (v List) Strings() []string {
 	var strings []string
 	for _, value := range v {
 		strings = append(strings, value.String())
