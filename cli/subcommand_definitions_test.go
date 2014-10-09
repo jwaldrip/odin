@@ -12,7 +12,6 @@ var _ = Describe("CLI Start", func() {
 	var cli *CLI
 	var cmd Command
 	var didRun bool
-	var didRunSub bool
 
 	BeforeEach(func() {
 		didRun = false
@@ -22,24 +21,39 @@ var _ = Describe("CLI Start", func() {
 		}
 		cli = New("v1.0.0", "sample description", runFn)
 		cli.ErrorHandling = PanicOnError
-		cli.Mute()
-		didRunSub = false
-		cli.DefineSubCommand("razzle", "razzle dazzle me", func(c Command) {
-			didRunSub = true
+		//cli.Mute()
+	})
+
+	Describe("DefineSubCommand", func() {
+		It("allow the defined command to run", func() {
+			var subDidRun bool
+			cli.DefineSubCommand("foo", "sub command", func(c Command) { subDidRun = true })
+			cli.Start("cmd", "foo")
+			Expect(subDidRun).To(Equal(true))
 		})
 	})
 
-	Context("when the subcommand is valid", func() {
-		It("should start a subcommand", func() {
-			cli.Start("cmd", "razzle")
-			Expect(didRunSub).To(Equal(true))
+	Describe("AddSubCommand", func() {
+		It("allow the defined command to run", func() {
+			var subDidRun bool
+			sub := NewSubCommand("foo", "sub command", func(c Command) { subDidRun = true })
+			cli.AddSubCommand(sub)
+			cli.Start("cmd", "foo")
+			Expect(subDidRun).To(Equal(true))
 		})
 	})
 
-	Context("when the subcommand is not valid", func() {
-		It("should raise an error", func() {
-			Expect(func() { cli.Start("cmd", "bad") }).Should(Panic())
+	Describe("AddSubCommand", func() {
+		It("allow the defined command to run", func() {
+			var subOneDidRun bool
+			var subTwoDidRun bool
+			subOne := NewSubCommand("foo", "sub command", func(c Command) { subOneDidRun = true })
+			subTwo := NewSubCommand("bar", "sub command", func(c Command) { subTwoDidRun = true })
+			cli.AddSubCommands(subOne, subTwo)
+			cli.Start("cmd", "foo")
+			cli.Start("cmd", "bar")
+			Expect(subOneDidRun).To(Equal(true))
+			Expect(subTwoDidRun).To(Equal(true))
 		})
 	})
-
 })
