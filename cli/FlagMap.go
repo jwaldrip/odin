@@ -20,3 +20,11 @@ func (fm flagMap) Sort() []*Flag {
 	}
 	return result
 }
+
+func (fm flagMap) Names() []string {
+	var keys []string
+	for k := range fm {
+		keys = append(keys, k)
+	}
+	return keys
+}

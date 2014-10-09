@@ -86,6 +86,12 @@ func (cmd *CLI) parseFlags(args []string) []string {
 	// Set all the flags to defaults before setting
 	cmd.setFlagDefaults()
 
+	// copy propogating flags
+	cmd.copyPropogatingFlags()
+
+	// Set inherited values
+	cmd.setFlagValuesFromParent()
+
 	// Set each flag by its set value
 	for {
 		// Break if no arguments remain
@@ -116,9 +122,8 @@ func (cmd *CLI) parseFlags(args []string) []string {
 
 // setAliasValues sets the values of flags from thier aliases
 func (cmd *CLI) setAliasValues(flags []*Flag, args []string) []string {
-	for i := 0; i < len(flags); i++ {
+	for i, flag := range flags {
 		isLastFlag := i == len(flags)-1
-		flag := flags[i]
 		if isLastFlag {
 			args = cmd.setFlagValue(flag, args)
 		} else {

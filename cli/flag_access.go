@@ -9,10 +9,7 @@ import (
 // Flag returns the Value interface to the value of the named flag,
 // returning nil if none exists.
 func (cmd *CLI) Flag(name string) values.Value {
-	flag, ok := cmd.flags[name]
-	if !ok {
-		panic(fmt.Sprintf("flag not defined %v", name))
-	}
+	flag := cmd.getFlag(name)
 	value := cmd.flagValues[flag]
 	return value
 }
@@ -24,4 +21,17 @@ func (cmd *CLI) Flags() values.Map {
 		flags[name] = cmd.Flag(name)
 	}
 	return flags
+}
+
+func (cmd *CLI) getFlag(name string) *Flag {
+	var ok bool
+	var flag *Flag
+	flag, ok = cmd.flags[name]
+	if !ok {
+		flag, ok = cmd.inheritedFlags[name]
+	}
+	if !ok {
+		panic(fmt.Sprintf("flag not defined %v", name))
+	}
+	return flag
 }

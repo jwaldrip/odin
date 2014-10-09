@@ -14,23 +14,25 @@ import "github.com/jwaldrip/odin/cli/values"
 type CLI struct {
 	ErrorHandling ErrorHandling
 
-	aliases         map[rune]*Flag
-	description     string
-	errOutput       io.Writer
-	flags           flagMap
-	flagsTerminated bool
-	flagValues      map[*Flag]values.Value
-	fn              func(Command)
-	name            string
-	params          paramsList
-	paramValues     map[*Param]values.Value
-	paramsParsed    bool
-	parent          Command
-	stdOutput       io.Writer
-	subCommands     map[string]*SubCommand
-	unparsedArgs    values.List
-	usage           func()
-	version         string
+	aliases          map[rune]*Flag
+	description      string
+	errOutput        io.Writer
+	flags            flagMap
+	flagsTerminated  bool
+	flagValues       map[*Flag]values.Value
+	fn               func(Command)
+	inheritedFlags   flagMap
+	name             string
+	params           paramsList
+	paramValues      map[*Param]values.Value
+	paramsParsed     bool
+	parent           Command
+	propogatingFlags flagMap
+	stdOutput        io.Writer
+	subCommands      map[string]*SubCommand
+	unparsedArgs     values.List
+	usage            func()
+	version          string
 }
 
 func (cmd *CLI) init(name, desc string, fn func(Command), paramNames ...string) {
