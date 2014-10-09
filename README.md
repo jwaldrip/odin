@@ -129,7 +129,7 @@ Commands can specify parameters that they require in the order they are passed. 
 *They can be defined at CLI creation...*
 
 ```go
-cli.New(version string, description string, fn CommandFn, params ...string)
+cli.New(version string, description string, fn func(Command), params ...string)
 ```
 
 *or at a later time...*
@@ -177,7 +177,7 @@ Sub commands can be defined in order to create chainable, complex command line u
 Sub commands have all the same defintion methods as the root level command, with one caveat; they have a `Parent()` method that can be used to fetch parameters and flags from further up the command chain.
 
 ```go
-mycli.DefineSubCommand(name string, description string, fn CommandFn, params ...string)
+mycli.DefineSubCommand(name string, description string, fn func(Command), params ...string)
 ```
 
 #### Accessing Params + Flags

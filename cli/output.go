@@ -4,37 +4,24 @@ import "os"
 import "io"
 import "fmt"
 
-type writer struct {
-	ErrorHandling ErrorHandling
-	usage         func()
-	errOutput     io.Writer
-	stdOutput     io.Writer
-}
-
 // ErrOutput is the error output for the command
-func (cmd *writer) ErrOutput() io.Writer {
+func (cmd *CLI) ErrOutput() io.Writer {
 	if cmd.errOutput == nil {
 		cmd.errOutput = os.Stderr
 	}
 	return cmd.errOutput
 }
 
-// Usage calls the Usage method for the flag set
-func (cmd *writer) Usage() {
-	if cmd.usage != nil {
-		cmd.usage()
-	}
-}
-
-func (cmd *writer) Mute() {
+// Mute mutes the output
+func (cmd *CLI) Mute() {
 	var err error
 	cmd.errOutput, err = os.Open(os.DevNull)
 	cmd.stdOutput, err = os.Open(os.DevNull)
 	exitIfError(err)
 }
 
-// ErrOutput is the error output for the command
-func (cmd *writer) StdOutput() io.Writer {
+// StdOutput is the error output for the command
+func (cmd *CLI) StdOutput() io.Writer {
 	if cmd.stdOutput == nil {
 		cmd.stdOutput = os.Stdout
 	}
@@ -43,7 +30,7 @@ func (cmd *writer) StdOutput() io.Writer {
 
 // failf prints to standard error a formatted error and usage message and
 // returns the error.
-func (cmd *writer) failf(format string, a ...interface{}) error {
+func (cmd *CLI) failf(format string, a ...interface{}) error {
 	err := fmt.Errorf(format, a...)
 	fmt.Fprintln(cmd.ErrOutput(), err)
 	fmt.Fprintln(cmd.ErrOutput(), "")
@@ -51,15 +38,15 @@ func (cmd *writer) failf(format string, a ...interface{}) error {
 	return err
 }
 
-func (cmd *writer) errf(format string, a ...interface{}) {
+func (cmd *CLI) errf(format string, a ...interface{}) {
 	cmd.handleErr(cmd.failf(format, a...))
 }
 
-func (cmd *writer) panicf(format string, a ...interface{}) {
+func (cmd *CLI) panicf(format string, a ...interface{}) {
 	panic(cmd.failf(format, a...))
 }
 
-func (cmd *writer) handleErr(err error) {
+func (cmd *CLI) handleErr(err error) {
 	if err != nil {
 		switch cmd.ErrorHandling {
 		case ExitOnError:
