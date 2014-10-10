@@ -21,7 +21,9 @@ func (cmd *CLI) InheritFlag(name string) {
 
 func (cmd *CLI) setFlagValuesFromParent() {
 	for name, flag := range cmd.inheritedFlags {
-		cmd.flagValues[flag] = cmd.parent.Flag(name)
+		if _, exist := cmd.flags[name]; !exist {
+			cmd.flagValues[flag] = cmd.parent.Flag(name)
+		}
 	}
 }
 
