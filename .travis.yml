@@ -3,11 +3,7 @@ go:
   - 1.2
   - 1.3
   - tip
-install:
-  - make install-deps
-  - go get code.google.com/p/go.tools/cmd/cover
-  - go get github.com/axw/gocov/gocov
-  - go get github.com/mattn/goveralls
-script:
-  - make test
-  - $HOME/gopath/bin/goveralls -repotoken Qmbg1eGELC9QLg1iV1CG3yHWCtYTe5iJn ./cli
+install: make install-deps
+script: goop exec make test
+
+after_script: goop exec goveralls -repotoken Qmbg1eGELC9QLg1iV1CG3yHWCtYTe5iJn ./cli
