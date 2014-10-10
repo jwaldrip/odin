@@ -72,6 +72,35 @@ var _ = Describe("CLI Start", func() {
 			cli.Start("cmd", "--foo", "razzle", "baz")
 			Expect(subsubcmd.Flag("foo").Get()).To(Equal(true))
 		})
+
+		It("should not propogate to parents", func() {
+			var subsubcmd Command
+			cli.SubCommandsInheritFlag("foo")
+			sub.DefineStringFlag("raz", "", "a foo flag")
+			sub.SubCommandsInheritFlag("raz")
+			sub.DefineSubCommand("baz", "a deeper command", func(c Command) { subsubcmd = c })
+			cli.Start("cmd", "razzle", "--raz=taz", "baz")
+			Expect(func() { cmd.Flag("raz") }).To(Panic())
+			Expect(subsubcmd.Flag("raz").Get()).To(Equal("taz"))
+		})
+
+		It("should allow overridding", func() {
+			var subsubcmd Command
+			cli.SubCommandsInheritFlag("foo")
+			sub.DefineStringFlag("foo", "", "a foo flag")
+			sub.DefineSubCommand("baz", "a deeper command", func(c Command) { subsubcmd = c })
+			cli.Start("cmd", "--foo", "razzle", "--foo=bizare")
+			Expect(subcmd.Flag("foo").Get()).To(Equal("bizare"))
+		})
+
+		It("overriding should stop propogation", func() {
+			var subsubcmd Command
+			cli.SubCommandsInheritFlag("foo")
+			sub.DefineStringFlag("foo", "", "a foo flag")
+			sub.DefineSubCommand("baz", "a deeper command", func(c Command) { subsubcmd = c })
+			cli.Start("cmd", "--foo", "razzle", "--foo=bizare", "baz")
+			Expect(func() { subsubcmd.Flag("foo") }).To(Panic())
+		})
 	})
 
 	Describe("SubCommandsInheritFlags", func() {
