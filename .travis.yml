@@ -5,5 +5,4 @@ go:
   - tip
 install: make install-deps
 script: goop exec make test
-
 after_script: goop exec goveralls -repotoken Qmbg1eGELC9QLg1iV1CG3yHWCtYTe5iJn ./cli
