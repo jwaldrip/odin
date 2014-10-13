@@ -12,6 +12,16 @@ func (cmd *CLI) ErrOutput() io.Writer {
 	return cmd.errOutput
 }
 
+// SetErrOutput sets the error output for the command
+func (cmd *CLI) SetErrOutput(writer io.Writer) {
+	cmd.errOutput = writer
+}
+
+// SetStdOutput sets the standard output for the command
+func (cmd *CLI) SetStdOutput(writer io.Writer) {
+	cmd.stdOutput = writer
+}
+
 // Mute mutes the output
 func (cmd *CLI) Mute() {
 	var err error
