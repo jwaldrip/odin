@@ -7,7 +7,8 @@ func (cmd *CLI) parseSubCommands(args []string) ([]string, bool) {
 	name := args[0]
 	subcmd, ok := cmd.subCommands[name]
 	if !ok {
-		subcmd.errf("invalid command: %s", name)
+		cmd.errf("invalid command: %s", name)
+		return args, false
 	}
 	subcmd.Start(args...)
 
