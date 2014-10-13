@@ -1,4 +1,8 @@
 code.google.com/p/go-uuid #7dda39b2e7d5e265014674c5af696ba4186679e9
+code.google.com/p/go.net #9cbdc6102a92af1201a1dbe68587693f2684e8a1
+code.google.com/p/go.tools/cmd/cover #a9cbf58422bba01fd4a6c6db5c95530003e31c3a
+code.google.com/p/goauth2 #afe77d958c701557ec5dc56f6936fcc194d15520
+code.google.com/p/google-api-go-client #11626ef0c2fd66fd8c9a128f6ae38b77cd101f30
 github.com/mattn/goveralls #89ffc28b5e4c741a73c4ce4dd63dcf5695ca627d
 github.com/onsi/ginkgo #6bd31378f9b5c099a60ab96b89f8fa9b48678d44
 github.com/onsi/gomega #a0ee4df1f2d58a75dd9d74e755615706d68e9ce9

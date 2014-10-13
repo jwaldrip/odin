@@ -26,8 +26,8 @@ func (l paramsList) Compare(Y paramsList) paramsList {
 // Names returns the list of parameters names as a slice of strings
 func (l paramsList) Names() []string {
 	var names []string
-	for i := 0; i < len(l); i++ {
-		names = append(names, l[i].Name)
+	for _, item := range l {
+		names = append(names, item.Name)
 	}
 	return names
 }

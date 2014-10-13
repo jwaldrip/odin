@@ -25,7 +25,20 @@ A go-lang library to help build self documenting command line applications.
 get the package with:
 
 ```
-go get github.com/jwaldrip/odin/cli
+go get gopkg.in/jwaldrip/odin.v1/cli
+```
+
+import it with:
+
+```go
+import "gopkg.in/jwaldrip/odin.v1/cli"
+```
+
+or using a a package manager like [Goop](https://github.com/nitrous-io/goop):
+
+```
+# Goopfile
+github.com/jwaldrip/odin #v1.4.0
 ```
 
 ## Usage
@@ -87,37 +100,37 @@ package main
 import (
 	"fmt"
 
-	"github.com/jwaldrip/odin/cli"
+	"gopkg.in/jwaldrip/odin.v1/cli"
 )
 
 // CLI is the odin CLI
-var CLI = cli.New("0.0.1", "my cli", func(c cli.Command){
+var app = cli.New("0.0.1", "my cli", func(c cli.Command){
 	if c.Flag("gopher").Get() == true {
-		fmt.Println("IT IS JUST GOPHERTASTIC!!!")
+		fmt.Println(IS JUST GOPHERTASTIC!!!")
 	} else {
-		fmt.Println("It is just fine")
+		fmt.Println("Is pretty dandy")
 	}
 })
 
 func init(){
-	CLI.DefineBoolFlag("gopher", false, "is it gophertastic?")
-	CLI.FlagAlias('g', "gopher")
+	app.DefineBoolFlag("gopher", false, "is it gophertastic?")
+	app.FlagAlias('g', "gopher")
 }
 
 func main(){
-	CLI.Start()
+	app.Start()
 }
 ```
 
 ```
 $ mycli
-It is just fine
+Is pretty dandy
 
 $ mycli --gopher
-IT IS JUST GOPHERTASTIC!!!
+IS JUST GOPHERTASTIC!!!
 
 $ mycli -g
-IT IS JUST GOPHERTASTIC!!!
+IS JUST GOPHERTASTIC!!!
 ```
 
 ### Required Parameters
@@ -135,7 +148,7 @@ cli.New(version string, description string, fn func(Command), params ...string)
 *or at a later time...*
 
 ```go
-cli.DefineParams(params ...string)
+app.DefineParams(params ...string)
 ```
 
 #### Accessing
@@ -196,6 +209,43 @@ cmd.Parent().Param("name")
 cmd.Parent().Flag("name")
 ```
 
+#### Flag Inheritence
+
+In addition to accesing the parent params via the `Parent()` you can instruct a sub command to inherit a flag from its parent.
+
+**example:**
+
+```go
+package main
+
+import (
+   "fmt"
+	"github.com/jwaldrip/odin"
+)
+
+var app = cli.New("0.0.1", "sample command", func(Command){})
+
+func init(){
+	app.DefineStringFlag("user", "", "the user")
+	subcmd := app.DefineSubCommand("action", "perform an action", func(c cli.Command){
+		fmt.Println("the user is:", c.Flag("user"))
+		fmt.Println("the action is:", c.Param("actionName"))
+	})
+	subcmd.DefineParams("actionName")
+	subcmd.InheritFlag("user")
+}
+
+func main(){
+	app.Start()
+}
+```
+
+```
+$ mycmd --user=jason action hello
+the user is: jason
+the action is: hello
+```
+
 ### Self Documentation
 
 #### Usage
@@ -241,6 +291,7 @@ greet-with 1.0.0
 * Bash Completion
 * Zsh Completion
 * CLI Bootstrapping
+* Param Inheritence
 
 ## Contributing
 

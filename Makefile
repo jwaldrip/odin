@@ -1,4 +1,4 @@
-test: install-deps
+test:
 	@clear
 	goop exec sh -c "cd cli && go test"
 
