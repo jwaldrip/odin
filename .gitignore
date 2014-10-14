@@ -16,4 +16,4 @@ _testmain.go
 *.prof
 coverage.out
 .vendor
-examples/greet-with/greet-with
+greet-with
