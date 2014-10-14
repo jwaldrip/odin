@@ -139,4 +139,14 @@ var _ = Describe("Flag parsing", func() {
 		})
 	})
 
+	Context("when continuing on error", func() {
+		Describe("invalid flag", func() {
+			It("should not panic", func() {
+				cli.ErrorHandling = ContinueOnError
+				cli.DefineSubCommand("nextcmd", "", func(c Command) {})
+				Expect(func() { cli.Start("cmd", "-x", "nextcmd") }).ToNot(Panic())
+			})
+		})
+	})
+
 })

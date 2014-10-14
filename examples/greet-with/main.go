@@ -8,31 +8,35 @@ import (
 import "fmt"
 import "strings"
 
-type colorfulString string
-
-// CLI is the Program
-var CLI = cli.New("1.0.0", "a simple tool to greet with", greet, "greeting")
+// Create a new cli application
+var app = cli.New("1.0.0", "a simple tool to greet with", greet, "greeting")
 
 func init() {
-	CLI.DefineBoolFlag("loudly", false, "say loudly")
-	CLI.AliasFlag('l', "loudly")
-	CLI.DefineStringFlag("color", "blue", "color the output (red, blue, green)")
-	CLI.AliasFlag('c', "color")
-	CLI.DefineSubCommand("to", "greet a person", greetGreetee, "greetee")
+	// define a flag called --loudly and also alias it to -l
+	app.DefineBoolFlag("loudly", false, "say loudly")
+	app.AliasFlag('l', "loudly")
+
+	// define a flag called --color and also alias it to -c
+	app.DefineStringFlag("color", "blue", "color the output (red, blue, green)")
+	app.AliasFlag('c', "color")
+
+	// add a sub command `to` that takes one param called `greetee`
+	subcmd := app.DefineSubCommand("to", "greet a person", greetGreetee, "greetee")
+
+	// tell the subcommand to inherit the flags we just defined
+	subcmd.InheritFlags("color", "loudly")
 }
 
 func main() {
-	CLI.Start()
+	// Run the app
+	app.Start()
 }
 
+// the greet command run by the root command
 func greet(c cli.Command) {
-	str := fmt.Sprintf("%s", c.Param("greeting"))
-	if c.Flag("loudly").Get() == true {
-		str = strings.ToUpper(str)
-	}
-	if c.Flag("color").String() != "" {
-		str = colorfulString(str).color(c.Flag("color").String())
-	}
+	greeting := c.Param("greeting")
+	str := fmt.Sprintf("%s", greeting)
+	str = styleByFlags(str, c)
 	fmt.Println(str)
 }
 
@@ -40,27 +44,35 @@ func greetGreetee(c cli.Command) {
 	greeting := c.Parent().Param("greeting")
 	greetee := c.Param("greetee")
 	str := fmt.Sprintf("%s %s", greeting, greetee)
-	if c.Parent().Flag("loudly").Get() == true {
-		str = strings.ToUpper(str)
-	}
-	if c.Parent().Flag("color").String() != "" {
-		str = colorfulString(str).color(c.Parent().Flag("color").String())
-	}
+	str = styleByFlags(str, c)
 	fmt.Println(str, strings.Join(c.Args().Strings(), " "))
 }
 
-func (s colorfulString) color(color string) string {
-	var coloredString string
+func styleByFlags(str string, c cli.Command) string {
+	if c.Flag("loudly").Get() == true {
+		str = louden(str)
+	}
+	if c.Flag("color").String() != "" {
+		str = colorize(str, c.Flag("color").String())
+	}
+	return str
+}
+
+func louden(str string) string {
+	return strings.ToUpper(str)
+}
+
+func colorize(str string, color string) string {
 	switch color {
 	case "red":
-		coloredString = fmt.Sprintf("\x1b[0;31;49m%s\x1b[0m", s)
+		str = fmt.Sprintf("\x1b[0;31;49m%s\x1b[0m", str)
 	case "blue":
-		coloredString = fmt.Sprintf("\x1b[0;34;49m%s\x1b[0m", s)
+		str = fmt.Sprintf("\x1b[0;34;49m%s\x1b[0m", str)
 	case "green":
-		coloredString = fmt.Sprintf("\x1b[0;32;49m%s\x1b[0m", s)
+		str = fmt.Sprintf("\x1b[0;32;49m%s\x1b[0m", str)
 	default:
 		fmt.Fprintln(os.Stderr, fmt.Sprintf("invalid color: '%s' ... try: 'red', 'blue', or 'green'", color))
 		os.Exit(2)
 	}
-	return coloredString
+	return str
 }

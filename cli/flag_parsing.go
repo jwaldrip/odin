@@ -153,6 +153,9 @@ func (cmd *CLI) setFlag(flag *Flag, value string) error {
 
 // setFlagValue sets the value of a given flag
 func (cmd *CLI) setFlagValue(flag *Flag, args []string) []string {
+	if flag == nil {
+		flag = noFlag // Fix for when we continue on error
+	}
 	splitArgs := []string{}
 	hasSetValue := false
 	hasPosValue := false

@@ -15,3 +15,12 @@ type boolFlag interface {
 	values.Value
 	IsBoolValue() bool
 }
+
+var noString string
+var noValue = values.NewString("", &noString)
+var noFlag = &Flag{
+	Name:     "",
+	Usage:    "",
+	DefValue: noValue.String(),
+	value:    noValue,
+}

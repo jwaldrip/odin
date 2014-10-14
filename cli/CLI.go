@@ -9,6 +9,9 @@ import "fmt"
 import "strings"
 import "github.com/jwaldrip/odin/cli/values"
 
+// ShowUsage is a function to show usage
+var ShowUsage = func(cmd Command) { cmd.Usage() }
+
 // CLI represents a set of defined flags.  The zero value of a FlagSet
 // has no name and has ContinueOnError error handling.
 type CLI struct {
@@ -50,6 +53,7 @@ func New(version, desc string, fn func(Command), paramNames ...string) *CLI {
 	cli.init(nameParts[len(nameParts)-1], desc, fn, paramNames...)
 	cli.version = version
 	cli.description = desc
+	cli.ErrorHandling = ExitOnError
 	return cli
 }
 
