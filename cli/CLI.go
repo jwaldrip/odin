@@ -50,6 +50,7 @@ func New(version, desc string, fn func(Command), paramNames ...string) *CLI {
 	cli.init(nameParts[len(nameParts)-1], desc, fn, paramNames...)
 	cli.version = version
 	cli.description = desc
+	cli.ErrorHandling = ExitOnError
 	return cli
 }
 
