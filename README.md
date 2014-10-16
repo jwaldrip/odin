@@ -106,7 +106,7 @@ import (
 // CLI is the odin CLI
 var app = cli.New("0.0.1", "my cli", func(c cli.Command){
 	if c.Flag("gopher").Get() == true {
-		fmt.Println(IS JUST GOPHERTASTIC!!!")
+		fmt.Println("IS JUST GOPHERTASTIC!!!")
 	} else {
 		fmt.Println("Is pretty dandy")
 	}
