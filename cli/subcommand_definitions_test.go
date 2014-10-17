@@ -41,6 +41,15 @@ var _ = Describe("CLI Start", func() {
 			cli.Start("cmd", "foo")
 			Expect(subDidRun).To(Equal(true))
 		})
+
+		It("should inherit ErrorHandling and fail when missing params", func() {
+			cli.Mute()
+			var subDidRun bool
+			sub := NewSubCommand("foo", "sub command", func(c Command) { subDidRun = true }, "bar")
+			cli.AddSubCommand(sub)
+			Expect(func() { cli.Start("cmd", "foo") }).Should(Panic())
+			Expect(subDidRun).To(Equal(false))
+		})
 	})
 
 	Describe("AddSubCommand", func() {
