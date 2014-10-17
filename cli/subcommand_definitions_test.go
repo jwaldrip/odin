@@ -52,7 +52,7 @@ var _ = Describe("CLI Start", func() {
 		})
 	})
 
-	Describe("AddSubCommand", func() {
+	Describe("AddSubCommands", func() {
 		It("allow the defined command to run", func() {
 			var subOneDidRun bool
 			var subTwoDidRun bool
