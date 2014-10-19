@@ -22,6 +22,7 @@ func (cmd *CLI) AddSubCommand(subcmdcopy *SubCommand) *SubCommand {
 	}
 	subcmd.errOutput = cmd.ErrOutput()
 	subcmd.stdOutput = cmd.StdOutput()
+	subcmd.ErrorHandling = cmd.ErrorHandling
 	cmd.subCommands[subcmd.name] = &subcmd
 	subcmd.parent = cmd
 	return &subcmd
