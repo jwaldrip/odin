@@ -3,7 +3,7 @@ package main
 import "github.com/jwaldrip/odin/cli"
 
 // VERSION is the odin version
-var VERSION = "1.4.1"
+var VERSION = "1.4.2"
 
 var app = cli.New(VERSION, "a command line DSL for go-lang", cli.ShowUsage)
 
