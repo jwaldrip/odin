@@ -21,7 +21,7 @@ var _ = Describe("CLI Start", func() {
 		}
 		cli = New("v1.0.0", "sample description", runFn)
 		cli.ErrorHandling = PanicOnError
-		//cli.Mute()
+		cli.Mute()
 	})
 
 	Describe("DefineSubCommand", func() {
@@ -43,12 +43,19 @@ var _ = Describe("CLI Start", func() {
 		})
 
 		It("should inherit ErrorHandling and fail when missing params", func() {
-			cli.Mute()
 			var subDidRun bool
 			sub := NewSubCommand("foo", "sub command", func(c Command) { subDidRun = true }, "bar")
 			cli.AddSubCommand(sub)
 			Expect(func() { cli.Start("cmd", "foo") }).Should(Panic())
 			Expect(subDidRun).To(Equal(false))
+		})
+
+		It("be able to access its parent", func() {
+			var subcmd Command
+			sub := NewSubCommand("foo", "sub command", func(c Command) { subcmd = c })
+			cli.AddSubCommand(sub)
+			cli.Start("cmd", "foo")
+			Expect(subcmd.Parent().(*CLI)).To(Equal(cli))
 		})
 	})
 
