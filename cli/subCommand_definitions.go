@@ -15,15 +15,20 @@ func (cmd *CLI) AddSubCommands(subcmds ...*SubCommand) {
 }
 
 // AddSubCommand adds a subcommand to a command
-func (cmd *CLI) AddSubCommand(subcmdcopy *SubCommand) *SubCommand {
-	subcmd := *subcmdcopy
+func (cmd *CLI) AddSubCommand(subcmd *SubCommand) *SubCommand {
 	if cmd.subCommands == nil {
 		cmd.subCommands = make(map[string]*SubCommand)
 	}
 	subcmd.errOutput = cmd.ErrOutput()
 	subcmd.stdOutput = cmd.StdOutput()
 	subcmd.ErrorHandling = cmd.ErrorHandling
-	cmd.subCommands[subcmd.name] = &subcmd
+	cmd.subCommands[subcmd.name] = subcmd
+	if subcmd.parent != nil {
+		panic("command already assigned")
+	}
+	if &subcmd.CLI == cmd {
+		panic("cannot assign subcmd to itself as a subcmd")
+	}
 	subcmd.parent = cmd
-	return &subcmd
+	return subcmd
 }

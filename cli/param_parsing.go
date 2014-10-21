@@ -7,20 +7,19 @@ import (
 )
 
 func (cmd *CLI) parseParams(args []string) []string {
+	var i int
 	var seenParams paramsList
 
 	if len(cmd.params) == 0 {
 		return args
 	}
-	i := 0
+	for _, param := range cmd.params {
+		cmd.setParamValue(param, "")
+	}
 	for i < len(args) && i < len(cmd.params) {
 		param := cmd.params[i]
 		seenParams = append(seenParams, param)
-		str := ""
-		if cmd.paramValues == nil {
-			cmd.paramValues = make(map[*Param]values.Value)
-		}
-		cmd.paramValues[param] = values.NewString(args[i], &str)
+		cmd.setParamValue(param, args[i])
 		i++
 	}
 	missingParams := cmd.params.Compare(seenParams)
@@ -35,4 +34,12 @@ func (cmd *CLI) parseParams(args []string) []string {
 	}
 
 	return args[i:]
+}
+
+func (cmd *CLI) setParamValue(param *Param, value string) {
+	str := ""
+	if cmd.paramValues == nil {
+		cmd.paramValues = make(map[*Param]values.Value)
+	}
+	cmd.paramValues[param] = values.NewString(value, &str)
 }
