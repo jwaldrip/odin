@@ -43,6 +43,7 @@ func (cmd *CLI) init(name, desc string, fn func(Command), paramNames ...string) 
 	cmd.fn = fn
 	cmd.description = desc
 	cmd.DefineParams(paramNames...)
+	cmd.ErrorHandling = ExitOnError
 }
 
 // New returns a new cli with the specified name and
@@ -53,7 +54,6 @@ func New(version, desc string, fn func(Command), paramNames ...string) *CLI {
 	cli.init(nameParts[len(nameParts)-1], desc, fn, paramNames...)
 	cli.version = version
 	cli.description = desc
-	cli.ErrorHandling = ExitOnError
 	return cli
 }
 
