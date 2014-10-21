@@ -24,10 +24,8 @@ func (cmd *CLI) Flags() values.Map {
 }
 
 func (cmd *CLI) getFlag(name string) *Flag {
-	var ok bool
-	var flag *Flag
-	flag, ok = cmd.inheritedFlags.Merge(cmd.flags)[name]
-	if !ok {
+	flag, exists := cmd.inheritedFlags.Merge(cmd.flags)[name]
+	if !exists {
 		panic(fmt.Sprintf("flag not defined %v", name))
 	}
 	return flag
