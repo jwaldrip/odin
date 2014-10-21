@@ -17,7 +17,7 @@ func (cmd *CLI) Flag(name string) values.Value {
 // Flags returns the flags as a map of strings with Values
 func (cmd *CLI) Flags() values.Map {
 	flags := make(values.Map)
-	for name := range cmd.flags {
+	for name := range cmd.inheritedFlags.Merge(cmd.flags) {
 		flags[name] = cmd.Flag(name)
 	}
 	return flags
