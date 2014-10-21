@@ -50,6 +50,21 @@ var _ = Describe("CLI Start", func() {
 			Expect(func() { cli.Start("cmd", "foo") }).Should(Panic())
 			Expect(subDidRun).To(Equal(false))
 		})
+
+		Context("when the sub command has already been assigned a parent", func() {
+			It("should panic", func() {
+				sub := NewSubCommand("foo", "sub command", ShowUsage, "bar")
+				cli.AddSubCommand(sub)
+				Expect(func() { cli.AddSubCommand(sub) }).To(Panic())
+			})
+		})
+
+		Context("when the sub command is assigned to itself", func() {
+			It("should panic", func() {
+				sub := NewSubCommand("foo", "sub command", ShowUsage, "bar")
+				Expect(func() { sub.AddSubCommand(sub) }).To(Panic())
+			})
+		})
 	})
 
 	Describe("AddSubCommands", func() {
