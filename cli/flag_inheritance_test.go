@@ -120,4 +120,15 @@ var _ = Describe("CLI Start", func() {
 			Expect(subsubcmd.Flag("bar").Get()).To(Equal("dive"))
 		})
 	})
+
+	Describe("SubSubCommandsInheritFlag", func() {
+		It("should propogate its flags to the sub commands", func() {
+			var subsubcmd Command
+			sub.DefineSubCommand("taz", "", func(c Command) { subsubcmd = c })
+			sub.DefineStringFlag("baz", "", "")
+			sub.SubCommandsInheritFlag("baz")
+			cli.Start("cmd", "razzle", "--baz=crud", "taz")
+			Expect(subsubcmd.Flag("baz").Get()).To(Equal("crud"))
+		})
+	})
 })
