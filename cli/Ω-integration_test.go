@@ -84,6 +84,26 @@ var _ = Describe("CLI Integration Test", func() {
 			})
 		})
 
+		It("should parse flags that occur after positional params and without sub-command", func() {
+			cli.Start(strings.Split("cmd example.com / --ssl", " ")...)
+			Expect(cmd.Param("host").Get()).To(Equal("example.com"))
+			Expect(cmd.Param("path").Get()).To(Equal("/"))
+			Expect(cmd.Flag("ssl").Get()).To(Equal(true))
+			Expect(cmd.Args()).To(BeZero())
+			Expect(didRun).To(Equal(true))
+		})
+
+		It("should parse flags that occur after positional params and with sub-command", func() {
+			subCmd.DefineBoolFlag("power", false, "with power")
+			cli.Start(strings.Split("cmd example.com / do something --power", " ")...)
+			Expect(cmd.Parent().Param("host").Get()).To(Equal("example.com"))
+			Expect(cmd.Parent().Param("path").Get()).To(Equal("/"))
+			Expect(cmd.Flag("power").Get()).To(Equal(true))
+			Expect(cmd.Param("action").Get()).To(Equal("something"))
+			Expect(cmd.Args()).To(BeZero())
+			Expect(subDidRun).To(Equal(true))
+		})
+
 	})
 
 })
