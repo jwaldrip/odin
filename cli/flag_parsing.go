@@ -44,7 +44,7 @@ func (cmd *CLI) flagFromArg(arg string) (bool, []*Flag) {
 	areAliases := isFlag && arg[1] != '-'
 	isTerminator := !areAliases && len(arg) == 2
 
-	if !isFlag || isTerminator {
+	if isTerminator {
 		cmd.flagsTerminated = true
 		return false, flags
 	}
@@ -70,54 +70,10 @@ func (cmd *CLI) flagFromArg(arg string) (bool, []*Flag) {
 	return areAliases, flags
 }
 
-func (cmd *CLI) initValues() {
+func (cmd *CLI) initFlagValues() {
 	if cmd.flagValues == nil {
 		cmd.flagValues = make(map[*Flag]values.Value)
 	}
-}
-
-// parseFlags flag definitions from the argument list, returns any left over
-// arguments after flags have been parsed.
-func (cmd *CLI) parseFlags(args []string) []string {
-	cmd.defineHelp()
-	cmd.defineVersion()
-	cmd.initValues()
-
-	// Set all the flags to defaults before setting
-	cmd.setFlagDefaults()
-
-	// copy propogating flags
-	cmd.copyPropogatingFlags()
-
-	// Set inherited values
-	cmd.setFlagValuesFromParent()
-
-	// Set each flag by its set value
-	for {
-		// Break if no arguments remain
-		if len(args) == 0 {
-			cmd.flagsTerminated = true
-			break
-		}
-		arg := args[0]
-		isAlias, flags := cmd.flagFromArg(arg)
-
-		// Break if the flags have been terminated
-		if cmd.flagsTerminated {
-			// Remove the flag terminator if it exists
-			if arg == "--" {
-				args = args[1:]
-			}
-			break
-		}
-		if isAlias {
-			args = cmd.setAliasValues(flags, args)
-		} else {
-			args = cmd.setFlagValue(flags[0], args)
-		}
-	}
-	// return the remaining unused args
-	return args
 }
 
 // setAliasValues sets the values of flags from thier aliases
