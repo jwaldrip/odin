@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"fmt"
 	"io"
 	"os"
 )
@@ -71,8 +72,23 @@ func (cmd *CLI) Start(args ...string) {
 		args = []string{}
 	}
 
-	// parse flags and params
-	args = cmd.parse(args)
+	// parse flags and args
+	args = cmd.parseFlags(args)
+
+	// Show a version
+	if len(cmd.Version()) > 0 && cmd.Flag("version").Get() == true {
+		fmt.Fprintln(cmd.StdOutput(), cmd.Name(), cmd.Version())
+		return
+	}
+
+	// Show Help
+	if cmd.Flag("help").Get() == true {
+		cmd.Usage()
+		return
+	}
+
+	// Parse Params
+	args = cmd.parseParams(args)
 
 	var subCommandsParsed bool
 	if args, subCommandsParsed = cmd.parseSubCommands(args); subCommandsParsed {
