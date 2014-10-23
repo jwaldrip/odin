@@ -32,6 +32,7 @@ var _ = Describe("CLI Integration Test", func() {
 		var subCmd *SubCommand
 
 		BeforeEach(func() {
+			subDidRun = false
 			cli.DefineParams("host", "path")
 			cli.DefineBoolFlag("ssl", false, "do it over ssl")
 			cli.AliasFlag('S', "ssl")
@@ -72,15 +73,21 @@ var _ = Describe("CLI Integration Test", func() {
 		})
 
 		Describe("version", func() {
-			It("should not panic", func() {
+			It("should not run command or panic", func() {
 				cli.Start("cmd", "--version")
+				Expect(didRun).To(Equal(false))
 			})
 		})
 
 		Describe("help", func() {
-			It("should not panic", func() {
+			It("should not run command or panic", func() {
 				cli.Start(strings.Split("cmd --help", " ")...)
+				Expect(didRun).To(Equal(false))
+			})
+
+			It("should not run sub-command or panic", func() {
 				cli.Start(strings.Split("cmd host path do --help", " ")...)
+				Expect(subDidRun).To(Equal(false))
 			})
 		})
 
