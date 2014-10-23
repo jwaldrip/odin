@@ -76,6 +76,72 @@ func (cmd *CLI) initFlagValues() {
 	}
 }
 
+// parse flag and param definitions from the argument list, returns any left
+// over arguments after flags have been parsed.
+func (cmd *CLI) parseFlags(args []string) []string {
+	cmd.defineHelp()
+	cmd.defineVersion()
+	cmd.initFlagValues()
+
+	// Set all the flags to defaults before setting
+	cmd.setFlagDefaults()
+
+	// copy propogating flags
+	cmd.copyPropogatingFlags()
+
+	// Set inherited values
+	cmd.setFlagValuesFromParent()
+
+	var paramIndex int
+	var paramArgs []string
+
+	// Set each flag by its set value
+	for {
+		// Break if no arguments remain
+		if len(args) == 0 {
+			cmd.flagsTerminated = true
+			break
+		}
+		arg := args[0]
+
+		if arg[0] != '-' { // Parse Param
+
+			if paramIndex == len(cmd.params) {
+				break
+			}
+			paramArgs = append(paramArgs, arg)
+			paramIndex++
+			args = args[1:]
+
+		} else { // Parse Flags
+
+			isAlias, flags := cmd.flagFromArg(arg)
+
+			// Break if the flags have been terminated
+			if cmd.flagsTerminated {
+				// Remove the flag terminator if it exists
+				if arg == "--" {
+					args = args[1:]
+				}
+				break
+			}
+
+			// Set flag values
+			if isAlias {
+				args = cmd.setAliasValues(flags, args)
+			} else {
+				args = cmd.setFlagValue(flags[0], args)
+			}
+		}
+	}
+
+	// reposition the Args so that they may still be parsed
+	args = append(paramArgs, args...)
+
+	// return the remaining unused args
+	return args
+}
+
 // setAliasValues sets the values of flags from thier aliases
 func (cmd *CLI) setAliasValues(flags []*Flag, args []string) []string {
 	for i, flag := range flags {
