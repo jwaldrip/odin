@@ -1,10 +1,10 @@
 package cli
 
 import (
+	"fmt"
 	"io"
 	"os"
 )
-import "fmt"
 
 import "strings"
 import "github.com/jwaldrip/odin/cli/values"

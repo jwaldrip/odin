@@ -32,6 +32,7 @@ var _ = Describe("CLI Integration Test", func() {
 		var subCmd *SubCommand
 
 		BeforeEach(func() {
+			subDidRun = false
 			cli.DefineParams("host", "path")
 			cli.DefineBoolFlag("ssl", false, "do it over ssl")
 			cli.AliasFlag('S', "ssl")
@@ -72,16 +73,42 @@ var _ = Describe("CLI Integration Test", func() {
 		})
 
 		Describe("version", func() {
-			It("should not panic", func() {
+			It("should not run command or panic", func() {
 				cli.Start("cmd", "--version")
+				Expect(didRun).To(Equal(false))
 			})
 		})
 
 		Describe("help", func() {
-			It("should not panic", func() {
+			It("should not run command or panic", func() {
 				cli.Start(strings.Split("cmd --help", " ")...)
-				cli.Start(strings.Split("cmd host path do --help", " ")...)
+				Expect(didRun).To(Equal(false))
 			})
+
+			It("should not run sub-command or panic", func() {
+				cli.Start(strings.Split("cmd host path do --help", " ")...)
+				Expect(subDidRun).To(Equal(false))
+			})
+		})
+
+		It("should parse flags that occur after positional params and without sub-command", func() {
+			cli.Start(strings.Split("cmd example.com / --ssl", " ")...)
+			Expect(cmd.Param("host").Get()).To(Equal("example.com"))
+			Expect(cmd.Param("path").Get()).To(Equal("/"))
+			Expect(cmd.Flag("ssl").Get()).To(Equal(true))
+			Expect(cmd.Args()).To(BeZero())
+			Expect(didRun).To(Equal(true))
+		})
+
+		It("should parse flags that occur after positional params and with sub-command", func() {
+			subCmd.DefineBoolFlag("power", false, "with power")
+			cli.Start(strings.Split("cmd example.com / do something --power", " ")...)
+			Expect(cmd.Parent().Param("host").Get()).To(Equal("example.com"))
+			Expect(cmd.Parent().Param("path").Get()).To(Equal("/"))
+			Expect(cmd.Flag("power").Get()).To(Equal(true))
+			Expect(cmd.Param("action").Get()).To(Equal("something"))
+			Expect(cmd.Args()).To(BeZero())
+			Expect(subDidRun).To(Equal(true))
 		})
 
 	})
