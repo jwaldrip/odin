@@ -129,12 +129,11 @@ var _ = Describe("Flag parsing", func() {
 		})
 
 		Context("with non flag", func() {
-			It("should not parse additional flags", func() {
+			It("should parse flags after the param", func() {
 				cli.DefineBoolFlag("sample", false, "a sample flag")
 				cli.Start("cmd", "foo", "--sample=true")
-				Expect(cmd.Flag("sample").Get()).To(Equal(false))
+				Expect(cmd.Flag("sample").Get()).To(Equal(true))
 				Expect(cmd.Arg(0).Get()).To(Equal("foo"))
-				Expect(cmd.Arg(1).Get()).To(Equal("--sample=true"))
 			})
 		})
 	})

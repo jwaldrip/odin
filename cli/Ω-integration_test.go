@@ -113,4 +113,12 @@ var _ = Describe("CLI Integration Test", func() {
 
 	})
 
+	It("should parse flags that occur after freeform args and with sub-command", func() {
+		cli.DefineBoolFlag("test", false, "")
+		cli.Start(strings.Split("cmd one two three --test", " ")...)
+		Expect(didRun).To(Equal(true))
+		Expect(cmd.Args().Strings()).To(Equal([]string{"one", "two", "three"}))
+		Expect(cmd.Flag("test").Get()).To(Equal(true))
+	})
+
 })
