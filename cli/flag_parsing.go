@@ -93,7 +93,7 @@ func (cmd *CLI) parseFlags(args []string) []string {
 	cmd.setFlagValuesFromParent()
 
 	var paramIndex int
-	var paramArgs []string
+	var nonFlags []string
 
 	// Set each flag by its set value
 	for {
@@ -106,10 +106,10 @@ func (cmd *CLI) parseFlags(args []string) []string {
 
 		if arg[0] != '-' { // Parse Param
 
-			if paramIndex == len(cmd.params) {
+			if paramIndex == len(cmd.params) && len(cmd.subCommands) > 0 {
 				break
 			}
-			paramArgs = append(paramArgs, arg)
+			nonFlags = append(nonFlags, arg)
 			paramIndex++
 			args = args[1:]
 
@@ -136,7 +136,7 @@ func (cmd *CLI) parseFlags(args []string) []string {
 	}
 
 	// reposition the Args so that they may still be parsed
-	args = append(paramArgs, args...)
+	args = append(nonFlags, args...)
 
 	// return the remaining unused args
 	return args
