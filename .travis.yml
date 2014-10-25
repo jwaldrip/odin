@@ -5,7 +5,6 @@ go:
   - tip
 env: PATH=$HOME/gopath/bin:$PATH
 install:
-  - go get github.com/nitrous-io/goop
   - make install-deps
 script: make test
 after_script: goop exec goveralls -repotoken Qmbg1eGELC9QLg1iV1CG3yHWCtYTe5iJn ./cli
