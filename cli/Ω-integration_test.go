@@ -114,7 +114,7 @@ var _ = Describe("CLI Integration Test", func() {
 			})
 
 			Context("on a sub command", func() {
-				FIt("Should contain any parameters from the parent command", func() {
+				It("Should contain any parameters from the parent command", func() {
 					output := bytes.NewBufferString("")
 					cli.SetStdOutput(output)
 					cli.Start("cmd", "local", "location", "do", "--help")
