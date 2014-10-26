@@ -10,6 +10,7 @@ import (
 func (cmd *CLI) defineHelp() {
 	if _, ok := cmd.flags["help"]; !ok {
 		cmd.DefineBoolFlag("help", false, "show help and exit")
+		cmd.flagHelp = cmd.flags["help"]
 		if _, ok := cmd.aliases['h']; !ok {
 			cmd.AliasFlag('h', "help")
 		}
@@ -20,6 +21,7 @@ func (cmd *CLI) defineHelp() {
 func (cmd *CLI) defineVersion() {
 	if _, ok := cmd.flags["version"]; !ok && len(cmd.Version()) > 0 {
 		cmd.DefineBoolFlag("version", false, "show version and exit")
+		cmd.flagVersion = cmd.flags["version"]
 		if _, ok := cmd.aliases['v']; !ok {
 			cmd.AliasFlag('v', "version")
 		}

@@ -30,3 +30,14 @@ func (cmd *CLI) getFlag(name string) *Flag {
 	}
 	return flag
 }
+
+func (cmd *CLI) hasFlags() bool {
+	var internalFlagCount int
+	if flag, ok := cmd.flags["help"]; ok && flag == cmd.flagHelp {
+		internalFlagCount++
+	}
+	if flag, ok := cmd.flags["version"]; ok && flag == cmd.flagVersion {
+		internalFlagCount++
+	}
+	return len(cmd.flags) > internalFlagCount
+}

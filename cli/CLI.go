@@ -21,6 +21,8 @@ type CLI struct {
 	description      string
 	longDescription  string
 	errOutput        io.Writer
+	flagHelp         *Flag
+	flagVersion      *Flag
 	flags            flagMap
 	flagsTerminated  bool
 	flagValues       map[*Flag]values.Value

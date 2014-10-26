@@ -127,7 +127,6 @@ func (cmd *CLI) Usage() {
 func (cmd *CLI) CommandUsageString() string {
 	hasParams := len(cmd.params) > 0
 	hasParent := cmd.parent != nil
-	hasOptions := (cmd.version != "" && len(cmd.flags) > 2) || len(cmd.flags) > 1
 	var buff bytes.Buffer
 
 	// Write the parent string
@@ -140,7 +139,7 @@ func (cmd *CLI) CommandUsageString() string {
 	// Write the name with options
 	buff.WriteString(fmt.Sprintf(" %s", cmd.Name()))
 
-	if hasOptions {
+	if cmd.hasFlags() {
 		buff.WriteString(" [options...]")
 	}
 
@@ -181,8 +180,7 @@ func (cmd *CLI) UsageString() string {
 	buff.WriteString(cmd.FlagsUsageString())
 	if hasParent {
 		parent := cmd.parent.(*CLI)
-		parentHasOptions := (parent.version != "" && len(parent.flags) > 2) || len(parent.flags) > 1
-		if parentHasOptions {
+		if parent.hasFlags() {
 			buff.WriteString(fmt.Sprintf("\n\nOptions for `%s`:\n", parent.Name()))
 			buff.WriteString(parent.FlagsUsageString())
 		}
