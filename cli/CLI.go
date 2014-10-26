@@ -19,6 +19,7 @@ type CLI struct {
 
 	aliases          map[rune]*Flag
 	description      string
+	longDescription  string
 	errOutput        io.Writer
 	flags            flagMap
 	flagsTerminated  bool

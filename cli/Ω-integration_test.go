@@ -1,6 +1,7 @@
 package cli_test
 
 import (
+	"bytes"
 	"strings"
 
 	. "github.com/jwaldrip/odin/cli"
@@ -88,6 +89,38 @@ var _ = Describe("CLI Integration Test", func() {
 			It("should not run sub-command or panic", func() {
 				cli.Start(strings.Split("cmd host path do --help", " ")...)
 				Expect(subDidRun).To(Equal(false))
+			})
+
+			Context("with a long description", func() {
+				It("Should contain a long description", func() {
+					output := bytes.NewBufferString("")
+					cli.SetStdOutput(output)
+					cli.SetLongDescription(
+						`something longer`,
+					)
+					cli.Start("cmd", "--help")
+					Expect(output.String()).To(ContainSubstring(cli.LongDescription()))
+					Expect(output.String()).ToNot(ContainSubstring(cli.Description()))
+				})
+			})
+
+			Context("without a long description", func() {
+				It("Should contain the standard description", func() {
+					output := bytes.NewBufferString("")
+					cli.SetStdOutput(output)
+					cli.Start("cmd", "--help")
+					Expect(output.String()).To(ContainSubstring(cli.Description()))
+				})
+			})
+
+			Context("on a sub command", func() {
+				FIt("Should contain any parameters from the parent command", func() {
+					output := bytes.NewBufferString("")
+					cli.SetStdOutput(output)
+					cli.Start("cmd", "local", "location", "do", "--help")
+					Expect(output.String()).To(ContainSubstring("host"))
+					Expect(output.String()).To(ContainSubstring("path"))
+				})
 			})
 		})
 

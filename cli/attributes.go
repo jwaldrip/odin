@@ -7,6 +7,11 @@ func (cmd *CLI) Description() string {
 	return cmd.description
 }
 
+// LongDescription is the long description for a command.
+func (cmd *CLI) LongDescription() string {
+	return strings.TrimSpace(cmd.longDescription)
+}
+
 // Parent Returns the parent command
 func (cmd *CLI) Parent() Command {
 	return cmd.parent
@@ -21,6 +26,11 @@ func (cmd *CLI) Name() string {
 		name = cmd.name
 	}
 	return name
+
+// SetLongDescription sets the long desription. This will will replace the
+// description when viewing the --help for a command.
+func (cmd *CLI) SetLongDescription(desc string) {
+	cmd.longDescription = desc
 }
 
 // Version returns the command version

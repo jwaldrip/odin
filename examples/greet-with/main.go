@@ -9,7 +9,7 @@ import "fmt"
 import "strings"
 
 // Create a new cli application
-var app = cli.New("1.0.0", "a simple tool to greet with", greet, "greeting")
+var app = cli.New("1.0.0", "A simple tool to greet with", greet, "greeting")
 
 func init() {
 	// define a flag called --loudly and also alias it to -l
@@ -22,6 +22,13 @@ func init() {
 
 	// add a sub command `to` that takes one param called `greetee`
 	subcmd := app.DefineSubCommand("to", "greet a person", greetGreetee, "greetee")
+	subcmd.SetLongDescription(`
+Say a greeting to a specific persion
+
+Example:
+  $ greet-with hello to jerry
+  hello jerry
+	`)
 
 	// tell the subcommand to inherit the flags we just defined
 	subcmd.InheritFlags("color", "loudly")
