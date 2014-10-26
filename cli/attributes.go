@@ -19,13 +19,8 @@ func (cmd *CLI) Parent() Command {
 
 // Name returns the command name
 func (cmd *CLI) Name() string {
-	var name string
-	if cmd.parent != nil {
-		name = strings.Join([]string{cmd.parent.Name(), cmd.name}, " ")
-	} else {
-		name = cmd.name
-	}
-	return name
+	return cmd.name
+}
 
 // SetLongDescription sets the long desription. This will will replace the
 // description when viewing the --help for a command.

@@ -123,35 +123,70 @@ func (cmd *CLI) Usage() {
 	cmd.usage()
 }
 
-// UsageString returns the command usage as a string
-func (cmd *CLI) UsageString() string {
-	hasSubCommands := len(cmd.subCommands) > 0
+// CommandUsageString returns the command and its accepted options and params
+func (cmd *CLI) CommandUsageString() string {
 	hasParams := len(cmd.params) > 0
-	hasDescription := len(cmd.description) > 0
-
-	// Start the Buffer
+	hasParent := cmd.parent != nil
+	hasOptions := (cmd.version != "" && len(cmd.flags) > 2) || len(cmd.flags) > 1
 	var buff bytes.Buffer
 
-	buff.WriteString("Usage:\n")
-	buff.WriteString(fmt.Sprintf("  %s [options...]", cmd.Name()))
+	// Write the parent string
+	if hasParent {
+		buff.WriteString(cmd.parent.(*CLI).CommandUsageString())
+	} else {
+		buff.WriteString(" ")
+	}
+
+	// Write the name with options
+	buff.WriteString(fmt.Sprintf(" %s", cmd.Name()))
+
+	if hasOptions {
+		buff.WriteString(" [options...]")
+	}
 
 	// Write Param Syntax
 	if hasParams {
 		buff.WriteString(fmt.Sprintf(" %s", cmd.ParamsUsageString()))
 	}
 
+	return buff.String()
+}
+
+// UsageString returns the command usage as a string
+func (cmd *CLI) UsageString() string {
+	hasSubCommands := len(cmd.subCommands) > 0
+	hasDescription := len(cmd.description) > 0
+	hasLongDescription := len(cmd.longDescription) > 0
+	hasParent := cmd.parent != nil
+
+	// Start the Buffer
+	var buff bytes.Buffer
+
+	buff.WriteString("Usage:\n")
+	buff.WriteString(cmd.CommandUsageString())
+
 	// Write Sub Command Syntax
 	if hasSubCommands {
 		buff.WriteString(" <command> [arg...]")
 	}
 
-	if hasDescription {
+	if hasLongDescription {
+		buff.WriteString(fmt.Sprintf("\n\n%s", cmd.LongDescription()))
+	} else if hasDescription {
 		buff.WriteString(fmt.Sprintf("\n\n%s", cmd.Description()))
 	}
 
-	// Write Flags Syntax
+	// Write Options Syntax
 	buff.WriteString("\n\nOptions:\n")
 	buff.WriteString(cmd.FlagsUsageString())
+	if hasParent {
+		parent := cmd.parent.(*CLI)
+		parentHasOptions := (parent.version != "" && len(parent.flags) > 2) || len(parent.flags) > 1
+		if parentHasOptions {
+			buff.WriteString(fmt.Sprintf("\n\nOptions for `%s`:\n", parent.Name()))
+			buff.WriteString(parent.FlagsUsageString())
+		}
+	}
 
 	// Write Sub Command List
 	if hasSubCommands {
