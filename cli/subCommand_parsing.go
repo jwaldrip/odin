@@ -13,10 +13,10 @@ func (cmd *CLI) parseSubCommands(args []string) ([]string, bool) {
 
 	// Inherit Outputs
 	if subcmd.errOutput == nil {
-		cmd.errOutput = cmd.ErrOutput()
+		subcmd.errOutput = cmd.errOutput
 	}
 	if subcmd.stdOutput == nil {
-		subcmd.stdOutput = cmd.StdOutput()
+		subcmd.stdOutput = cmd.stdOutput
 	}
 
 	subcmd.Start(args...)
