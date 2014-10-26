@@ -10,6 +10,15 @@ func (cmd *CLI) parseSubCommands(args []string) ([]string, bool) {
 		cmd.errf("invalid command: %s", name)
 		return args, false
 	}
+
+	// Inherit Outputs
+	if subcmd.errOutput == nil {
+		cmd.errOutput = cmd.ErrOutput()
+	}
+	if subcmd.stdOutput == nil {
+		subcmd.stdOutput = cmd.StdOutput()
+	}
+
 	subcmd.Start(args...)
 
 	return []string{}, true

@@ -19,8 +19,6 @@ func (cmd *CLI) AddSubCommand(subcmd *SubCommand) *SubCommand {
 	if cmd.subCommands == nil {
 		cmd.subCommands = make(map[string]*SubCommand)
 	}
-	subcmd.errOutput = cmd.ErrOutput()
-	subcmd.stdOutput = cmd.StdOutput()
 	subcmd.ErrorHandling = cmd.ErrorHandling
 	cmd.subCommands[subcmd.name] = subcmd
 	if subcmd.parent != nil {
