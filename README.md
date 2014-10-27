@@ -1,4 +1,4 @@
-# odin [![godoc](http://img.shields.io/badge/Go-Doc-blue.svg)](https://godoc.org/github.com/jwaldrip/odin/cli) [![Build Status](https://travis-ci.org/jwaldrip/odin.svg?branch=master)](https://travis-ci.org/jwaldrip/odin) [![Coverage Status](https://img.shields.io/coveralls/jwaldrip/odin.svg)](https://coveralls.io/r/jwaldrip/odin?branch=master)
+# odin [![godoc](http://img.shields.io/badge/Go-Doc-blue.svg)](https://godoc.org/github.com/jwaldrip/odin/cli) [![Build Status](https://travis-ci.org/jwaldrip/odin.svg?branch=master)](https://travis-ci.org/jwaldrip/odin) [![Coverage Status](https://img.shields.io/coveralls/jwaldrip/odin.svg)](https://coveralls.io/r/jwaldrip/odin?branch=master)[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/jwaldrip/odin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 > _**A note to readers:**  
 > I did my best to make this readme as comprehensive as possible but
