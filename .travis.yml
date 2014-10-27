@@ -8,3 +8,10 @@ install:
   - make install-deps
 script: make test
 after_script: goop exec goveralls -repotoken Qmbg1eGELC9QLg1iV1CG3yHWCtYTe5iJn ./cli
+notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/9627e177cc438b591d2a
+    on_success: always
+    on_failure: always
+    on_start: false
