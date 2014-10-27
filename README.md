@@ -7,7 +7,7 @@
 
 ---
 
-> [Installation](#installation) | [Usage](#usage) | [Examples](https://github.com/jwaldrip/odin/tree/master/examples) | [Contributing](https://github.com/jwaldrip/odin/blob/master/CONTRIBUTING.md)
+> [Installation](#installation) | [Usage](#usage) | [Examples](https://github.com/jwaldrip/odin/tree/master/examples) | [Contributing](https://github.com/jwaldrip/odin/blob/master/CONTRIBUTING.md) | [In the Wild](#in-the-wild)
 
 ![odin](https://raw.githubusercontent.com/jwaldrip/odin/master/odin.png)
 
@@ -285,6 +285,14 @@ greet-with 1.0.0
 ## Examples
 
 *Example CLIs can be found in [./examples](https://github.com/jwaldrip/odin/tree/master/examples)*
+
+## In the wild
+
+Here are some tools using Odin in the wild. Have your own you would like to plug? Submit a pull request!
+
+* [nitrous-io/tug](https://github.com/nitrous-io/tug)
+* [jwaldrip/git-get](https://github.com/jwaldrip/git-get)
+* [Sam-Izdat/pogo](https://github.com/Sam-Izdat/pogo)
 
 ## Todo
 
