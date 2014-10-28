@@ -6,77 +6,56 @@ import (
 	"strings"
 )
 
+var sep = "     : "
+var columnWidth []int
+
 // DefaultUsage is the Default Usage used by odin
 func (cmd *CLI) DefaultUsage() {
 	fmt.Fprintln(cmd.StdOutput(), cmd.UsageString())
 }
 
 // FlagsUsageString returns the flags usage as a string
-func (cmd *CLI) FlagsUsageString() string {
-	var maxBufferLen int
-	flagsUsages := make(map[*Flag]*bytes.Buffer)
+func (cmd *CLI) FlagsUsageString(title string) string {
+	flagStrings := make(map[*Flag][]string)
 
-	// init the map for each flag
-	for _, flag := range cmd.aliases {
-		flagsUsages[flag] = bytes.NewBufferString("")
+	// init the usage strings slice for each flag
+	for _, flag := range cmd.flags {
+		flagStrings[flag] = []string{}
 	}
 
-	// Get each flags aliases
-	for r, flag := range cmd.aliases {
-		alias := string(r)
-		buffer := flagsUsages[flag]
-		var err error
-		if buffer.Len() == 0 {
-			_, err = buffer.WriteString(fmt.Sprintf("-%s", alias))
+	// alias keys
+	for alias, flag := range cmd.aliases {
+		flagStrings[flag] = append(flagStrings[flag], "-"+string(alias))
+	}
+
+	// flag keys and values
+	for _, flag := range cmd.flags {
+		if _, boolflag := flag.value.(boolFlag); boolflag {
+			flagStrings[flag] = append(flagStrings[flag], "--"+flag.Name)
 		} else {
-			_, err = buffer.WriteString(fmt.Sprintf(", -%s", alias))
-		}
-		exitIfError(err)
-		buffLen := len(buffer.String())
-		if buffLen > maxBufferLen {
-			maxBufferLen = buffLen
+			flagStrings[flag] = append(flagStrings[flag], "--"+flag.Name+"="+flag.DefValue)
 		}
 	}
 
-	// Get each flags names
-	for name, flag := range cmd.flags {
-		buffer := flagsUsages[flag]
-		if buffer == nil {
-			flagsUsages[flag] = new(bytes.Buffer)
-			buffer = flagsUsages[flag]
-		}
-		var err error
-		if buffer.Len() == 0 {
-			_, err = buffer.WriteString(fmt.Sprintf("--%s", name))
-		} else {
-			_, err = buffer.WriteString(fmt.Sprintf(", --%s", name))
-		}
-		if _, ok := flag.value.(boolFlag); !ok {
-			buffer.WriteString(fmt.Sprintf("=\"%s\"", flag.DefValue))
-		}
-		exitIfError(err)
-		buffLen := len(buffer.String())
-		if buffLen > maxBufferLen {
-			maxBufferLen = buffLen
-		}
+	// build the table
+	tbl := NewSharedShellTable(&sep, &columnWidth)
+	for flag, usages := range flagStrings {
+		row := tbl.Row()
+		row.Column(" ", strings.Join(usages, ", "))
+		row.Column(flag.Usage)
 	}
 
-	// get the flag strings and append the usage info
-	var outputLines []string
-	for i := 0; i < len(cmd.flags); i++ {
-		flag := cmd.flags.Sort()[i]
-		buffer := flagsUsages[flag]
-		for {
-			buffLen := len(buffer.String())
-			if buffLen > maxBufferLen {
-				break
-			}
-			buffer.WriteString(" ")
-		}
-		outputLines = append(outputLines, fmt.Sprintf("  %s # %s", buffer.String(), flag.Usage))
+	var usage string
+
+	if cmd.parent != nil && cmd.parent.(*CLI).hasFlags() {
+		parent := cmd.parent.(*CLI)
+		parentUsage := parent.FlagsUsageString(fmt.Sprintf("Options for `%s`", parent.Name()))
+		usage = fmt.Sprintf("%s%s", tbl.String(), parentUsage)
+	} else {
+		usage = tbl.String()
 	}
 
-	return strings.Join(outputLines, "\n")
+	return fmt.Sprintf("\n\n%s:\n%s", title, usage)
 }
 
 // ParamsUsageString returns the params usage as a string
@@ -90,29 +69,14 @@ func (cmd *CLI) ParamsUsageString() string {
 }
 
 // SubCommandsUsageString is the usage string for sub commands
-func (cmd *CLI) SubCommandsUsageString() string {
-	var maxBufferLen int
-	for _, cmd := range cmd.subCommands {
-		buffLen := len(cmd.name)
-		if buffLen > maxBufferLen {
-			maxBufferLen = buffLen
-		}
+func (cmd *CLI) SubCommandsUsageString(title string) string {
+	tbl := NewSharedShellTable(&sep, &columnWidth)
+	for _, subcmd := range cmd.subCommands {
+		row := tbl.Row()
+		row.Column(" ", subcmd.Name())
+		row.Column(subcmd.Description())
 	}
-
-	var outputLines []string
-	for _, cmd := range cmd.subCommands {
-		var whitespace bytes.Buffer
-		for {
-			buffLen := len(cmd.name) + len(whitespace.String())
-			if buffLen == maxBufferLen+5 {
-				break
-			}
-			whitespace.WriteString(" ")
-		}
-		outputLines = append(outputLines, fmt.Sprintf("  %s%s%s", cmd.name, whitespace.String(), cmd.Description()))
-	}
-
-	return strings.Join(outputLines, "\n")
+	return fmt.Sprintf("\n\n%s:\n%s", title, tbl.String())
 }
 
 // Usage calls the Usage method for the flag set
@@ -156,7 +120,10 @@ func (cmd *CLI) UsageString() string {
 	hasSubCommands := len(cmd.subCommands) > 0
 	hasDescription := len(cmd.description) > 0
 	hasLongDescription := len(cmd.longDescription) > 0
-	hasParent := cmd.parent != nil
+
+	// Prefetch table to calculate the widths
+	_ = cmd.SubCommandsUsageString("")
+	_ = cmd.FlagsUsageString("")
 
 	// Start the Buffer
 	var buff bytes.Buffer
@@ -176,20 +143,11 @@ func (cmd *CLI) UsageString() string {
 	}
 
 	// Write Options Syntax
-	buff.WriteString("\n\nOptions:\n")
-	buff.WriteString(cmd.FlagsUsageString())
-	if hasParent {
-		parent := cmd.parent.(*CLI)
-		if parent.hasFlags() {
-			buff.WriteString(fmt.Sprintf("\n\nOptions for `%s`:\n", parent.Name()))
-			buff.WriteString(parent.FlagsUsageString())
-		}
-	}
+	buff.WriteString(cmd.FlagsUsageString("Options"))
 
 	// Write Sub Command List
 	if hasSubCommands {
-		buff.WriteString("\n\nCommands:\n")
-		buff.WriteString(cmd.SubCommandsUsageString())
+		buff.WriteString(cmd.SubCommandsUsageString("Commands"))
 	}
 
 	// Return buffer as string
