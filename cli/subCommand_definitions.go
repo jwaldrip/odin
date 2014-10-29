@@ -16,11 +16,8 @@ func (cmd *CLI) AddSubCommands(subcmds ...*SubCommand) {
 
 // AddSubCommand adds a subcommand to a command
 func (cmd *CLI) AddSubCommand(subcmd *SubCommand) *SubCommand {
-	if cmd.subCommands == nil {
-		cmd.subCommands = make(map[string]*SubCommand)
-	}
 	subcmd.ErrorHandling = cmd.ErrorHandling
-	cmd.subCommands[subcmd.name] = subcmd
+	cmd.subCommands.Add(subcmd.name, subcmd)
 	if subcmd.parent != nil {
 		panic("command already assigned")
 	}
