@@ -35,7 +35,7 @@ type CLI struct {
 	parent           Command
 	propogatingFlags flagMap
 	stdOutput        io.Writer
-	subCommands      map[string]*SubCommand
+	subCommands      subCommandList
 	unparsedArgs     values.List
 	usage            func()
 	version          string

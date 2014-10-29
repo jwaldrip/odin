@@ -71,11 +71,11 @@ func (cmd *CLI) ParamsUsageString() string {
 // SubCommandsUsageString is the usage string for sub commands
 func (cmd *CLI) SubCommandsUsageString(title string) string {
 	tbl := NewSharedShellTable(&sep, &columnWidth)
-	for _, subcmd := range cmd.subCommands {
+	cmd.subCommands.Each(func(name string, command *SubCommand) {
 		row := tbl.Row()
-		row.Column(" ", subcmd.Name())
-		row.Column(subcmd.Description())
-	}
+		row.Column(" ", command.Name())
+		row.Column(command.Description())
+	})
 	return fmt.Sprintf("\n\n%s:\n%s", title, tbl.String())
 }
 
