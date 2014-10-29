@@ -2,10 +2,7 @@ package main
 
 import "github.com/jwaldrip/odin/cli"
 
-// VERSION is the odin version
-var VERSION = "1.6.2"
-
-var app = cli.New(VERSION, "a command line DSL for go-lang", cli.ShowUsage)
+var app = cli.New(version, "a command line DSL for go-lang", cli.ShowUsage)
 
 func main() {
 	app.Start()
