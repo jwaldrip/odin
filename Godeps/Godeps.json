@@ -1,0 +1,19 @@
+{
+	"ImportPath": "github.com/jwaldrip/odin",
+	"GoVersion": "go1.3.3",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/onsi/ginkgo",
+			"Comment": "v1.1.0-12-g90d6a47",
+			"Rev": "90d6a472e25d8096739d5405286ec051c87fade7"
+		},
+		{
+			"ImportPath": "github.com/onsi/gomega",
+			"Comment": "v1.0-15-g4117d14",
+			"Rev": "4117d1493de348074818bd945fe7e51c821faf8b"
+		}
+	]
+}

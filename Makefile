@@ -1,11 +1,12 @@
 test:
 	@clear
-	goop exec sh -c "cd cli && go test"
+	cd cli && go test
 	go build ./examples/greet-with && ./greet-with -c red -l hello to world
 
 install-deps:
-	go get github.com/nitrous-io/goop
-	goop install
+	go get github.com/mattn/goveralls
+	go get github.com/axw/gocov
+	go get code.google.com/p/go.tools/cmd/cover
 
-install: install-deps
-	goop exec go install
+install:
+	go install
