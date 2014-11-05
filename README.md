@@ -246,6 +246,42 @@ the user is: jason
 the action is: hello
 ```
 
+### Output
+
+#### Helpers
+Output is possible directly on the CLI and is prefered over using fmt. Available commands map to their fmt counterparts.
+
+method | description
+--- | ---
+`ErrPrint(a ...interface{})` | Prints to the err output.
+`ErrPrintf(format string, a ...interface{})` | Prints formatted to the err output.
+`ErrPrintln(a ...interface{})` | Prints a line to the err output.
+`Print(a ...interface{})` | Prints to the std output.
+`Printf(format string, a ...interface{})` | Prints formatted to the std output.
+`Println(a ...interface{})` | Prints a line to the std output.
+
+```go
+package main
+
+import "github.com/jwaldrip/odin/cli"
+
+app := cli.New("1.0.0", "my app", func(c cli.Command){
+  c.Println("hello world")
+  c.ErrPrintln("There was an error")
+} 
+```
+
+#### Custom Output
+Any `io.Writer` can be used as an output
+
+```go
+outbuffer := bytes.NewBufferString("")
+errbuffer := bytes.NewBufferString("")
+app.SetStdOut(outbuffer)
+app.SetStdErr(errbuffer)
+```
+
+
 ### Self Documentation
 
 #### Usage
