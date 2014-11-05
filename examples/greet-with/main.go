@@ -44,7 +44,7 @@ func greet(c cli.Command) {
 	greeting := c.Param("greeting")
 	str := fmt.Sprintf("%s", greeting)
 	str = styleByFlags(str, c)
-	fmt.Println(str)
+	c.Println(str)
 }
 
 func greetGreetee(c cli.Command) {
@@ -52,7 +52,7 @@ func greetGreetee(c cli.Command) {
 	greetee := c.Param("greetee")
 	str := fmt.Sprintf("%s %s", greeting, greetee)
 	str = styleByFlags(str, c)
-	fmt.Println(str, strings.Join(c.Args().Strings(), " "))
+	c.Println(str, strings.Join(c.Args().Strings(), " "))
 }
 
 func styleByFlags(str string, c cli.Command) string {
