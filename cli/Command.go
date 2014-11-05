@@ -1,19 +1,41 @@
 package cli
 
-import "github.com/jwaldrip/odin/cli/values"
+import (
+	"io"
+
+	"github.com/jwaldrip/odin/cli/values"
+)
 
 // Command represents a readable command
 type Command interface {
+	// Freeform Arguments
 	Arg(int) values.Value
 	Args() values.List
+
+	// Attributes
+	Name() string
 	Description() string
+	Version() string
+
+	// Flags
 	Flag(string) values.Value
 	Flags() values.Map
-	Name() string
+
+	// Params
 	Param(string) values.Value
 	Params() values.Map
+
+	// Outputs
+	ErrPrint(...interface{})
+	ErrPrintf(string, ...interface{})
+	ErrPrintln(...interface{})
+	Print(...interface{})
+	Printf(string, ...interface{})
+	Println(...interface{})
+	StdOut() io.Writer
+	StdErr() io.Writer
+
+	// Misc
 	Parent() Command
-	Start(...string)
 	Usage()
-	Version() string
 }
