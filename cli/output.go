@@ -1,25 +1,29 @@
 package cli
 
-import "os"
+import (
+	"fmt"
+	"os"
+)
 import "io"
-import "fmt"
 
-// ErrOutput is the error output for the command
+// ErrOutput is an alias for StdErr
 func (cmd *CLI) ErrOutput() io.Writer {
-	if cmd.errOutput == nil {
-		cmd.errOutput = os.Stderr
-	}
-	return cmd.errOutput
+	return cmd.StdErr()
 }
 
-// SetErrOutput sets the error output for the command
-func (cmd *CLI) SetErrOutput(writer io.Writer) {
-	cmd.errOutput = writer
+// ErrPrint does a fmt.Print to the std err of the CLI
+func (cmd *CLI) ErrPrint(a ...interface{}) {
+	fmt.Fprint(cmd.StdErr(), a...)
 }
 
-// SetStdOutput sets the standard output for the command
-func (cmd *CLI) SetStdOutput(writer io.Writer) {
-	cmd.stdOutput = writer
+// ErrPrintf does a fmt.Printf to the std err of the CLI
+func (cmd *CLI) ErrPrintf(format string, a ...interface{}) {
+	fmt.Fprintf(cmd.StdErr(), format, a...)
+}
+
+// ErrPrintln does a fmt.Println to the std err of the CLI
+func (cmd *CLI) ErrPrintln(a ...interface{}) {
+	fmt.Fprintln(cmd.StdErr(), a...)
 }
 
 // Mute mutes the output
@@ -30,39 +34,58 @@ func (cmd *CLI) Mute() {
 	exitIfError(err)
 }
 
-// StdOutput is the error output for the command
-func (cmd *CLI) StdOutput() io.Writer {
+// Print does a fmt.Print to the std out of the CLI
+func (cmd *CLI) Print(a ...interface{}) {
+	fmt.Fprint(cmd.StdOut(), a...)
+}
+
+// Printf does a fmt.Printf to the std out of the CLI
+func (cmd *CLI) Printf(format string, a ...interface{}) {
+	fmt.Fprintf(cmd.StdOut(), format, a...)
+}
+
+// Println does a fmt.Println to the std out of the CLI
+func (cmd *CLI) Println(a ...interface{}) {
+	fmt.Fprintln(cmd.StdOut(), a...)
+}
+
+// SetErrOutput is an alias for SetStdErr
+func (cmd *CLI) SetErrOutput(writer io.Writer) {
+	cmd.SetStdErr(writer)
+}
+
+// SetStdErr sets the error output for the command
+func (cmd *CLI) SetStdErr(writer io.Writer) {
+	cmd.errOutput = writer
+}
+
+// SetStdOut sets the standard output for the command
+func (cmd *CLI) SetStdOut(writer io.Writer) {
+	cmd.stdOutput = writer
+}
+
+// SetStdOutput is an alias for SetStdOut
+func (cmd *CLI) SetStdOutput(writer io.Writer) {
+	cmd.SetStdOut(writer)
+}
+
+// StdOut is the standard output for the command
+func (cmd *CLI) StdOut() io.Writer {
 	if cmd.stdOutput == nil {
 		cmd.stdOutput = os.Stdout
 	}
 	return cmd.stdOutput
 }
 
-// failf prints to standard error a formatted error and usage message and
-// returns the error.
-func (cmd *CLI) failf(format string, a ...interface{}) error {
-	err := fmt.Errorf(format, a...)
-	fmt.Fprintln(cmd.ErrOutput(), err)
-	fmt.Fprintln(cmd.ErrOutput(), "")
-	cmd.Usage()
-	return err
+// StdOutput is an alias for StdOut
+func (cmd *CLI) StdOutput() io.Writer {
+	return cmd.StdOut()
 }
 
-func (cmd *CLI) errf(format string, a ...interface{}) {
-	cmd.handleErr(cmd.failf(format, a...))
-}
-
-func (cmd *CLI) panicf(format string, a ...interface{}) {
-	panic(cmd.failf(format, a...))
-}
-
-func (cmd *CLI) handleErr(err error) {
-	if err != nil {
-		switch cmd.ErrorHandling {
-		case ExitOnError:
-			os.Exit(2)
-		case PanicOnError:
-			panic(err)
-		}
+// StdErr is the error output for the command
+func (cmd *CLI) StdErr() io.Writer {
+	if cmd.errOutput == nil {
+		cmd.errOutput = os.Stderr
 	}
+	return cmd.errOutput
 }
