@@ -74,9 +74,22 @@ func (cmd *CLI) SubCommandsUsageString(title string) string {
 	cmd.subCommands.Each(func(name string, command *SubCommand) {
 		row := tbl.Row()
 		row.Column(" ", command.Name())
-		row.Column(command.Description())
+		aliases := decorateNameAliases(command.NameAliases())
+		desArray := []string{command.Description(), aliases}
+		description := strings.Join(desArray, "  ")
+		row.Column(description)
 	})
 	return fmt.Sprintf("\n\n%s:\n%s", title, tbl.String())
+}
+
+func decorateNameAliases(aliases map[string]string) string {
+	var keys []string
+	for k := range aliases {
+		keys = append(keys, k)
+	}
+	str := strings.Join(keys, ",")
+	str = strings.Join([]string{"aliases:", "[", str, "]"}, "")
+	return str
 }
 
 // Usage calls the Usage method for the flag set
