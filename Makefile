@@ -1,9 +1,7 @@
 test:
 	@clear
 	cd cli && go test
-	go build ./examples/greet-with && ./greet-with -c red -l hello to world
-	go build ./examples/greet-with && ./greet-with -h
-	go build ./examples/greet-with && ./greet-with -c red -l hello two world
+	go build ./examples/greet-with && ./greet-with -c red -l hello to world 
 
 install-deps:
 	go get github.com/mattn/goveralls
