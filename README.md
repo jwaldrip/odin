@@ -25,13 +25,13 @@ A go-lang library to help build self documenting command line applications.
 get the package with:
 
 ```
-go get gopkg.in/jwaldrip/odin.v1/cli
+go get github.com/jwaldrip/odin/cli
 ```
 
 import it with:
 
 ```go
-import "gopkg.in/jwaldrip/odin.v1/cli"
+import "github.com/jwaldrip/odin/cli"
 ```
 
 or using a a package manager like [Goop](https://github.com/nitrous-io/goop):
@@ -100,7 +100,7 @@ package main
 import (
 	"fmt"
 
-	"gopkg.in/jwaldrip/odin.v1/cli"
+	"github.com/jwaldrip/odin/cli"
 )
 
 // CLI is the odin CLI
