@@ -32,3 +32,8 @@ func (cmd *CLI) SetLongDescription(desc string) {
 func (cmd *CLI) Version() string {
 	return cmd.version
 }
+
+// NameAliases sets the name aliases
+func (cmd *CLI) NameAliases() map[string]string {
+	return cmd.nameAliases
+}

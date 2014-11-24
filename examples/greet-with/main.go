@@ -22,6 +22,7 @@ func init() {
 
 	// add a sub command `to` that takes one param called `greetee`
 	subcmd := app.DefineSubCommand("to", "greet a person", greetGreetee, "greetee")
+	subcmd.AliasName("two", "to")
 	subcmd.SetLongDescription(`
 Say a greeting to a specific persion
 

@@ -29,6 +29,7 @@ type CLI struct {
 	fn               func(Command)
 	inheritedFlags   flagMap
 	name             string
+	nameAliases      map[string]string
 	params           paramsList
 	paramValues      map[*Param]values.Value
 	paramsParsed     bool

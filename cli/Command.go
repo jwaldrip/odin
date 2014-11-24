@@ -14,6 +14,7 @@ type Command interface {
 
 	// Attributes
 	Name() string
+	NameAliases() map[string]string
 	Description() string
 	Version() string
 

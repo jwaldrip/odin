@@ -27,6 +27,10 @@ func (l *subCommandList) Get(name string) (*SubCommand, error) {
 			subCommand = item.command
 			break
 		}
+		if item.command.nameAliases[name] != "" {
+			subCommand = item.command
+			break
+		}
 	}
 	if subCommand == nil {
 		return nil, fmt.Errorf("invalid subcommand")
