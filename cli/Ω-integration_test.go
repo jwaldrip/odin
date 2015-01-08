@@ -109,7 +109,6 @@ var _ = Describe("CLI Integration Test", func() {
 				It("should have custom usage", func() {
 					output := bytes.NewBufferString("")
 					cli.SetStdOutput(output)
-
 					cli.SetUsage(func() {
 						output.WriteString(`something longer`)
 					})
