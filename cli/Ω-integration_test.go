@@ -2,6 +2,7 @@ package cli_test
 
 import (
 	"bytes"
+	"fmt"
 	"strings"
 
 	. "github.com/jwaldrip/odin/cli"
@@ -100,6 +101,21 @@ var _ = Describe("CLI Integration Test", func() {
 					)
 					cli.Start("cmd", "--help")
 					Expect(output.String()).To(ContainSubstring(cli.LongDescription()))
+					Expect(output.String()).ToNot(ContainSubstring(cli.Description()))
+				})
+			})
+
+			Context("with a custom usage", func() {
+				It("should have custom usage", func() {
+					output := bytes.NewBufferString("")
+					cli.SetStdOutput(output)
+
+					cli.SetUsage(func() {
+						output.WriteString(`something longer`)
+					})
+					cli.Start("cmd", "--help")
+					fmt.Println(output.String())
+					Expect(output.String()).To(ContainSubstring(`something longer`))
 					Expect(output.String()).ToNot(ContainSubstring(cli.Description()))
 				})
 			})

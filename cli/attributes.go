@@ -28,6 +28,11 @@ func (cmd *CLI) SetLongDescription(desc string) {
 	cmd.longDescription = desc
 }
 
+//SetUsage lets your override the usagestring
+func (cmd *CLI) SetUsage(use func()) {
+	cmd.usage = use
+}
+
 // Version returns the command version
 func (cmd *CLI) Version() string {
 	return cmd.version
