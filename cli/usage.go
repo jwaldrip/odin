@@ -89,7 +89,7 @@ func decorateNameAliases(aliases map[string]string) string {
 	}
 	var str string
 	if len(keys) > 0 {
-		strings.Join(keys, ",")
+		str = strings.Join(keys, ",")
 		str = strings.Join([]string{"aliases:", "[", str, "]"}, "")
 	}
 	return str
