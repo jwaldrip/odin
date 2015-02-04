@@ -27,6 +27,7 @@ type CLI struct {
 	flagsTerminated  bool
 	flagValues       map[*Flag]values.Value
 	fn               func(Command)
+	hidden           bool
 	inheritedFlags   flagMap
 	name             string
 	nameAliases      map[string]string
@@ -45,6 +46,12 @@ type CLI struct {
 func (cmd *CLI) init(name, desc string, fn func(Command), paramNames ...string) {
 	cmd.name = name
 	cmd.fn = fn
+	switch desc {
+	case "hidden", "none":
+		cmd.hidden = true
+	default:
+		cmd.hidden = false
+	}
 	cmd.description = desc
 	cmd.DefineParams(paramNames...)
 	cmd.ErrorHandling = ExitOnError

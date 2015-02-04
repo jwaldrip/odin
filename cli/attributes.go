@@ -12,6 +12,11 @@ func (cmd *CLI) LongDescription() string {
 	return strings.TrimSpace(cmd.longDescription)
 }
 
+// Hidden is the attribute the tells you if the command is hidden
+func (cmd *CLI) Hidden() bool {
+	return cmd.hidden
+}
+
 // Parent Returns the parent command
 func (cmd *CLI) Parent() Command {
 	return cmd.parent
