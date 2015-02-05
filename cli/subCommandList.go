@@ -11,6 +11,9 @@ type subCommandListItem struct {
 // Each loops through each subcommand
 func (l *subCommandList) Each(fn func(string, *SubCommand)) {
 	for _, item := range *l {
+		if item.command.Hidden() {
+			continue
+		}
 		fn(item.name, item.command)
 	}
 }
