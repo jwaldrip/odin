@@ -70,7 +70,7 @@ DefineTypeFlag(name string, defaultValue typedValue, usage string)
 *Pointer Definitions are in the format of:*
 ```go
 var ptr TYPE
-DefineTypeFlag(ptr, name string, defaultValue typedValue, usage string)
+DefineTypeFlagVar(ptr, name string, defaultValue typedValue, usage string)
 ```
 
 #### Supported Value Types
