@@ -89,7 +89,7 @@ DefineTypeFlagVar(ptr, name string, defaultValue typedValue, usage string)
 aliases are always defined as a `rune` to limit them to one character.
 
 ```go
-FlagAlias(alias rune, flagName string)
+AliasFlag(alias rune, flagName string)
 ```
 
 #### Example
@@ -114,7 +114,7 @@ var app = cli.New("0.0.1", "my cli", func(c cli.Command){
 
 func init(){
 	app.DefineBoolFlag("gopher", false, "is it gophertastic?")
-	app.FlagAlias('g', "gopher")
+	app.AliasFlag('g', "gopher")
 }
 
 func main(){
