@@ -1,0 +1,229 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "n2HmjMgnpxys0yOxv5FqW7mbrFs=",
+			"comment": "v1.1.0-12-g90d6a47",
+			"path": "github.com/onsi/ginkgo",
+			"revision": "90d6a472e25d8096739d5405286ec051c87fade7"
+		},
+		{
+			"checksumSHA1": "DJH/V/ofTagn+H1VtgXB0rfGhIg=",
+			"comment": "v1.1.0-12-g90d6a47",
+			"path": "github.com/onsi/ginkgo/config",
+			"revision": "90d6a472e25d8096739d5405286ec051c87fade7"
+		},
+		{
+			"checksumSHA1": "IWyWliqGwzELcHMGpqzCoPbt5Iw=",
+			"comment": "v1.1.0-12-g90d6a47",
+			"path": "github.com/onsi/ginkgo/ginkgo",
+			"revision": "90d6a472e25d8096739d5405286ec051c87fade7"
+		},
+		{
+			"checksumSHA1": "RX2QA4mqBzsogy4OWOCi9mUfAGU=",
+			"comment": "v1.1.0-12-g90d6a47",
+			"path": "github.com/onsi/ginkgo/ginkgo/convert",
+			"revision": "90d6a472e25d8096739d5405286ec051c87fade7"
+		},
+		{
+			"checksumSHA1": "brZ63GMMr79P/RwClxFRBKMtICg=",
+			"comment": "v1.1.0-12-g90d6a47",
+			"path": "github.com/onsi/ginkgo/ginkgo/nodot",
+			"revision": "90d6a472e25d8096739d5405286ec051c87fade7"
+		},
+		{
+			"checksumSHA1": "qYSfIkA0/hUUiCrHXn2ZTnOmJzY=",
+			"comment": "v1.1.0-12-g90d6a47",
+			"path": "github.com/onsi/ginkgo/ginkgo/testrunner",
+			"revision": "90d6a472e25d8096739d5405286ec051c87fade7"
+		},
+		{
+			"checksumSHA1": "ubPZfeIQtF2jfU/XJLqvrByZ0oY=",
+			"comment": "v1.1.0-12-g90d6a47",
+			"path": "github.com/onsi/ginkgo/ginkgo/testsuite",
+			"revision": "90d6a472e25d8096739d5405286ec051c87fade7"
+		},
+		{
+			"checksumSHA1": "9ZEz0EYtdY6hn8ZelrRU7OmUvhg=",
+			"comment": "v1.1.0-12-g90d6a47",
+			"path": "github.com/onsi/ginkgo/ginkgo/watch",
+			"revision": "90d6a472e25d8096739d5405286ec051c87fade7"
+		},
+		{
+			"checksumSHA1": "Q8OjMptzcvlLxaJAzq0GBTf3muM=",
+			"comment": "v1.1.0-12-g90d6a47",
+			"path": "github.com/onsi/ginkgo/integration",
+			"revision": "90d6a472e25d8096739d5405286ec051c87fade7"
+		},
+		{
+			"checksumSHA1": "T1cZh3UWr4Hnx6fQYp+7KDNvxG4=",
+			"comment": "v1.1.0-12-g90d6a47",
+			"path": "github.com/onsi/ginkgo/internal/codelocation",
+			"revision": "90d6a472e25d8096739d5405286ec051c87fade7"
+		},
+		{
+			"checksumSHA1": "qvz6/+otRkWa1OHaPMKap9D5Ge4=",
+			"comment": "v1.1.0-12-g90d6a47",
+			"path": "github.com/onsi/ginkgo/internal/containernode",
+			"revision": "90d6a472e25d8096739d5405286ec051c87fade7"
+		},
+		{
+			"checksumSHA1": "+B3WqxnBJhRqwCwb7/Ec1YiHFsA=",
+			"comment": "v1.1.0-12-g90d6a47",
+			"path": "github.com/onsi/ginkgo/internal/failer",
+			"revision": "90d6a472e25d8096739d5405286ec051c87fade7"
+		},
+		{
+			"checksumSHA1": "9SBRTIdPLd/Rm7FW7U5zbMzK6OQ=",
+			"comment": "v1.1.0-12-g90d6a47",
+			"path": "github.com/onsi/ginkgo/internal/leafnodes",
+			"revision": "90d6a472e25d8096739d5405286ec051c87fade7"
+		},
+		{
+			"checksumSHA1": "JE0FPweR718ZQaiB9H9B7Yfb6L0=",
+			"comment": "v1.1.0-12-g90d6a47",
+			"path": "github.com/onsi/ginkgo/internal/remote",
+			"revision": "90d6a472e25d8096739d5405286ec051c87fade7"
+		},
+		{
+			"checksumSHA1": "SzYmam3zjh3vStrQaYx8FZwy1wE=",
+			"comment": "v1.1.0-12-g90d6a47",
+			"path": "github.com/onsi/ginkgo/internal/spec",
+			"revision": "90d6a472e25d8096739d5405286ec051c87fade7"
+		},
+		{
+			"checksumSHA1": "z5V+7kkCo/+e6SBCXgBfwqU0ShE=",
+			"comment": "v1.1.0-12-g90d6a47",
+			"path": "github.com/onsi/ginkgo/internal/specrunner",
+			"revision": "90d6a472e25d8096739d5405286ec051c87fade7"
+		},
+		{
+			"checksumSHA1": "yoBD2mP9+iS0TmESeR6U3mtD3X0=",
+			"comment": "v1.1.0-12-g90d6a47",
+			"path": "github.com/onsi/ginkgo/internal/suite",
+			"revision": "90d6a472e25d8096739d5405286ec051c87fade7"
+		},
+		{
+			"checksumSHA1": "6sOxGhw1brknfjJd9h7MhpnxHMY=",
+			"comment": "v1.1.0-12-g90d6a47",
+			"path": "github.com/onsi/ginkgo/internal/testingtproxy",
+			"revision": "90d6a472e25d8096739d5405286ec051c87fade7"
+		},
+		{
+			"checksumSHA1": "dpgqwFYT7NWSOG0Ah+r6kgMhrBg=",
+			"comment": "v1.1.0-12-g90d6a47",
+			"path": "github.com/onsi/ginkgo/internal/writer",
+			"revision": "90d6a472e25d8096739d5405286ec051c87fade7"
+		},
+		{
+			"checksumSHA1": "AnMrW/nA8DIqZW/jT3DltdSUmAY=",
+			"comment": "v1.1.0-12-g90d6a47",
+			"path": "github.com/onsi/ginkgo/reporters",
+			"revision": "90d6a472e25d8096739d5405286ec051c87fade7"
+		},
+		{
+			"checksumSHA1": "YbssfKAuCmAn+fETkc0IZrG3ctE=",
+			"comment": "v1.1.0-12-g90d6a47",
+			"path": "github.com/onsi/ginkgo/reporters/stenographer",
+			"revision": "90d6a472e25d8096739d5405286ec051c87fade7"
+		},
+		{
+			"checksumSHA1": "NcaZIfUWUkxHjo8tUfX5Ej8+iLU=",
+			"comment": "v1.1.0-12-g90d6a47",
+			"path": "github.com/onsi/ginkgo/types",
+			"revision": "90d6a472e25d8096739d5405286ec051c87fade7"
+		},
+		{
+			"checksumSHA1": "Fe5Fsg0Rchl1uCqfcwkbjXk2gPM=",
+			"comment": "v1.0-15-g4117d14",
+			"path": "github.com/onsi/gomega",
+			"revision": "4117d1493de348074818bd945fe7e51c821faf8b"
+		},
+		{
+			"checksumSHA1": "VrTakWOJeOH8XD3UXGlv46brx10=",
+			"comment": "v1.0-15-g4117d14",
+			"path": "github.com/onsi/gomega/format",
+			"revision": "4117d1493de348074818bd945fe7e51c821faf8b"
+		},
+		{
+			"checksumSHA1": "UtNgcjwjuBTJ/WDPqCLlOc7n73s=",
+			"comment": "v1.0-15-g4117d14",
+			"path": "github.com/onsi/gomega/gbytes",
+			"revision": "4117d1493de348074818bd945fe7e51c821faf8b"
+		},
+		{
+			"checksumSHA1": "IvPMs60GF+F9FcXchxQDuHWSlV0=",
+			"comment": "v1.0-15-g4117d14",
+			"path": "github.com/onsi/gomega/gexec",
+			"revision": "4117d1493de348074818bd945fe7e51c821faf8b"
+		},
+		{
+			"checksumSHA1": "Yg3vDhQSvuHU8zrGJSDZ/NNMmC0=",
+			"comment": "v1.0-15-g4117d14",
+			"path": "github.com/onsi/gomega/ghttp",
+			"revision": "4117d1493de348074818bd945fe7e51c821faf8b"
+		},
+		{
+			"checksumSHA1": "H4RBR9kcEWh2lECAzBaOTSvgUuA=",
+			"comment": "v1.0-15-g4117d14",
+			"path": "github.com/onsi/gomega/internal/assertion",
+			"revision": "4117d1493de348074818bd945fe7e51c821faf8b"
+		},
+		{
+			"checksumSHA1": "FK2Mo40RhzbRWSE+/6QXtEpaZYQ=",
+			"comment": "v1.0-15-g4117d14",
+			"path": "github.com/onsi/gomega/internal/asyncassertion",
+			"revision": "4117d1493de348074818bd945fe7e51c821faf8b"
+		},
+		{
+			"checksumSHA1": "CIwteJCVKKQDPoXfqtVTVMHAeEU=",
+			"comment": "v1.0-15-g4117d14",
+			"path": "github.com/onsi/gomega/internal/fakematcher",
+			"revision": "4117d1493de348074818bd945fe7e51c821faf8b"
+		},
+		{
+			"checksumSHA1": "G+KJsEQohAtPAHEbhHxRN0pffcA=",
+			"comment": "v1.0-15-g4117d14",
+			"path": "github.com/onsi/gomega/internal/testingtsupport",
+			"revision": "4117d1493de348074818bd945fe7e51c821faf8b"
+		},
+		{
+			"checksumSHA1": "UZvqag8xyV4VZ62J4QNM/7skNKI=",
+			"comment": "v1.0-15-g4117d14",
+			"path": "github.com/onsi/gomega/matchers",
+			"revision": "4117d1493de348074818bd945fe7e51c821faf8b"
+		},
+		{
+			"checksumSHA1": "gWJfsDHiZTga1esEChd+MfpftN0=",
+			"comment": "v1.0-15-g4117d14",
+			"path": "github.com/onsi/gomega/matchers/support/goraph/bipartitegraph",
+			"revision": "4117d1493de348074818bd945fe7e51c821faf8b"
+		},
+		{
+			"checksumSHA1": "zjTC6ady0bJUwzTFAKtv63T7Fmg=",
+			"comment": "v1.0-15-g4117d14",
+			"path": "github.com/onsi/gomega/matchers/support/goraph/edge",
+			"revision": "4117d1493de348074818bd945fe7e51c821faf8b"
+		},
+		{
+			"checksumSHA1": "o2+IscLOPKOiovl2g0/igkD1R4Q=",
+			"comment": "v1.0-15-g4117d14",
+			"path": "github.com/onsi/gomega/matchers/support/goraph/node",
+			"revision": "4117d1493de348074818bd945fe7e51c821faf8b"
+		},
+		{
+			"checksumSHA1": "W1zfga0jmo7Daetjcur8v2hh0y8=",
+			"comment": "v1.0-15-g4117d14",
+			"path": "github.com/onsi/gomega/matchers/support/goraph/util",
+			"revision": "4117d1493de348074818bd945fe7e51c821faf8b"
+		},
+		{
+			"checksumSHA1": "zEuQ0PUlbqojtNwvu01Mn3DQCJM=",
+			"comment": "v1.0-15-g4117d14",
+			"path": "github.com/onsi/gomega/types",
+			"revision": "4117d1493de348074818bd945fe7e51c821faf8b"
+		}
+	],
+	"rootPath": "github.com/jwaldrip/odin"
+}
