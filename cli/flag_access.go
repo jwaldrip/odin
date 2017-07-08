@@ -7,7 +7,7 @@ import (
 )
 
 // Flag returns the Value interface to the value of the named flag,
-// returning nil if none exists.
+// panics if none exists.
 func (cmd *CLI) Flag(name string) values.Value {
 	flag := cmd.getFlag(name)
 	value := cmd.flagValues[flag]
