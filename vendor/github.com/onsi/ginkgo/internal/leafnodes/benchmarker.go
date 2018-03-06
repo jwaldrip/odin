@@ -4,10 +4,13 @@ import (
 	"math"
 	"time"
 
+	"sync"
+
 	"github.com/onsi/ginkgo/types"
 )
 
 type benchmarker struct {
+	mu           sync.Mutex
 	measurements map[string]*types.SpecMeasurement
 	orderCounter int
 }
@@ -23,18 +26,29 @@ func (b *benchmarker) Time(name string, body func(), info ...interface{}) (elaps
 	body()
 	elapsedTime = time.Since(t)
 
-	measurement := b.getMeasurement(name, "Fastest Time", "Slowest Time", "Average Time", "s", info...)
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	measurement := b.getMeasurement(name, "Fastest Time", "Slowest Time", "Average Time", "s", 3, info...)
 	measurement.Results = append(measurement.Results, elapsedTime.Seconds())
 
 	return
 }
 
 func (b *benchmarker) RecordValue(name string, value float64, info ...interface{}) {
-	measurement := b.getMeasurement(name, "Smallest", " Largest", " Average", "", info...)
+	measurement := b.getMeasurement(name, "Smallest", " Largest", " Average", "", 3, info...)
+	b.mu.Lock()
+	defer b.mu.Unlock()
 	measurement.Results = append(measurement.Results, value)
 }
 
-func (b *benchmarker) getMeasurement(name string, smallestLabel string, largestLabel string, averageLabel string, units string, info ...interface{}) *types.SpecMeasurement {
+func (b *benchmarker) RecordValueWithPrecision(name string, value float64, units string, precision int, info ...interface{}) {
+	measurement := b.getMeasurement(name, "Smallest", " Largest", " Average", units, precision, info...)
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	measurement.Results = append(measurement.Results, value)
+}
+
+func (b *benchmarker) getMeasurement(name string, smallestLabel string, largestLabel string, averageLabel string, units string, precision int, info ...interface{}) *types.SpecMeasurement {
 	measurement, ok := b.measurements[name]
 	if !ok {
 		var computedInfo interface{}
@@ -50,6 +64,7 @@ func (b *benchmarker) getMeasurement(name string, smallestLabel string, largestL
 			LargestLabel:  largestLabel,
 			AverageLabel:  averageLabel,
 			Units:         units,
+			Precision:     precision,
 			Results:       make([]float64, 0),
 		}
 		b.measurements[name] = measurement
@@ -60,6 +75,8 @@ func (b *benchmarker) getMeasurement(name string, smallestLabel string, largestL
 }
 
 func (b *benchmarker) measurementsReport() map[string]*types.SpecMeasurement {
+	b.mu.Lock()
+	defer b.mu.Unlock()
 	for _, measurement := range b.measurements {
 		measurement.Smallest = math.MaxFloat64
 		measurement.Largest = -math.MaxFloat64

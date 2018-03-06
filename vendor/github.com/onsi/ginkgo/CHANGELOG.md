@@ -1,4 +1,41 @@
-## HEAD
+## 1.4.0 7/16/2017
+
+- `ginkgo` now provides a hint if you accidentally forget to run `ginkgo bootstrap` to generate a `*_suite_test.go` file that actually invokes the Ginkgo test runner. [#345](https://github.com/onsi/ginkgo/pull/345)
+- thanks to improvements in `go test -c` `ginkgo` no longer needs to fix Go's compilation output to ensure compilation errors are expressed relative to the CWD. [#357]
+- `ginkgo watch -watchRegExp=...` allows you to specify a custom regular expression to watch.  Only files matching the regular expression are watched for changes (the default is `\.go$`) [#356]
+- `ginkgo` now always emits compilation output.  Previously, only failed compilation output was printed out. [#277]
+- `ginkgo -requireSuite` now fails the test run if there are `*_test.go` files but `go test` fails to detect any tests.  Typically this means you forgot to run `ginkgo bootstrap` to generate a suite file. [#344]
+- `ginkgo -timeout=DURATION` allows you to adjust the timeout for the entire test suite (default is 24 hours) [#248]
+
+## 1.3.0 3/28/2017
+
+Improvements:
+
+- Significantly improved parallel test distribution.  Now instead of pre-sharding test cases across workers (which can result in idle workers and poor test performance) Ginkgo uses a shared queue to keep all workers busy until all tests are complete.  This improves test-time performance and consistency.
+- `Skip(message)` can be used to skip the current test.
+- Added `extensions/table` - a Ginkgo DSL for [Table Driven Tests](http://onsi.github.io/ginkgo/#table-driven-tests)
+- Add `GinkgoRandomSeed()` - shorthand for `config.GinkgoConfig.RandomSeed`
+- Support for retrying flaky tests with `--flakeAttempts`
+- `ginkgo ./...` now recurses as you'd expect
+- Added `Specify` a synonym for `It`
+- Support colorise on Windows
+- Broader support for various go compilation flags in the `ginkgo` CLI
+
+Bug Fixes:
+
+- Ginkgo tests now fail when you `panic(nil)` (#167)
+
+## 1.2.0 5/31/2015
+
+Improvements
+
+- `ginkgo -coverpkg` calls down to `go test -coverpkg` (#160)
+- `ginkgo -afterSuiteHook COMMAND` invokes the passed-in `COMMAND` after a test suite completes (#152)
+- Relaxed requirement for Go 1.4+.  `ginkgo` now works with Go v1.3+ (#166)
+
+## 1.2.0-beta
+
+Ginkgo now requires Go 1.4+
 
 Improvements:
 
@@ -16,7 +53,28 @@ Improvements:
   will run `B` but *not* `A`.  This tends to be a common usage pattern when in the thick of writing and debugging tests.
 - When `SIGINT` is received, Ginkgo will emit the contents of the `GinkgoWriter` before running the `AfterSuite`.  Useful for debugging stuck tests.
 - When `--progress` is set, Ginkgo will write test progress (in particular, Ginkgo will say when it is about to run a BeforeEach, AfterEach, It, etc...) to the `GinkgoWriter`.  This is useful for debugging stuck tests and tests that generate many logs.
+- Improved output when an error occurs in a setup or teardown block.
+- When `--dryRun` is set, Ginkgo will walk the spec tree and emit to its reporter *without* actually running anything.  Best paired with `-v` to understand which specs will run in which order.
+- Add `By` to help document long `It`s.  `By` simply writes to the `GinkgoWriter`.
+- Add support for precompiled tests:
+    - `ginkgo build <path-to-package>` will now compile the package, producing a file named `package.test`
+    - The compiled `package.test` file can be run directly.  This runs the tests in series.
+    - To run precompiled tests in parallel, you can run: `ginkgo -p package.test`
+- Support `bootstrap`ping and `generate`ing [Agouti](http://agouti.org) specs.
+- `ginkgo generate` and `ginkgo bootstrap` now honor the package name already defined in a given directory
+- The `ginkgo` CLI ignores `SIGQUIT`.  Prevents its stack dump from interlacing with the underlying test suite's stack dump.
+- The `ginkgo` CLI now compiles tests into a temporary directory instead of the package directory.  This necessitates upgrading to Go v1.4+.
+- `ginkgo -notify` now works on Linux
 
+Bug Fixes:
+
+- If --skipPackages is used and all packages are skipped, Ginkgo should exit 0.
+- Fix tempfile leak when running in parallel
+- Fix incorrect failure message when a panic occurs during a parallel test run
+- Fixed an issue where a pending test within a focused context (or a focused test within a pending context) would skip all other tests.
+- Be more consistent about handling SIGTERM as well as SIGINT
+- When interupted while concurrently compiling test suites in the background, Ginkgo now cleans up the compiled artifacts.
+- Fixed a long standing bug where `ginkgo -p` would hang if a process spawned by one of the Ginkgo parallel nodes does not exit. (Hooray!)
 
 ## 1.1.0 (8/2/2014)
 
@@ -26,7 +84,7 @@ No changes, just dropping the beta.
 New Features:
 
 - `ginkgo watch` now monitors packages *and their dependencies* for changes.  The depth of the dependency tree can be modified with the `-depth` flag.
-- Test suites with a programmatic focus (`FIt`, `FDescribe`, etc...) exit with non-zero status code, evne when they pass.  This allows CI systems to detect accidental commits of focused test suites.
+- Test suites with a programmatic focus (`FIt`, `FDescribe`, etc...) exit with non-zero status code, even when they pass.  This allows CI systems to detect accidental commits of focused test suites.
 - `ginkgo -p` runs the testsuite in parallel with an auto-detected number of nodes.
 - `ginkgo -tags=TAG_LIST` passes a list of tags down to the `go build` command.
 - `ginkgo --failFast` aborts the test suite after the first failure.

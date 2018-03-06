@@ -7,6 +7,8 @@ import (
 	"sync"
 	"syscall"
 
+	"github.com/onsi/ginkgo/internal/spec_iterator"
+
 	"github.com/onsi/ginkgo/config"
 	"github.com/onsi/ginkgo/internal/leafnodes"
 	"github.com/onsi/ginkgo/internal/spec"
@@ -20,7 +22,7 @@ import (
 type SpecRunner struct {
 	description     string
 	beforeSuiteNode leafnodes.SuiteNode
-	specs           *spec.Specs
+	iterator        spec_iterator.SpecIterator
 	afterSuiteNode  leafnodes.SuiteNode
 	reporters       []reporters.Reporter
 	startTime       time.Time
@@ -29,14 +31,15 @@ type SpecRunner struct {
 	writer          Writer.WriterInterface
 	config          config.GinkgoConfigType
 	interrupted     bool
+	processedSpecs  []*spec.Spec
 	lock            *sync.Mutex
 }
 
-func New(description string, beforeSuiteNode leafnodes.SuiteNode, specs *spec.Specs, afterSuiteNode leafnodes.SuiteNode, reporters []reporters.Reporter, writer Writer.WriterInterface, config config.GinkgoConfigType) *SpecRunner {
+func New(description string, beforeSuiteNode leafnodes.SuiteNode, iterator spec_iterator.SpecIterator, afterSuiteNode leafnodes.SuiteNode, reporters []reporters.Reporter, writer Writer.WriterInterface, config config.GinkgoConfigType) *SpecRunner {
 	return &SpecRunner{
 		description:     description,
 		beforeSuiteNode: beforeSuiteNode,
-		specs:           specs,
+		iterator:        iterator,
 		afterSuiteNode:  afterSuiteNode,
 		reporters:       reporters,
 		writer:          writer,
@@ -47,6 +50,11 @@ func New(description string, beforeSuiteNode leafnodes.SuiteNode, specs *spec.Sp
 }
 
 func (runner *SpecRunner) Run() bool {
+	if runner.config.DryRun {
+		runner.performDryRun()
+		return true
+	}
+
 	runner.reportSuiteWillBegin()
 	go runner.registerForInterrupts()
 
@@ -63,6 +71,44 @@ func (runner *SpecRunner) Run() bool {
 	runner.reportSuiteDidEnd(suitePassed)
 
 	return suitePassed
+}
+
+func (runner *SpecRunner) performDryRun() {
+	runner.reportSuiteWillBegin()
+
+	if runner.beforeSuiteNode != nil {
+		summary := runner.beforeSuiteNode.Summary()
+		summary.State = types.SpecStatePassed
+		runner.reportBeforeSuite(summary)
+	}
+
+	for {
+		spec, err := runner.iterator.Next()
+		if err == spec_iterator.ErrClosed {
+			break
+		}
+		if err != nil {
+			fmt.Println("failed to iterate over tests:\n" + err.Error())
+			break
+		}
+
+		runner.processedSpecs = append(runner.processedSpecs, spec)
+
+		summary := spec.Summary(runner.suiteID)
+		runner.reportSpecWillRun(summary)
+		if summary.State == types.SpecStateInvalid {
+			summary.State = types.SpecStatePassed
+		}
+		runner.reportSpecDidComplete(summary, false)
+	}
+
+	if runner.afterSuiteNode != nil {
+		summary := runner.afterSuiteNode.Summary()
+		summary.State = types.SpecStatePassed
+		runner.reportAfterSuite(summary)
+	}
+
+	runner.reportSuiteDidEnd(true)
 }
 
 func (runner *SpecRunner) runBeforeSuite() bool {
@@ -98,27 +144,38 @@ func (runner *SpecRunner) runAfterSuite() bool {
 func (runner *SpecRunner) runSpecs() bool {
 	suiteFailed := false
 	skipRemainingSpecs := false
-	for _, spec := range runner.specs.Specs() {
+	for {
+		spec, err := runner.iterator.Next()
+		if err == spec_iterator.ErrClosed {
+			break
+		}
+		if err != nil {
+			fmt.Println("failed to iterate over tests:\n" + err.Error())
+			suiteFailed = true
+			break
+		}
+
+		runner.processedSpecs = append(runner.processedSpecs, spec)
+
 		if runner.wasInterrupted() {
-			return suiteFailed
+			break
 		}
 		if skipRemainingSpecs {
 			spec.Skip()
 		}
-		runner.reportSpecWillRun(spec)
 
 		if !spec.Skipped() && !spec.Pending() {
-			runner.runningSpec = spec
-			spec.Run(runner.writer)
-			runner.runningSpec = nil
-			if spec.Failed() {
+			if passed := runner.runSpec(spec); !passed {
 				suiteFailed = true
 			}
 		} else if spec.Pending() && runner.config.FailOnPending {
+			runner.reportSpecWillRun(spec.Summary(runner.suiteID))
 			suiteFailed = true
+			runner.reportSpecDidComplete(spec.Summary(runner.suiteID), spec.Failed())
+		} else {
+			runner.reportSpecWillRun(spec.Summary(runner.suiteID))
+			runner.reportSpecDidComplete(spec.Summary(runner.suiteID), spec.Failed())
 		}
-
-		runner.reportSpecDidComplete(spec)
 
 		if spec.Failed() && runner.config.FailFast {
 			skipRemainingSpecs = true
@@ -126,6 +183,26 @@ func (runner *SpecRunner) runSpecs() bool {
 	}
 
 	return !suiteFailed
+}
+
+func (runner *SpecRunner) runSpec(spec *spec.Spec) (passed bool) {
+	maxAttempts := 1
+	if runner.config.FlakeAttempts > 0 {
+		// uninitialized configs count as 1
+		maxAttempts = runner.config.FlakeAttempts
+	}
+
+	for i := 0; i < maxAttempts; i++ {
+		runner.reportSpecWillRun(spec.Summary(runner.suiteID))
+		runner.runningSpec = spec
+		spec.Run(runner.writer)
+		runner.runningSpec = nil
+		runner.reportSpecDidComplete(spec.Summary(runner.suiteID), spec.Failed())
+		if !spec.Failed() {
+			return true
+		}
+	}
+	return false
 }
 
 func (runner *SpecRunner) CurrentSpecSummary() (*types.SpecSummary, bool) {
@@ -138,7 +215,7 @@ func (runner *SpecRunner) CurrentSpecSummary() (*types.SpecSummary, bool) {
 
 func (runner *SpecRunner) registerForInterrupts() {
 	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 
 	<-c
 	signal.Stop(c)
@@ -193,7 +270,7 @@ func (runner *SpecRunner) wasInterrupted() bool {
 
 func (runner *SpecRunner) reportSuiteWillBegin() {
 	runner.startTime = time.Now()
-	summary := runner.summary(true)
+	summary := runner.suiteWillBeginSummary()
 	for _, reporter := range runner.reporters {
 		reporter.SpecSuiteWillBegin(runner.config, summary)
 	}
@@ -211,22 +288,23 @@ func (runner *SpecRunner) reportAfterSuite(summary *types.SetupSummary) {
 	}
 }
 
-func (runner *SpecRunner) reportSpecWillRun(spec *spec.Spec) {
+func (runner *SpecRunner) reportSpecWillRun(summary *types.SpecSummary) {
 	runner.writer.Truncate()
 
-	summary := spec.Summary(runner.suiteID)
 	for _, reporter := range runner.reporters {
 		reporter.SpecWillRun(summary)
 	}
 }
 
-func (runner *SpecRunner) reportSpecDidComplete(spec *spec.Spec) {
-	summary := spec.Summary(runner.suiteID)
+func (runner *SpecRunner) reportSpecDidComplete(summary *types.SpecSummary, failed bool) {
+	if failed && len(summary.CapturedOutput) == 0 {
+		summary.CapturedOutput = string(runner.writer.Bytes())
+	}
 	for i := len(runner.reporters) - 1; i >= 1; i-- {
 		runner.reporters[i].SpecDidComplete(summary)
 	}
 
-	if spec.Failed() {
+	if failed {
 		runner.writer.DumpOut()
 	}
 
@@ -234,17 +312,17 @@ func (runner *SpecRunner) reportSpecDidComplete(spec *spec.Spec) {
 }
 
 func (runner *SpecRunner) reportSuiteDidEnd(success bool) {
-	summary := runner.summary(success)
+	summary := runner.suiteDidEndSummary(success)
 	summary.RunTime = time.Since(runner.startTime)
 	for _, reporter := range runner.reporters {
 		reporter.SpecSuiteDidEnd(summary)
 	}
 }
 
-func (runner *SpecRunner) countSpecsSatisfying(filter func(ex *spec.Spec) bool) (count int) {
+func (runner *SpecRunner) countSpecsThatRanSatisfying(filter func(ex *spec.Spec) bool) (count int) {
 	count = 0
 
-	for _, spec := range runner.specs.Specs() {
+	for _, spec := range runner.processedSpecs {
 		if filter(spec) {
 			count++
 		}
@@ -253,28 +331,37 @@ func (runner *SpecRunner) countSpecsSatisfying(filter func(ex *spec.Spec) bool) 
 	return count
 }
 
-func (runner *SpecRunner) summary(success bool) *types.SuiteSummary {
-	numberOfSpecsThatWillBeRun := runner.countSpecsSatisfying(func(ex *spec.Spec) bool {
+func (runner *SpecRunner) suiteDidEndSummary(success bool) *types.SuiteSummary {
+	numberOfSpecsThatWillBeRun := runner.countSpecsThatRanSatisfying(func(ex *spec.Spec) bool {
 		return !ex.Skipped() && !ex.Pending()
 	})
 
-	numberOfPendingSpecs := runner.countSpecsSatisfying(func(ex *spec.Spec) bool {
+	numberOfPendingSpecs := runner.countSpecsThatRanSatisfying(func(ex *spec.Spec) bool {
 		return ex.Pending()
 	})
 
-	numberOfSkippedSpecs := runner.countSpecsSatisfying(func(ex *spec.Spec) bool {
+	numberOfSkippedSpecs := runner.countSpecsThatRanSatisfying(func(ex *spec.Spec) bool {
 		return ex.Skipped()
 	})
 
-	numberOfPassedSpecs := runner.countSpecsSatisfying(func(ex *spec.Spec) bool {
+	numberOfPassedSpecs := runner.countSpecsThatRanSatisfying(func(ex *spec.Spec) bool {
 		return ex.Passed()
 	})
 
-	numberOfFailedSpecs := runner.countSpecsSatisfying(func(ex *spec.Spec) bool {
+	numberOfFlakedSpecs := runner.countSpecsThatRanSatisfying(func(ex *spec.Spec) bool {
+		return ex.Flaked()
+	})
+
+	numberOfFailedSpecs := runner.countSpecsThatRanSatisfying(func(ex *spec.Spec) bool {
 		return ex.Failed()
 	})
 
-	if runner.beforeSuiteNode != nil && !runner.beforeSuiteNode.Passed() {
+	if runner.beforeSuiteNode != nil && !runner.beforeSuiteNode.Passed() && !runner.config.DryRun {
+		var known bool
+		numberOfSpecsThatWillBeRun, known = runner.iterator.NumberOfSpecsThatWillBeRunIfKnown()
+		if !known {
+			numberOfSpecsThatWillBeRun = runner.iterator.NumberOfSpecsPriorToIteration()
+		}
 		numberOfFailedSpecs = numberOfSpecsThatWillBeRun
 	}
 
@@ -283,12 +370,39 @@ func (runner *SpecRunner) summary(success bool) *types.SuiteSummary {
 		SuiteSucceeded:   success,
 		SuiteID:          runner.suiteID,
 
-		NumberOfSpecsBeforeParallelization: runner.specs.NumberOfOriginalSpecs(),
-		NumberOfTotalSpecs:                 len(runner.specs.Specs()),
+		NumberOfSpecsBeforeParallelization: runner.iterator.NumberOfSpecsPriorToIteration(),
+		NumberOfTotalSpecs:                 len(runner.processedSpecs),
 		NumberOfSpecsThatWillBeRun:         numberOfSpecsThatWillBeRun,
 		NumberOfPendingSpecs:               numberOfPendingSpecs,
 		NumberOfSkippedSpecs:               numberOfSkippedSpecs,
 		NumberOfPassedSpecs:                numberOfPassedSpecs,
 		NumberOfFailedSpecs:                numberOfFailedSpecs,
+		NumberOfFlakedSpecs:                numberOfFlakedSpecs,
+	}
+}
+
+func (runner *SpecRunner) suiteWillBeginSummary() *types.SuiteSummary {
+	numTotal, known := runner.iterator.NumberOfSpecsToProcessIfKnown()
+	if !known {
+		numTotal = -1
+	}
+
+	numToRun, known := runner.iterator.NumberOfSpecsThatWillBeRunIfKnown()
+	if !known {
+		numToRun = -1
+	}
+
+	return &types.SuiteSummary{
+		SuiteDescription: runner.description,
+		SuiteID:          runner.suiteID,
+
+		NumberOfSpecsBeforeParallelization: runner.iterator.NumberOfSpecsPriorToIteration(),
+		NumberOfTotalSpecs:                 numTotal,
+		NumberOfSpecsThatWillBeRun:         numToRun,
+		NumberOfPendingSpecs:               -1,
+		NumberOfSkippedSpecs:               -1,
+		NumberOfPassedSpecs:                -1,
+		NumberOfFailedSpecs:                -1,
+		NumberOfFlakedSpecs:                -1,
 	}
 }

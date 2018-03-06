@@ -26,6 +26,15 @@ func BeEquivalentTo(expected interface{}) types.GomegaMatcher {
 	}
 }
 
+//BeIdenticalTo uses the == operator to compare actual with expected.
+//BeIdenticalTo is strict about types when performing comparisons.
+//It is an error for both actual and expected to be nil.  Use BeNil() instead.
+func BeIdenticalTo(expected interface{}) types.GomegaMatcher {
+	return &matchers.BeIdenticalToMatcher{
+		Expected: expected,
+	}
+}
+
 //BeNil succeeds if actual is nil
 func BeNil() types.GomegaMatcher {
 	return &matchers.BeNilMatcher{}
@@ -47,6 +56,21 @@ func BeFalse() types.GomegaMatcher {
 //    Ω(err).ShouldNot(HaveOccurred())
 func HaveOccurred() types.GomegaMatcher {
 	return &matchers.HaveOccurredMatcher{}
+}
+
+//Succeed passes if actual is a nil error
+//Succeed is intended to be used with functions that return a single error value. Instead of
+//    err := SomethingThatMightFail()
+//    Ω(err).ShouldNot(HaveOccurred())
+//
+//You can write:
+//    Ω(SomethingThatMightFail()).Should(Succeed())
+//
+//It is a mistake to use Succeed with a function that has multiple return values.  Gomega's Ω and Expect
+//functions automatically trigger failure if any return values after the first return value are non-zero/non-nil.
+//This means that Ω(MultiReturnFunc()).ShouldNot(Succeed()) can never pass.
+func Succeed() types.GomegaMatcher {
+	return &matchers.SucceedMatcher{}
 }
 
 //MatchError succeeds if actual is a non-nil error that matches the passed in string/error.
@@ -152,7 +176,7 @@ func MatchRegexp(regexp string, args ...interface{}) types.GomegaMatcher {
 }
 
 //ContainSubstring succeeds if actual is a string or stringer that contains the
-//passed-in regexp.  Optional arguments can be provided to construct the substring
+//passed-in substring.  Optional arguments can be provided to construct the substring
 //via fmt.Sprintf().
 func ContainSubstring(substr string, args ...interface{}) types.GomegaMatcher {
 	return &matchers.ContainSubstringMatcher{
@@ -190,6 +214,24 @@ func MatchJSON(json interface{}) types.GomegaMatcher {
 	}
 }
 
+//MatchXML succeeds if actual is a string or stringer of XML that matches
+//the expected XML.  The XMLs are decoded and the resulting objects are compared via
+//reflect.DeepEqual so things like whitespaces shouldn't matter.
+func MatchXML(xml interface{}) types.GomegaMatcher {
+	return &matchers.MatchXMLMatcher{
+		XMLToMatch: xml,
+	}
+}
+
+//MatchYAML succeeds if actual is a string or stringer of YAML that matches
+//the expected YAML.  The YAML's are decoded and the resulting objects are compared via
+//reflect.DeepEqual so things like key-ordering and whitespace shouldn't matter.
+func MatchYAML(yaml interface{}) types.GomegaMatcher {
+	return &matchers.MatchYAMLMatcher{
+		YAMLToMatch: yaml,
+	}
+}
+
 //BeEmpty succeeds if actual is empty.  Actual must be of type string, array, map, chan, or slice.
 func BeEmpty() types.GomegaMatcher {
 	return &matchers.BeEmptyMatcher{}
@@ -198,6 +240,13 @@ func BeEmpty() types.GomegaMatcher {
 //HaveLen succeeds if actual has the passed-in length.  Actual must be of type string, array, map, chan, or slice.
 func HaveLen(count int) types.GomegaMatcher {
 	return &matchers.HaveLenMatcher{
+		Count: count,
+	}
+}
+
+//HaveCap succeeds if actual has the passed-in capacity.  Actual must be of type array, chan, or slice.
+func HaveCap(count int) types.GomegaMatcher {
+	return &matchers.HaveCapMatcher{
 		Count: count,
 	}
 }
@@ -220,7 +269,7 @@ func ContainElement(element interface{}) types.GomegaMatcher {
 	}
 }
 
-//ConsistOf succeeds if actual contains preciely the elements passed into the matcher.  The ordering of the elements does not matter.
+//ConsistOf succeeds if actual contains precisely the elements passed into the matcher.  The ordering of the elements does not matter.
 //By default ConsistOf() uses Equal() to match the elements, however custom matchers can be passed in instead.  Here are some examples:
 //
 //    Ω([]string{"Foo", "FooBar"}).Should(ConsistOf("FooBar", "Foo"))
@@ -235,7 +284,6 @@ func ContainElement(element interface{}) types.GomegaMatcher {
 //    Ω([]string{"Foo", "FooBar"}).Should(ConsistOf([]string{"FooBar", "Foo"}))
 //
 //Note that Go's type system does not allow you to write this as ConsistOf([]string{"FooBar", "Foo"}...) as []string and []interface{} are different types - hence the need for this special rule.
-
 func ConsistOf(elements ...interface{}) types.GomegaMatcher {
 	return &matchers.ConsistOfMatcher{
 		Elements: elements,
@@ -310,4 +358,70 @@ func BeAssignableToTypeOf(expected interface{}) types.GomegaMatcher {
 //Actual must be a function that takes no arguments and returns no results.
 func Panic() types.GomegaMatcher {
 	return &matchers.PanicMatcher{}
+}
+
+//BeAnExistingFile succeeds if a file exists.
+//Actual must be a string representing the abs path to the file being checked.
+func BeAnExistingFile() types.GomegaMatcher {
+	return &matchers.BeAnExistingFileMatcher{}
+}
+
+//BeARegularFile succeeds if a file exists and is a regular file.
+//Actual must be a string representing the abs path to the file being checked.
+func BeARegularFile() types.GomegaMatcher {
+	return &matchers.BeARegularFileMatcher{}
+}
+
+//BeADirectory succeeds if a file exists and is a directory.
+//Actual must be a string representing the abs path to the file being checked.
+func BeADirectory() types.GomegaMatcher {
+	return &matchers.BeADirectoryMatcher{}
+}
+
+//And succeeds only if all of the given matchers succeed.
+//The matchers are tried in order, and will fail-fast if one doesn't succeed.
+//  Expect("hi").To(And(HaveLen(2), Equal("hi"))
+//
+//And(), Or(), Not() and WithTransform() allow matchers to be composed into complex expressions.
+func And(ms ...types.GomegaMatcher) types.GomegaMatcher {
+	return &matchers.AndMatcher{Matchers: ms}
+}
+
+//SatisfyAll is an alias for And().
+//  Ω("hi").Should(SatisfyAll(HaveLen(2), Equal("hi")))
+func SatisfyAll(matchers ...types.GomegaMatcher) types.GomegaMatcher {
+	return And(matchers...)
+}
+
+//Or succeeds if any of the given matchers succeed.
+//The matchers are tried in order and will return immediately upon the first successful match.
+//  Expect("hi").To(Or(HaveLen(3), HaveLen(2))
+//
+//And(), Or(), Not() and WithTransform() allow matchers to be composed into complex expressions.
+func Or(ms ...types.GomegaMatcher) types.GomegaMatcher {
+	return &matchers.OrMatcher{Matchers: ms}
+}
+
+//SatisfyAny is an alias for Or().
+//  Expect("hi").SatisfyAny(Or(HaveLen(3), HaveLen(2))
+func SatisfyAny(matchers ...types.GomegaMatcher) types.GomegaMatcher {
+	return Or(matchers...)
+}
+
+//Not negates the given matcher; it succeeds if the given matcher fails.
+//  Expect(1).To(Not(Equal(2))
+//
+//And(), Or(), Not() and WithTransform() allow matchers to be composed into complex expressions.
+func Not(matcher types.GomegaMatcher) types.GomegaMatcher {
+	return &matchers.NotMatcher{Matcher: matcher}
+}
+
+//WithTransform applies the `transform` to the actual value and matches it against `matcher`.
+//The given transform must be a function of one parameter that returns one value.
+//  var plus1 = func(i int) int { return i + 1 }
+//  Expect(1).To(WithTransform(plus1, Equal(2))
+//
+//And(), Or(), Not() and WithTransform() allow matchers to be composed into complex expressions.
+func WithTransform(transform interface{}, matcher types.GomegaMatcher) types.GomegaMatcher {
+	return matchers.NewWithTransformMatcher(transform, matcher)
 }
